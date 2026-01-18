@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && source ../.venv/bin/activate && python app.py",
+    "dev:all": "npm run dev:backend & npm run dev",
+    "install:all": "npm install && cd frontend && npm install"
+  },
+  "dependencies": {
+    "firebase": "^12.7.0"
+  }
+}
