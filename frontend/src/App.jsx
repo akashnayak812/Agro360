@@ -25,12 +25,6 @@ function AppContent() {
 
   return (
     <>
-      {!isAuthPage && (
-        <div className="absolute top-4 right-6 z-50">
-          <LanguageSelector />
-        </div>
-      )}
-
       {isAuthPage ? (
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
@@ -54,7 +48,6 @@ function AppContent() {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AnimatePresence>
-          <VoiceAssistant />
           <AIChatbot />
         </Layout>
       )}

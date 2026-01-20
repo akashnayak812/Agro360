@@ -75,13 +75,33 @@ class SoilHealthAnalyzer:
 
 class DiseaseDetector:
     def predict(self, image_data):
-        # image_data: Placeholder for now, envisioning actual image bytes passed later
-        # For now, we simulate "No Image" handling or text description if passed
-        prompt = "Identify plant disease from the image and suggest treatment. Return JSON: { 'disease': 'name', 'symptoms': 'desc', 'treatment': 'steps' }"
-        # Since we don't have real image upload in frontend yet (only file input that isn't sent to backend),
-        # we will use text generation to simulate a random specific disease analysis for demo 'wow' factor
-        # based on a random scenario
+        prompt = """
+        Analyze this plant leaf image. Identify the disease (if any).
+        Return purely JSON in this format:
+        {
+            "disease": "Name of disease", 
+            "symptoms": "Description of symptoms observed", 
+            "treatment": "Recommended treatment"
+        }
+        If the image is not a plant or not clear, return:
+        { "disease": "Unknown", "symptoms": "Image not clear or not a plant", "treatment": "Please upload a clear image of a plant leaf." }
+        """
         
+        if image_data:
+            print("Sending image to Gemini for analysis...")
+            response = gemini_service.analyze_image(prompt, image_data)
+            if response:
+                try:
+                    # Clean potential markdown
+                    clean_response = response.replace('```json', '').replace('```', '').strip()
+                    res_json = json.loads(clean_response)
+                    return res_json.get('disease', 'Unknown'), res_json.get('symptoms', ''), res_json.get('treatment', '')
+                except Exception as e:
+                    print(f"Error parsing Gemini response: {e}")
+                    pass
+        
+        # Fallback to mock if API fails or no image
+        print("Using mock disease detection.")
         scenarios = ["Yellow spots on tomato leaves", "White powder on rose leaves", "Brown rot on potato"]
         scenario = random.choice(scenarios)
         

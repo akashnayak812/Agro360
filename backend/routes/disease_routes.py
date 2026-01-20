@@ -7,11 +7,13 @@ disease_bp = Blueprint('disease_bp', __name__)
 @disease_bp.route('/detect', methods=['POST'])
 def detect_disease():
     try:
-        # In a real app, we would handle file upload here
-        # file = request.files['image']
+        image_data = None
+        if 'image' in request.files:
+            file = request.files['image']
+            # Read file bytes
+            image_data = file.read()
         
-        # For mock/demo, assuming we just trigger the logic
-        name, symptoms, treatment = disease_model.predict(None)
+        name, symptoms, treatment = disease_model.predict(image_data)
         
         return jsonify({
             "success": True,

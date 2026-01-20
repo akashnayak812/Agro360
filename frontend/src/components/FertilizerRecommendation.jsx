@@ -69,13 +69,22 @@ const FertilizerRecommendation = () => {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-6xl mx-auto space-y-8"
         >
-            <div className="flex items-center gap-4">
-                <div className="p-3 bg-blue-100 rounded-2xl text-blue-600">
-                    <Droplets size={32} />
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-100 rounded-2xl text-blue-600">
+                        <Droplets size={32} />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-heading font-bold text-gray-900">Fertilizer Advisor</h1>
+                        <p className="text-gray-500">Get the perfect fertilizer suggestions for optimal growth.</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-3xl font-heading font-bold text-gray-900">Fertilizer Advisor</h1>
-                    <p className="text-gray-500">Get the perfect fertilizer suggestions for optimal growth.</p>
+                <div className="flex gap-2">
+                    <select className="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
+                        <option value="en">English</option>
+                        <option value="hi">हिंदी</option>
+                        <option value="te">తెలుగు</option>
+                    </select>
                 </div>
             </div>
 
@@ -111,77 +120,87 @@ const FertilizerRecommendation = () => {
                         </div>
                     </Card>
 
-                <Card glass className="p-8">
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <Input
-                            name="crop"
-                            placeholder="Target Crop (e.g. Rice, Maize)"
-                            onChange={handleChange}
-                            required
-                            icon={Sprout}
-                            className="bg-blue-50/30 focus-visible:ring-blue-500/30 focus-visible:border-blue-500"
-                        />
-
-                        <div className="space-y-4">
-                            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Soil Nutrients (मृदा पोषक तत्व)</h3>
-                            <div className="text-xs text-gray-500 mb-2">💡 Lower values mean soil needs more nutrition</div>
-                            <div className="grid grid-cols-1 gap-4">
-                                <div>
-                                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                                        🌿 For Leaf Growth (पत्तियों के लिए) - N
-                                    </label>
-                                    <Input
-                                        name="N"
-                                        placeholder="Leaf nutrition value"
-                                        onChange={handleChange}
-                                        required
-                                        icon={Activity}
-                                    />
+                    <Card glass className="p-8">
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            {result && !result.success && (
+                                <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm border border-red-100">
+                                    ⚠️ {result.error || "An error occurred. Please check your inputs and try again."}
                                 </div>
-                                <div>
-                                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                                        🌺 For Flowers & Fruits (फूल और फल के लिए) - P
-                                    </label>
-                                    <Input
-                                        name="P"
-                                        placeholder="Flower nutrition value"
-                                        onChange={handleChange}
-                                        required
-                                        icon={Activity}
-                                    />
-                                </div>
-                                <div>
-                                    <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
-                                        💪 For Plant Strength (पौधों की ताकत के लिए) - K
-                                    </label>
-                                    <Input
-                                        name="K"
-                                        placeholder="Strength nutrition value"
-                                        onChange={handleChange}
-                                        required
-                                        icon={Activity}
-                                    />
-                                </div>
-                            </div>
+                            )}
                             <Input
-                                name="ph"
-                                placeholder="pH Level"
+                                name="crop"
+                                placeholder="Target Crop (e.g. Rice, Maize)"
                                 onChange={handleChange}
                                 required
-                                icon={Beaker}
+                                icon={Sprout}
+                                className="bg-blue-50/30 focus-visible:ring-blue-500/30 focus-visible:border-blue-500"
                             />
-                        </div>
 
-                        <Button
-                            type="submit"
-                            variant="primary"
-                            className="w-full text-lg h-12 bg-blue-600 hover:bg-blue-700 shadow-blue-500/20"
-                            isLoading={loading}
-                        >
-                            {loading ? 'Analyzing...' : 'Get Advice'}
-                        </Button>
-                    </form>
-                </Card>
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">Soil Nutrients (मृदा पोषक तत्व)</h3>
+                                <div className="text-xs text-gray-500 mb-2">💡 Lower values mean soil needs more nutrition</div>
+                                <div className="grid grid-cols-1 gap-4">
+                                    <div>
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
+                                            🌿 For Leaf Growth (पत्तियों के लिए) - N
+                                        </label>
+                                        <Input
+                                            name="N"
+                                            type="number"
+                                            placeholder="Leaf nutrition value"
+                                            onChange={handleChange}
+                                            required
+                                            icon={Activity}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
+                                            🌺 For Flowers & Fruits (फूल और फल के लिए) - P
+                                        </label>
+                                        <Input
+                                            name="P"
+                                            type="number"
+                                            placeholder="Flower nutrition value"
+                                            onChange={handleChange}
+                                            required
+                                            icon={Activity}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-sm font-medium text-gray-700 flex items-center gap-2 mb-1">
+                                            💪 For Plant Strength (पौधों की ताकत के लिए) - K
+                                        </label>
+                                        <Input
+                                            name="K"
+                                            type="number"
+                                            placeholder="Strength nutrition value"
+                                            onChange={handleChange}
+                                            required
+                                            icon={Activity}
+                                        />
+                                    </div>
+                                </div>
+                                <Input
+                                    name="ph"
+                                    type="number"
+                                    step="0.1"
+                                    placeholder="pH Level"
+                                    onChange={handleChange}
+                                    required
+                                    icon={Beaker}
+                                />
+                            </div>
+
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                className="w-full text-lg h-12 bg-blue-600 hover:bg-blue-700 shadow-blue-500/20"
+                                isLoading={loading}
+                            >
+                                {loading ? 'Analyzing...' : 'Get Advice'}
+                            </Button>
+                        </form>
+                    </Card>
                 </div>
 
                 <div className="space-y-6">
@@ -193,7 +212,7 @@ const FertilizerRecommendation = () => {
                                 description={fertilizerInfo[result.fertilizer]?.description || result.message || "Apply this fertilizer as recommended for best results."}
                                 benefits={fertilizerInfo[result.fertilizer]?.benefits || []}
                             />
-                            
+
                             <Card className="p-6 bg-gradient-to-br from-blue-50 to-white border-blue-100">
                                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                                     📋 How to Apply (कैसे इस्तेमाल करें):

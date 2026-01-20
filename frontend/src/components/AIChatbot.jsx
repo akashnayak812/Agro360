@@ -14,7 +14,7 @@ const AIChatbot = () => {
   const [position, setPosition] = useState({ x: 20, y: 20 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  
+
   const chatContainerRef = useRef(null);
   const chatbotRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -42,11 +42,11 @@ const AIChatbot = () => {
     if (isDragging) {
       const newX = e.clientX - dragOffset.x;
       const newY = e.clientY - dragOffset.y;
-      
+
       // Keep within viewport bounds
       const maxX = window.innerWidth - chatbotRef.current.offsetWidth;
       const maxY = window.innerHeight - chatbotRef.current.offsetHeight;
-      
+
       setPosition({
         x: Math.max(0, Math.min(newX, maxX)),
         y: Math.max(0, Math.min(newY, maxY))
@@ -84,21 +84,26 @@ const AIChatbot = () => {
       });
 
       if (response.data.success) {
-        setMessages(prev => [...prev, { 
-          type: 'bot', 
-          text: response.data.response 
+        setMessages(prev => [...prev, {
+          type: 'bot',
+          text: response.data.response
         }]);
+
+        // Text-to-Speech
+        const utterance = new SpeechSynthesisUtterance(response.data.response);
+        window.speechSynthesis.speak(utterance);
+
       } else {
-        setMessages(prev => [...prev, { 
-          type: 'bot', 
-          text: 'Sorry, I encountered an error. Please try again.' 
+        setMessages(prev => [...prev, {
+          type: 'bot',
+          text: 'Sorry, I encountered an error. Please try again.'
         }]);
       }
     } catch (error) {
       console.error('Chat error:', error);
-      setMessages(prev => [...prev, { 
-        type: 'bot', 
-        text: 'Sorry, I\'m having trouble connecting. Please check if the server is running.' 
+      setMessages(prev => [...prev, {
+        type: 'bot',
+        text: 'Sorry, I\'m having trouble connecting. Please check if the server is running.'
       }]);
     } finally {
       setIsLoading(false);
@@ -153,9 +158,8 @@ const AIChatbot = () => {
       onMouseDown={handleMouseDown}
       className="select-none"
     >
-      <div className={`bg-white rounded-2xl shadow-2xl border border-gray-200 transition-all ${
-        isMinimized ? 'w-80' : 'w-96'
-      }`}>
+      <div className={`bg-white rounded-2xl shadow-2xl border border-gray-200 transition-all ${isMinimized ? 'w-80' : 'w-96'
+        }`}>
         {/* Header */}
         <div className="chat-header bg-gradient-to-r from-green-600 to-emerald-600 text-white p-4 rounded-t-2xl cursor-grab active:cursor-grabbing flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -205,11 +209,10 @@ const AIChatbot = () => {
                   className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] p-3 rounded-2xl ${
-                      msg.type === 'user'
-                        ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-br-none'
-                        : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm'
-                    }`}
+                    className={`max-w-[80%] p-3 rounded-2xl ${msg.type === 'user'
+                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-br-none'
+                      : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm'
+                      }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
                   </div>
@@ -247,6 +250,27 @@ const AIChatbot = () => {
                   className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-3 rounded-xl hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   <Send size={20} />
+                </button>
+                <button
+                  onClick={() => {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    if (SpeechRecognition) {
+                      const recognition = new SpeechRecognition();
+                      recognition.lang = 'en-US';
+                      recognition.start();
+                      recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        setInput(transcript);
+                      };
+                      recognition.onerror = (e) => console.error("Speech error:", e);
+                    } else {
+                      alert("Voice input not supported in this browser.");
+                    }
+                  }}
+                  className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-green-100 hover:text-green-600 transition-colors"
+                  title="Speak"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><line x1="12" x2="12" y1="19" y2="22" /></svg>
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-2 text-center">

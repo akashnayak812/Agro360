@@ -2,10 +2,10 @@ import google.generativeai as genai
 import os
 import json
 
-# Configure Gemini
-# In a real scenario, use os.environ.get("GEMINI_API_KEY")
-# For this task, using the user provided key directly as requested, though env var is safer.
-API_KEY = "AIzaSyA7GyZeUz3IwMTXP5OFNsZo7_tv81OpnhM"
+# Configure Gemini from environment variable
+API_KEY = os.environ.get("GEMINI_API_KEY")
+if not API_KEY:
+    raise ValueError("GEMINI_API_KEY environment variable is not set")
 genai.configure(api_key=API_KEY)
 
 class GeminiService:
@@ -78,6 +78,21 @@ class GeminiService:
             return response.text
         except Exception as e:
             print(f"Gemini Generation Error: {e}")
+            return None
+
+    def analyze_image(self, prompt, image_bytes, mime_type='image/jpeg'):
+        """
+        Analyze an image (bytes) with a text prompt.
+        """
+        try:
+            image_part = {
+                "mime_type": mime_type,
+                "data": image_bytes
+            }
+            response = self.model.generate_content([prompt, image_part])
+            return response.text
+        except Exception as e:
+            print(f"Gemini Image Analysis Error: {e}")
             return None
 
 gemini_service = GeminiService()

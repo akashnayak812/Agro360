@@ -1,3 +1,8 @@
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
 from services.gemini_service import gemini_service
 import json
 

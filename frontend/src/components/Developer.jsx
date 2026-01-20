@@ -155,7 +155,7 @@ const Developer = () => {
 
     const projectStats = {
         teamSize: "4 Members",
-        developmentTime: "6+ Months",
+        developmentTime: "2+ Months",
         features: "15+ Features",
         technologies: "20+ Tech Stack"
     };
