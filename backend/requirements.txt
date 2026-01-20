@@ -15,3 +15,4 @@ python-dotenv
 email_validator
 
 Pillow
+scikit-image

@@ -20,6 +20,7 @@ from routes.community_routes import community_bp
 from routes.voice_routes import voice_bp
 from routes.auth_routes import auth_bp, init_auth_routes
 from routes.chatbot_routes import chatbot_bp
+from routes.soil_image_routes import soil_image_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -53,6 +54,7 @@ app.register_blueprint(advisory_bp, url_prefix='/api/advisory')
 app.register_blueprint(community_bp, url_prefix='/api/community')
 app.register_blueprint(voice_bp, url_prefix='/api/voice')
 app.register_blueprint(chatbot_bp, url_prefix='/api/chatbot')
+app.register_blueprint(soil_image_bp, url_prefix='/api/soil')
 
 @app.route('/')
 def home():
