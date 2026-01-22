@@ -8,11 +8,12 @@ pandas
 scikit-learn
 tensorflow
 opencv-python-headless
-google-generativeai
+google-genai
 flask-jwt-extended
 flask-bcrypt
 python-dotenv
 email_validator
+cryptography
 
 Pillow
 scikit-image

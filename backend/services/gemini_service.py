@@ -1,17 +1,34 @@
-import google.generativeai as genai
+from google import genai
 import os
 import json
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Configure Gemini from environment variable
+import PIL.Image
+import io
 
 # Configure Gemini from environment variable
 API_KEY = os.environ.get("GEMINI_API_KEY")
 if not API_KEY:
-    raise ValueError("GEMINI_API_KEY environment variable is not set")
-genai.configure(api_key=API_KEY)
+    print("WARNING: GEMINI_API_KEY environment variable is not set. Using fallback responses.")
 
 class GeminiService:
     def __init__(self):
-        self.model = genai.GenerativeModel('gemini-flash-latest')
-        self.chat = self.model.start_chat(history=[])
+        self.client = None
+        self.model_name = None
+        
+        if API_KEY:
+            try:
+                self.client = genai.Client(api_key=API_KEY)
+                # Use gemini-flash-latest as default model
+                self.model_name = "gemini-flash-latest"
+                print(f"Successfully initialized Gemini client with model: {self.model_name}")
+            except Exception as e:
+                print(f"Failed to initialize Gemini client: {e}")
+                self.client = None
         
         # System instruction to enforce agriculture domain
         self.system_prompt = """
@@ -38,6 +55,12 @@ class GeminiService:
         """
 
     def process_farming_intent(self, text, language='en'):
+        if not self.client:
+            return {
+                "response": "AI service is not configured. Please check API key.", 
+                "intent": "error",
+                "success": False
+            }
         try:
             # Construct the prompt with context
             full_prompt = f"""
@@ -49,7 +72,10 @@ class GeminiService:
             Respond in valid JSON format only.
             """
             
-            response = self.model.generate_content(full_prompt)
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=full_prompt
+            )
             
             # Clean up response to ensure valid JSON
             response_text = response.text.strip()
@@ -73,23 +99,43 @@ class GeminiService:
         Generic method to generate content from Gemini based on a prompt.
         Used by ML models for predictions.
         """
+        if not self.client:
+            print("Gemini client not initialized - API key missing")
+            return None
         try:
-            response = self.model.generate_content(prompt)
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt
+            )
             return response.text
         except Exception as e:
+            # import traceback
+            # traceback.print_exc()
             print(f"Gemini Generation Error: {e}")
             return None
 
-    def analyze_image(self, prompt, image_bytes, mime_type='image/jpeg'):
+    def analyze_image(self, prompt, image_data):
         """
-        Analyze an image (bytes) with a text prompt.
+        Analyze an image using Gemini's vision capabilities.
         """
+        if not self.client:
+            print("Gemini client not initialized - API key missing")
+            return None
         try:
-            image_part = {
-                "mime_type": mime_type,
-                "data": image_bytes
-            }
-            response = self.model.generate_content([prompt, image_part])
+            # Check if image_data is bytes, convert to PIL Image if so
+            image_content = image_data
+            if isinstance(image_data, bytes):
+                try:
+                    image_content = PIL.Image.open(io.BytesIO(image_data))
+                except Exception as img_err:
+                    print(f"Error converting bytes to image: {img_err}")
+                    return None
+
+            # For image analysis, use the vision-capable model
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=[prompt, image_content]
+            )
             return response.text
         except Exception as e:
             print(f"Gemini Image Analysis Error: {e}")

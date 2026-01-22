@@ -24,7 +24,7 @@ class CropRecommender:
                 pass
         
         # Fallback to mock if API fails
-        print("Gemini failed, using fallback.")
+        print("Gemini failed, using fallback. Response was:", response)
         return "Rice (Fallback)", 0.85
 
 class FertilizerRecommender:

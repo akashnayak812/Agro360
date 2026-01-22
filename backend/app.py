@@ -5,10 +5,11 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 import os
 from dotenv import load_dotenv
-from config import Config
 
-# Load environment variables from .env file
+# Load environment variables BEFORE importing Config
 load_dotenv()
+
+from config import Config
 
 from routes.crop_routes import crop_bp
 from routes.fertilizer_routes import fertilizer_bp
@@ -21,6 +22,7 @@ from routes.voice_routes import voice_bp
 from routes.auth_routes import auth_bp, init_auth_routes
 from routes.chatbot_routes import chatbot_bp
 from routes.soil_image_routes import soil_image_bp
+from routes.location_routes import location_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -55,6 +57,7 @@ app.register_blueprint(community_bp, url_prefix='/api/community')
 app.register_blueprint(voice_bp, url_prefix='/api/voice')
 app.register_blueprint(chatbot_bp, url_prefix='/api/chatbot')
 app.register_blueprint(soil_image_bp, url_prefix='/api/soil')
+app.register_blueprint(location_bp, url_prefix='/api/location')
 
 @app.route('/')
 def home():
@@ -65,4 +68,4 @@ def health():
     return jsonify({"status": "healthy"})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, host='0.0.0.0', port=5001)
