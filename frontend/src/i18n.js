@@ -18,7 +18,11 @@ const resources = {
                 "soil": "Soil Health",
                 "disease": "Disease Detection",
                 "advisory": "Advisory",
-                "community": "Community"
+                "community": "Community",
+                "simulator": "Farm Simulator",
+                "market": "Market Insights",
+                "risk": "Risk Assessment",
+                "farm3d": "3D Farm View"
             },
             "voice": {
                 "listening": "Listening...",
@@ -60,7 +64,11 @@ const resources = {
                 "soil": "मृदा स्वास्थ्य",
                 "disease": "रोग पहचान",
                 "advisory": "सलाह",
-                "community": "समुदाय"
+                "community": "समुदाय",
+                "simulator": "खेत सिमुलेटर",
+                "market": "बाज़ार जानकारी",
+                "risk": "जोखिम आकलन",
+                "farm3d": "3D खेत दृश्य"
             },
             "voice": {
                 "listening": "सुन रहा हूँ...",
@@ -102,7 +110,11 @@ const resources = {
                 "soil": "Bhoomi Arogyam",
                 "disease": "RogaNirdharana",
                 "advisory": "Salaha",
-                "community": "Samajam"
+                "community": "Samajam",
+                "simulator": "Vyavasaya Simulator",
+                "market": "Market Vivaralu",
+                "risk": "Risk Anchana",
+                "farm3d": "3D Pola Drishyam"
             },
             "voice": {
                 "listening": "Vintunnanu...",

@@ -23,6 +23,9 @@ from routes.auth_routes import auth_bp, init_auth_routes
 from routes.chatbot_routes import chatbot_bp
 from routes.soil_image_routes import soil_image_bp
 from routes.location_routes import location_bp
+from routes.simulator_routes import simulator_bp
+from routes.market_routes import market_bp
+from routes.risk_routes import risk_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -58,6 +61,9 @@ app.register_blueprint(voice_bp, url_prefix='/api/voice')
 app.register_blueprint(chatbot_bp, url_prefix='/api/chatbot')
 app.register_blueprint(soil_image_bp, url_prefix='/api/soil')
 app.register_blueprint(location_bp, url_prefix='/api/location')
+app.register_blueprint(simulator_bp, url_prefix='/api/simulator')
+app.register_blueprint(market_bp, url_prefix='/api/market')
+app.register_blueprint(risk_bp, url_prefix='/api/risk')
 
 @app.route('/')
 def home():

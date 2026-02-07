@@ -11,26 +11,28 @@ import LocationSelector from './LocationSelector';
 import SimpleSoilSelector from './SimpleSoilSelector';
 import VoiceInput, { SpeakResult } from './VoiceInput';
 
+import { SOIL_TYPES } from './SimpleSoilSelector';
+
 const SoilAnalysis = () => {
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
-    
+
     // Simple mode state
     const [simpleData, setSimpleData] = useState({
         state: '',
         district: '',
         soilType: ''
     });
-    
+
     // Advanced mode state
     const [formData, setFormData] = useState({
         N: '', P: '', K: '', ph: '', moisture: ''
     });
-    
+
     // Image upload state
     const [soilImage, setSoilImage] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
-    
+
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [autoFilledData, setAutoFilledData] = useState(null);
@@ -62,7 +64,7 @@ const SoilAnalysis = () => {
     };
 
     // Handle image upload
-    const handleImageUpload = (e) => {
+    const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file) {
             setSoilImage(file);
@@ -71,6 +73,41 @@ const SoilAnalysis = () => {
                 setImagePreview(reader.result);
             };
             reader.readAsDataURL(file);
+
+            // Upload and analyze
+            const formData = new FormData();
+            formData.append('image', file);
+            setLoading(true);
+
+            try {
+                const response = await fetch('http://localhost:5001/api/soil/analyze-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Map backend soil type to frontend ID
+                    let mappedType = '';
+                    const backendType = data.soil_type;
+
+                    if (backendType === 'Red Soil') mappedType = 'red_sandy';
+                    else if (backendType === 'Black Soil') mappedType = 'black_sticky';
+                    else if (backendType.includes('Sandy')) mappedType = 'red_sandy'; // or yellow_clay
+                    else if (backendType === 'Alluvial Soil') mappedType = 'alluvial';
+                    else mappedType = 'brown_loamy'; // Fallback
+
+                    setSimpleData(prev => ({ ...prev, soilType: mappedType }));
+
+                    // Optional: Show a message
+                    alert(`Detected: ${backendType} (${data.confidence * 100}%)`);
+                }
+            } catch (error) {
+                console.error("Image analysis error:", error);
+                alert("Failed to analyze image");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -78,7 +115,7 @@ const SoilAnalysis = () => {
     const handleSimpleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        
+
         try {
             // Get soil data based on soil type
             const response = await fetch('http://localhost:5001/api/location/soil/by-type', {
@@ -87,7 +124,7 @@ const SoilAnalysis = () => {
                 body: JSON.stringify({ soil_type: simpleData.soilType }),
             });
             const soilData = await response.json();
-            
+
             if (soilData.success) {
                 // Now analyze
                 const analyzeResponse = await fetch('http://localhost:5001/api/soil/analyze', {
@@ -193,7 +230,7 @@ const SoilAnalysis = () => {
                                     <Mic size={18} className="text-purple-600" />
                                     Voice Input (आवाज से बताएं)
                                 </h3>
-                                <VoiceInput 
+                                <VoiceInput
                                     onResult={handleVoiceResult}
                                     placeholder="Say your soil type..."
                                 />
@@ -474,7 +511,7 @@ const SoilAnalysis = () => {
                             </div>
                             <h3 className="text-xl font-semibold text-gray-900">Awaiting Data</h3>
                             <p className="text-gray-500 max-w-xs mt-2">
-                                {mode === 'simple' 
+                                {mode === 'simple'
                                     ? "Select your soil type to generate a health report."
                                     : "Input your soil test results to generate a health report."
                                 }

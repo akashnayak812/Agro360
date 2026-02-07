@@ -18,6 +18,11 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Developer from './components/Developer';
 import AIChatbot from './components/AIChatbot';
+import DigitalTwin from './components/DigitalTwin';
+import MarketInsights from './components/MarketInsights';
+import RiskAssessment from './components/RiskAssessment';
+import Farm3DVisualization from './components/Farm3DVisualization';
+import AccessibilityWidget from './components/AccessibilityWidget';
 
 function AppContent() {
   const location = useLocation();
@@ -45,10 +50,15 @@ function AppContent() {
               <Route path="/advisory" element={<AnimatedPage><Advisory /></AnimatedPage>} />
               <Route path="/community" element={<AnimatedPage><Community /></AnimatedPage>} />
               <Route path="/developer" element={<AnimatedPage><Developer /></AnimatedPage>} />
+              <Route path="/simulator" element={<AnimatedPage><DigitalTwin /></AnimatedPage>} />
+              <Route path="/market" element={<AnimatedPage><MarketInsights /></AnimatedPage>} />
+              <Route path="/risk" element={<AnimatedPage><RiskAssessment /></AnimatedPage>} />
+              <Route path="/farm3d" element={<AnimatedPage><Farm3DVisualization /></AnimatedPage>} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AnimatePresence>
           <AIChatbot />
+          <AccessibilityWidget />
         </Layout>
       )}
     </>

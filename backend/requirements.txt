@@ -17,3 +17,5 @@ cryptography
 
 Pillow
 scikit-image
+
+gunicorn

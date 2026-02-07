@@ -15,7 +15,11 @@ import {
     Leaf,
     LogOut,
     LogIn,
-    Code2
+    Code2,
+    Activity,
+    BarChart3,
+    Shield,
+    Box
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '../lib/utils';
@@ -35,6 +39,10 @@ const Sidebar = () => {
         { path: '/soil', icon: FlaskConical, label: t('nav.soil') },
         { path: '/disease', icon: ScanLine, label: t('nav.disease') },
         { path: '/advisory', icon: CloudSun, label: t('nav.advisory') },
+        { path: '/simulator', icon: Activity, label: t('nav.simulator') || 'Digital Twin' },
+        { path: '/market', icon: BarChart3, label: t('nav.market') || 'Market Insights' },
+        { path: '/risk', icon: Shield, label: t('nav.risk') || 'Risk Assessment' },
+        { path: '/farm3d', icon: Box, label: t('nav.farm3d') || '3D Farm View' },
         { path: '/community', icon: Users, label: t('nav.community') },
         { path: '/developer', icon: Code2, label: 'Developer' },
     ];

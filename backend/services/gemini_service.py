@@ -7,10 +7,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Configure Gemini from environment variable
-import PIL.Image
-import io
-
-# Configure Gemini from environment variable
 API_KEY = os.environ.get("GEMINI_API_KEY")
 if not API_KEY:
     print("WARNING: GEMINI_API_KEY environment variable is not set. Using fallback responses.")
@@ -23,8 +19,9 @@ class GeminiService:
         if API_KEY:
             try:
                 self.client = genai.Client(api_key=API_KEY)
-                # Use gemini-flash-latest as default model
-                self.model_name = "gemini-flash-latest"
+                # Use gemini-2.0-flash as default model, with 1.5-flash as fallback
+                self.model_name = "gemini-2.0-flash"
+                self.fallback_model = "gemini-1.5-flash"
                 print(f"Successfully initialized Gemini client with model: {self.model_name}")
             except Exception as e:
                 print(f"Failed to initialize Gemini client: {e}")
@@ -72,10 +69,18 @@ class GeminiService:
             Respond in valid JSON format only.
             """
             
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=full_prompt
-            )
+            try:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=full_prompt
+                )
+            except Exception as e:
+                # If quota exceeded or other error, try fallback model
+                print(f"Primary model {self.model_name} failed: {e}. Trying fallback {self.fallback_model}...")
+                response = self.client.models.generate_content(
+                    model=self.fallback_model,
+                    contents=full_prompt
+                )
             
             # Clean up response to ensure valid JSON
             response_text = response.text.strip()
@@ -103,14 +108,19 @@ class GeminiService:
             print("Gemini client not initialized - API key missing")
             return None
         try:
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=prompt
-            )
+            try:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt
+                )
+            except Exception as e:
+                print(f"Primary model {self.model_name} failed: {e}. Trying fallback {self.fallback_model}...")
+                response = self.client.models.generate_content(
+                    model=self.fallback_model,
+                    contents=prompt
+                )
             return response.text
         except Exception as e:
-            # import traceback
-            # traceback.print_exc()
             print(f"Gemini Generation Error: {e}")
             return None
 
@@ -122,20 +132,18 @@ class GeminiService:
             print("Gemini client not initialized - API key missing")
             return None
         try:
-            # Check if image_data is bytes, convert to PIL Image if so
-            image_content = image_data
-            if isinstance(image_data, bytes):
-                try:
-                    image_content = PIL.Image.open(io.BytesIO(image_data))
-                except Exception as img_err:
-                    print(f"Error converting bytes to image: {img_err}")
-                    return None
-
             # For image analysis, use the vision-capable model
-            response = self.client.models.generate_content(
-                model=self.model_name,
-                contents=[prompt, image_content]
-            )
+            try:
+                response = self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=[prompt, image_data]
+                )
+            except Exception as e:
+                print(f"Primary model {self.model_name} failed: {e}. Trying fallback {self.fallback_model}...")
+                response = self.client.models.generate_content(
+                    model=self.fallback_model,
+                    contents=[prompt, image_data]
+                )
             return response.text
         except Exception as e:
             print(f"Gemini Image Analysis Error: {e}")

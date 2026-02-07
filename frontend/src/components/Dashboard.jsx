@@ -10,11 +10,13 @@ import {
     ScanLine,
     Users,
     CloudRain,
-    Wind,
-    ThermometerSun
+    ThermometerSun,
+    MapPin,
+    Loader2
 } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
+import { useAuth } from '../context/AuthContext';
 
 const modules = [
     { title: 'Best Crop', desc: 'Find suitable crops based on soil & climate', path: '/crop', icon: Sprout, color: 'text-emerald-500', bg: 'bg-emerald-50' },
@@ -26,6 +28,7 @@ const modules = [
 ];
 
 const Dashboard = () => {
+    const { user } = useAuth();
     const container = {
         hidden: { opacity: 0 },
         show: {
@@ -41,6 +44,51 @@ const Dashboard = () => {
         show: { opacity: 1, y: 0 }
     };
 
+    const [location, setLocation] = React.useState(null);
+    const [locationLoading, setLocationLoading] = React.useState(false);
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+
+    const detectLocation = () => {
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser");
+            return;
+        }
+
+        setLocationLoading(true);
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                try {
+                    const { latitude, longitude } = position.coords;
+                    const response = await fetch(`${API_URL}/api/location/reverse-geocode`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ lat: latitude, lon: longitude }),
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        setLocation(data);
+                    } else {
+                        alert("Could not fetch location details");
+                    }
+                } catch (error) {
+                    console.error("Location Error:", error);
+                    alert("Failed to detect location");
+                } finally {
+                    setLocationLoading(false);
+                }
+            },
+            (error) => {
+                console.error("Geolocation Error:", error);
+                alert("Please allow location access to use this feature.");
+                setLocationLoading(false);
+            }
+        );
+    };
+
     return (
         <motion.div
             variants={container}
@@ -48,13 +96,35 @@ const Dashboard = () => {
             animate="show"
             className="space-y-8"
         >
+
             {/* Header Section */}
             <motion.header variants={item} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-4xl font-heading font-bold text-gray-900 bg-gradient-to-r from-agro-darkGreen to-agro-green bg-clip-text text-transparent">
-                        Welcome back, Farmer
-                    </h1>
-                    <p className="text-gray-500 mt-2 text-lg">Here's what's happening on your farm today.</p>
+                    <h2 className="text-2xl font-bold text-gray-800">
+                        Welcome back, {user?.displayName || user?.email?.split('@')[0] || 'Farmer'}
+                    </h2>
+                    <div className="flex items-center gap-2 mt-1 text-gray-500">
+                        {locationLoading ? (
+                            <span className="flex items-center gap-1 text-xs">
+                                <Loader2 size={12} className="animate-spin" /> Detecting location...
+                            </span>
+                        ) : (
+                            <span className="flex items-center gap-1 text-sm">
+                                <MapPin size={14} className="text-agro-green" />
+                                {location ? `${location.mandal || location.city}, ${location.district}, ${location.state}` : "Location not detected"}
+                            </span>
+                        )}
+
+                        {!location && (
+                            <button
+                                onClick={detectLocation}
+                                disabled={locationLoading}
+                                className="text-xs text-agro-green font-semibold hover:underline disabled:opacity-50"
+                            >
+                                {locationLoading ? "Detecting..." : "Detect Location"}
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-sm rounded-full border border-white/40 shadow-sm text-sm font-medium text-gray-600">

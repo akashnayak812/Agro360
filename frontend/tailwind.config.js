@@ -17,6 +17,8 @@ export default {
                     cream: '#FDFBF7', // Off-white background
                     glass: "rgba(255, 255, 255, 0.2)",
                     glassBorder: "rgba(255, 255, 255, 0.3)",
+                    neon: '#39FF14', // Neon Green
+                    gold: '#FFD700', // Gold
                 },
                 primary: {
                     50: '#ecfdf5',
@@ -34,6 +36,8 @@ export default {
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
                 heading: ['Outfit', 'sans-serif'],
+                syncopate: ['Syncopate', 'sans-serif'],
+                lexend: ['Lexend', 'sans-serif'],
             },
             animation: {
                 'fade-in': 'fadeIn 0.5s ease-out',
