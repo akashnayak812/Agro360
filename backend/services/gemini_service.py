@@ -20,8 +20,8 @@ class GeminiService:
         
         self.current_key_index = 0
         self.client = None
-        self.model_name = "gemini-2.0-flash"
-        self.fallback_model = "gemini-2.5-flash"
+        self.model_name = "gemini-2.5-flash"
+        self.fallback_models = ["gemini-2.0-flash", "gemini-2.0-flash-lite-001", "gemini-flash-latest"]
 
         self._initialize_client()
 
@@ -97,29 +97,18 @@ class GeminiService:
             """
             
             # Retry logic with key rotation
-            max_retries = len(self.api_keys) * 2  # Allow for a full rotation + model fallback
+            # Retry logic with key rotation
+            max_retries = len(self.api_keys)
             
-            for attempt in range(max_retries):
-                try:
-                    # Try with current configuration
-                    response = self.client.models.generate_content(
-                        model=self.model_name,
-                        contents=full_prompt
-                    )
-                    
-                    # Clean up response to ensure valid JSON
-                    response_text = response.text.strip()
-                    if response_text.startswith('```json'):
-                        response_text = response_text[7:-3]
-                    elif response_text.startswith('```'):
-                        response_text = response_text[3:-3]
-                        
-                    return json.loads(response_text)
-                except Exception as e:
-                    print(f"Primary model {self.model_name} failed: {e}. Trying fallback {self.fallback_model}...")
+            # List of models to try in order
+            models_to_try = [self.model_name] + self.fallback_models
+
+            for key_attempt in range(max_retries):
+                for model in models_to_try:
                     try:
+                        # Try with current configuration
                         response = self.client.models.generate_content(
-                            model=self.fallback_model,
+                            model=model,
                             contents=full_prompt
                         )
                         
@@ -131,22 +120,29 @@ class GeminiService:
                             response_text = response_text[3:-3]
                             
                         return json.loads(response_text)
-                    except Exception as fallback_e:
-                        print(f"Fallback model failed: {fallback_e}")
-                        
-                        # Check for quota/resource exhaustion on either attempt
-                        error_str = str(e)
-                        fallback_error_str = str(fallback_e)
-                        
-                        if ("429" in error_str or "RESOURCE_EXHAUSTED" in error_str or 
-                            "429" in fallback_error_str or "RESOURCE_EXHAUSTED" in fallback_error_str):
-                            print(f"Quota exceeded on key index {self.current_key_index}. Rotating key...")
-                            if self._rotate_key():
-                                continue # Retry with new key
 
-                    # If we're here, this attempt failed completely
-                    if attempt == max_retries - 1:
-                        raise e # Re-raise last exception if out of retries
+                    except Exception as e:
+                        print(f"Model {model} failed with key index {self.current_key_index}: {e}")
+                        
+                        # Check for quota/resource exhaustion
+                        error_str = str(e)
+                        if "429" in error_str or "RESOURCE_EXHAUSTED" in error_str:
+                            # If it's a quota error, we might want to switch keys, but let's try other models first 
+                            # on the same key unless all models fail.
+                            # However, usually quota is per project/key, not per model (though sometimes per model).
+                            # Let's continue to the next model first.
+                            continue
+                        else:
+                            # If it's another error (like model not found), continue to next model
+                            continue
+                
+                # If we've tried all models on this key and failed, rotate key
+                print(f"All models failed on key index {self.current_key_index}. Rotating key...")
+                if not self._rotate_key():
+                    break # No more keys to rotate
+            
+            # If we exit the loops without returning, it means total failure
+            raise Exception("All models and keys exhausted.")
 
         except Exception as e:
             print(f"Gemini API Error: {e}")
@@ -166,33 +162,26 @@ class GeminiService:
             return None
         try:
             # Retry logic with key rotation
-            max_retries = len(self.api_keys) * 2
+            max_retries = len(self.api_keys)
+            models_to_try = [self.model_name] + self.fallback_models
             
-            for attempt in range(max_retries):
-                try:
-                     response = self.client.models.generate_content(
-                        model=self.model_name,
-                        contents=prompt
-                    )
-                     return response.text
-                except Exception as e:
-                    print(f"Primary model {self.model_name} failed: {e}. Trying fallback {self.fallback_model}...")
+            for key_attempt in range(max_retries):
+                for model in models_to_try:
                     try:
-                        response = self.client.models.generate_content(
-                            model=self.fallback_model,
+                         response = self.client.models.generate_content(
+                            model=model,
                             contents=prompt
                         )
-                        return response.text
-                    except Exception as fallback_e:
-                        # Check for quota/resource exhaustion on either attempt
-                        error_str = str(e)
-                        fallback_error_str = str(fallback_e)
-                        
-                        if ("429" in error_str or "RESOURCE_EXHAUSTED" in error_str or 
-                            "429" in fallback_error_str or "RESOURCE_EXHAUSTED" in fallback_error_str):
-                            print(f"Quota exceeded on key index {self.current_key_index}. Rotating key...")
-                            if self._rotate_key():
-                                continue
+                         return response.text
+                    except Exception as e:
+                        print(f"Model {model} failed: {e}")
+                        # Continue to next model
+                        continue
+                
+                # If all models fail on this key, rotate
+                print(f"Quota exceeded or all models failed on key index {self.current_key_index}. Rotating key...")
+                if not self._rotate_key():
+                    return None
             return None
         except Exception as e:
             print(f"Gemini Generation Error: {e}")
@@ -207,17 +196,22 @@ class GeminiService:
             return None
         try:
             # For image analysis, use the vision-capable model
-            try:
-                response = self.client.models.generate_content(
-                    model=self.model_name,
-                    contents=[prompt, image_data]
-                )
-            except Exception as e:
-                print(f"Primary model {self.model_name} failed: {e}. Trying fallback {self.fallback_model}...")
-                response = self.client.models.generate_content(
-                    model=self.fallback_model,
-                    contents=[prompt, image_data]
-                )
+            models_to_try = [self.model_name] + self.fallback_models
+            
+            for model in models_to_try:
+                try:
+                    response = self.client.models.generate_content(
+                        model=model,
+                        contents=[prompt, image_data]
+                    )
+                    return response.text
+                except Exception as e:
+                    print(f"Model {model} failed: {e}. Trying next...")
+                    continue
+            
+            # If all models fail (image analysis often doesn't rotate keys as strictly in this snippet, can add if needed)
+            print("All image analysis models failed.")
+            return None
             return response.text
         except Exception as e:
             print(f"Gemini Image Analysis Error: {e}")
