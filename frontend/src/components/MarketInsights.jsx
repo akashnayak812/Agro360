@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import {
@@ -17,10 +17,128 @@ import {
     Clock,
     MapPin,
     Info,
-    Sparkles
+    Sparkles,
+    Landmark
 } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
+
+// Animated Line Chart Component
+const PriceHistoryChart = ({ data, color = "#10B981" }) => {
+    const maxPrice = Math.max(...data.map(d => parseFloat(d.price)));
+    const minPrice = Math.min(...data.map(d => parseFloat(d.price)));
+    const range = maxPrice - minPrice;
+
+    // Normalize points for SVG path
+    const points = data.map((d, i) => {
+        const x = (i / (data.length - 1)) * 100;
+        const y = 100 - ((parseFloat(d.price) - minPrice) / range) * 80 - 10; // Keep some padding
+        return `${x},${y}`;
+    }).join(' ');
+
+    return (
+        <div className="h-48 w-full relative">
+            <svg className="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+                {/* Gradient Definition */}
+                <defs>
+                    <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={color} stopOpacity="0.2" />
+                        <stop offset="100%" stopColor={color} stopOpacity="0" />
+                    </linearGradient>
+                </defs>
+
+                {/* Area under the line */}
+                <motion.path
+                    d={`M0,100 ${points.split(' ').map((p, i) => `L${p}`).join(' ')} L100,100 Z`}
+                    fill="url(#chartGradient)"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1 }}
+                />
+
+                {/* The Line */}
+                <motion.polyline
+                    points={points}
+                    fill="none"
+                    stroke={color}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    initial={{ pathLength: 0 }}
+                    animate={{ pathLength: 1 }}
+                    transition={{ duration: 1.5, ease: "easeInOut" }}
+                />
+
+                {/* Dots on points */}
+                {data.map((d, i) => {
+                    const x = (i / (data.length - 1)) * 100;
+                    const y = 100 - ((parseFloat(d.price) - minPrice) / range) * 80 - 10;
+                    return (
+                        <motion.circle
+                            key={i}
+                            cx={x}
+                            cy={y}
+                            r="1.5"
+                            fill="white"
+                            stroke={color}
+                            strokeWidth="1"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ delay: 1 + i * 0.05 }}
+                        />
+                    );
+                })}
+            </svg>
+
+            {/* Tooltip Overlay (simplified) */}
+            <div className="absolute inset-0 flex justify-between items-end pb-2 opacity-0 hover:opacity-100 transition-opacity">
+                {data.filter((_, i) => i % Math.ceil(data.length / 5) === 0).map((d, i) => (
+                    <div key={i} className="text-[10px] text-gray-400 font-medium bg-white/80 px-1 rounded transform translate-y-4">
+                        {d.date}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// Market Comparison Bar Chart
+const MarketComparisonChart = ({ markets, currentPrice }) => {
+    // Generate mock price variations for comparison
+    const comparisonData = useMemo(() => {
+        return markets.map(m => ({
+            name: m.name.split(' ')[0], // City name
+            price: m.id === 'all' ? currentPrice : currentPrice * (0.9 + Math.random() * 0.2),
+            distance: Math.floor(Math.random() * 500) + 50
+        })).sort((a, b) => b.price - a.price);
+    }, [markets, currentPrice]);
+
+    const maxVal = Math.max(...comparisonData.map(d => d.price));
+
+    return (
+        <div className="space-y-3 mt-4">
+            {comparisonData.map((item, idx) => (
+                <div key={item.name} className="relative">
+                    <div className="flex justify-between text-xs mb-1">
+                        <span className="font-medium text-gray-700">{item.name}</span>
+                        <span className="font-bold text-gray-900">₹{item.price.toFixed(0)}</span>
+                    </div>
+                    <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(item.price / maxVal) * 100}%` }}
+                            transition={{ duration: 1, delay: idx * 0.1 }}
+                            className={`h-full rounded-full ${item.price === maxVal ? 'bg-green-500' :
+                                    item.price > currentPrice ? 'bg-emerald-400' : 'bg-blue-400'
+                                }`}
+                        />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
 
 const MarketInsights = () => {
     const { t } = useTranslation();
@@ -172,8 +290,6 @@ const MarketInsights = () => {
     };
 
     const priceHistory = priceData ? generatePriceHistory() : [];
-    const maxPrice = Math.max(...priceHistory.map(p => parseFloat(p.price)));
-    const minPrice = Math.min(...priceHistory.map(p => parseFloat(p.price)));
 
     return (
         <motion.div
@@ -188,8 +304,8 @@ const MarketInsights = () => {
                         <BarChart3 size={32} />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-heading font-bold text-gray-900">Market Insights</h1>
-                        <p className="text-gray-500">Real-time prices, demand trends & profit analysis</p>
+                        <h1 className="text-3xl font-heading font-bold text-gray-900">Agri-Market Insights</h1>
+                        <p className="text-gray-500">Real-time Mandi Prices & Trends</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -200,7 +316,7 @@ const MarketInsights = () => {
                         disabled={loading}
                     >
                         <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-                        Refresh
+                        Refresh Data
                     </Button>
                     <button
                         onClick={() => speakText(`Current market price for ${selectedCrop} is ${priceData?.currentPrice} rupees per quintal. The price has ${priceData?.isPositive ? 'increased' : 'decreased'} by ${Math.abs(priceData?.changePercent)} percent.`)}
@@ -215,12 +331,12 @@ const MarketInsights = () => {
             {/* Filters */}
             <Card glass className="p-4">
                 <div className="flex flex-wrap items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <Search size={18} className="text-gray-400" />
+                    <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
+                        <Search size={18} className="text-gray-400 ml-2" />
                         <select
                             value={selectedCrop}
                             onChange={(e) => setSelectedCrop(e.target.value)}
-                            className="p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                            className="bg-transparent p-1.5 text-sm font-medium outline-none text-gray-700 w-32"
                         >
                             {cropCategories.flatMap(cat => cat.crops).map(crop => (
                                 <option key={crop} value={crop}>
@@ -230,12 +346,12 @@ const MarketInsights = () => {
                         </select>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <MapPin size={18} className="text-gray-400" />
+                    <div className="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
+                        <MapPin size={18} className="text-gray-400 ml-2" />
                         <select
                             value={selectedMarket}
                             onChange={(e) => setSelectedMarket(e.target.value)}
-                            className="p-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500"
+                            className="bg-transparent p-1.5 text-sm font-medium outline-none text-gray-700 w-40"
                         >
                             {markets.map(market => (
                                 <option key={market.id} value={market.id}>{market.name}</option>
@@ -244,17 +360,16 @@ const MarketInsights = () => {
                     </div>
 
                     <div className="flex items-center gap-2 ml-auto">
-                        <Clock size={18} className="text-gray-400" />
+                        <Clock size={16} className="text-gray-400" />
                         <div className="flex rounded-lg border border-gray-200 overflow-hidden">
                             {['week', 'month', 'quarter'].map(range => (
                                 <button
                                     key={range}
                                     onClick={() => setTimeRange(range)}
-                                    className={`px-3 py-1.5 text-sm font-medium transition-colors ${
-                                        timeRange === range
+                                    className={`px-3 py-1.5 text-xs font-medium transition-colors ${timeRange === range
                                             ? 'bg-emerald-500 text-white'
                                             : 'bg-white text-gray-600 hover:bg-gray-50'
-                                    }`}
+                                        }`}
                                 >
                                     {range === 'week' ? '1W' : range === 'month' ? '1M' : '3M'}
                                 </button>
@@ -266,81 +381,53 @@ const MarketInsights = () => {
 
             {/* Main Price Display */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Current Price Card */}
-                <Card glass className="p-6 lg:col-span-2">
+                {/* Current Price Card & Chart */}
+                <Card glass className="p-6 lg:col-span-2 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-32 bg-emerald-500/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+
                     {priceData ? (
-                        <div className="space-y-6">
+                        <div className="space-y-6 relative z-10">
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
-                                        {selectedCrop.charAt(0).toUpperCase() + selectedCrop.slice(1)} Price
+                                    <h2 className="text-sm font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
+                                        <Landmark size={14} />
+                                        Mandi Price Live
                                     </h2>
-                                    <div className="flex items-baseline gap-3 mt-2">
-                                        <span className="text-5xl font-bold text-gray-900">
+                                    <div className="flex items-baseline gap-3 mt-1">
+                                        <span className="text-5xl font-bold text-gray-900 tracking-tight">
                                             ₹{priceData.currentPrice}
                                         </span>
-                                        <span className="text-lg text-gray-500">{priceData.unit}</span>
+                                        <span className="text-lg text-gray-500 font-medium">{priceData.unit}</span>
                                     </div>
-                                    <div className={`flex items-center gap-1 mt-2 ${
-                                        priceData.isPositive ? 'text-green-600' : 'text-red-600'
-                                    }`}>
+                                    <div className={`flex items-center gap-2 mt-2 px-3 py-1 rounded-full w-fit ${priceData.isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                                        }`}>
                                         {priceData.isPositive ? (
-                                            <ArrowUpRight size={20} />
+                                            <ArrowUpRight size={18} />
                                         ) : (
-                                            <ArrowDownRight size={20} />
+                                            <ArrowDownRight size={18} />
                                         )}
-                                        <span className="font-semibold">
+                                        <span className="font-bold">
                                             ₹{Math.abs(priceData.change)} ({priceData.changePercent}%)
                                         </span>
-                                        <span className="text-gray-500 text-sm ml-1">today</span>
                                     </div>
                                 </div>
 
                                 <div className="text-right space-y-2">
-                                    <div className="text-sm">
-                                        <span className="text-gray-500">24h High: </span>
-                                        <span className="font-semibold text-green-600">₹{priceData.high24h}</span>
+                                    <div className="text-sm p-2 bg-gray-50 rounded-lg">
+                                        <span className="text-gray-500 block text-xs">High (24h)</span>
+                                        <span className="font-bold text-green-600">₹{priceData.high24h}</span>
                                     </div>
-                                    <div className="text-sm">
-                                        <span className="text-gray-500">24h Low: </span>
-                                        <span className="font-semibold text-red-600">₹{priceData.low24h}</span>
-                                    </div>
-                                    <div className="text-sm">
-                                        <span className="text-gray-500">MSP: </span>
-                                        <span className="font-semibold text-blue-600">₹{priceData.msp}</span>
+                                    <div className="text-sm p-2 bg-gray-50 rounded-lg">
+                                        <span className="text-gray-500 block text-xs">Low (24h)</span>
+                                        <span className="font-bold text-red-600">₹{priceData.low24h}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Simple Price Chart */}
-                            <div className="h-48 relative">
-                                <div className="absolute inset-0 flex items-end justify-between gap-1">
-                                    {priceHistory.slice(-30).map((point, idx) => {
-                                        const height = ((parseFloat(point.price) - minPrice) / (maxPrice - minPrice)) * 100;
-                                        return (
-                                            <motion.div
-                                                key={idx}
-                                                initial={{ height: 0 }}
-                                                animate={{ height: `${Math.max(height, 5)}%` }}
-                                                transition={{ delay: idx * 0.02 }}
-                                                className={`flex-1 rounded-t ${
-                                                    idx === priceHistory.length - 1
-                                                        ? 'bg-emerald-500'
-                                                        : priceData.isPositive
-                                                            ? 'bg-emerald-200 hover:bg-emerald-300'
-                                                            : 'bg-red-200 hover:bg-red-300'
-                                                } transition-colors cursor-pointer`}
-                                                title={`${point.date}: ₹${point.price}`}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            <div className="flex justify-between text-xs text-gray-400">
-                                <span>{priceHistory[0]?.date}</span>
-                                <span>{priceHistory[Math.floor(priceHistory.length / 2)]?.date}</span>
-                                <span>{priceHistory[priceHistory.length - 1]?.date}</span>
+                            {/* Animated Line Chart */}
+                            <div className="pt-4 border-t border-gray-100">
+                                <h3 className="text-xs font-semibold text-gray-400 mb-4">PRICE TREND ({timeRange.toUpperCase()})</h3>
+                                <PriceHistoryChart data={priceHistory} color={priceData.isPositive ? '#10B981' : '#EF4444'} />
                             </div>
                         </div>
                     ) : (
@@ -350,158 +437,82 @@ const MarketInsights = () => {
                     )}
                 </Card>
 
-                {/* Quick Stats */}
-                <div className="space-y-4">
-                    <Card glass className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100">
-                        <div className="flex items-center gap-3">
+                {/* Market Comparison & Stats */}
+                <div className="space-y-6">
+                    <Card glass className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100">
+                        <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-blue-100 rounded-lg">
-                                <BarChart3 size={20} className="text-blue-600" />
+                                <MapPin size={20} className="text-blue-600" />
                             </div>
                             <div>
-                                <div className="text-sm text-gray-500">Trading Volume</div>
-                                <div className="text-xl font-bold text-gray-900">{priceData?.volume || '---'} qtl</div>
+                                <h3 className="font-bold text-gray-900">Market Comparison</h3>
+                                <p className="text-xs text-gray-500">Prices in nearby mandis</p>
                             </div>
                         </div>
+                        {priceData && <MarketComparisonChart markets={markets.filter(m => m.id !== 'all')} currentPrice={parseFloat(priceData.currentPrice)} />}
                     </Card>
 
-                    <Card glass className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-purple-100 rounded-lg">
-                                <TrendingUp size={20} className="text-purple-600" />
+                    <div className="grid grid-cols-2 gap-4">
+                        <Card glass className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
+                            <div className="mb-2 p-2 bg-amber-100 rounded-lg w-fit">
+                                <Star size={18} className="text-amber-600" />
                             </div>
-                            <div>
-                                <div className="text-sm text-gray-500">Avg. ROI</div>
-                                <div className="text-xl font-bold text-gray-900">
-                                    {cropPrices.find(c => c.name.toLowerCase() === selectedCrop)?.roi || '18.5'}%
-                                </div>
+                            <div className="text-xs text-gray-500">Demand</div>
+                            <div className="text-lg font-bold text-gray-900">
+                                {cropPrices.find(c => c.name.toLowerCase() === selectedCrop)?.demand || 'High'}
                             </div>
-                        </div>
-                    </Card>
-
-                    <Card glass className="p-4 bg-gradient-to-br from-amber-50 to-orange-50 border-amber-100">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-amber-100 rounded-lg">
-                                <Star size={20} className="text-amber-600" />
+                        </Card>
+                        <Card glass className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 border-purple-100">
+                            <div className="mb-2 p-2 bg-purple-100 rounded-lg w-fit">
+                                <TrendingUp size={18} className="text-purple-600" />
                             </div>
-                            <div>
-                                <div className="text-sm text-gray-500">Demand Level</div>
-                                <div className="text-xl font-bold text-gray-900">
-                                    {cropPrices.find(c => c.name.toLowerCase() === selectedCrop)?.demand || 'High'}
-                                </div>
+                            <div className="text-xs text-gray-500">Avg. ROI</div>
+                            <div className="text-lg font-bold text-gray-900">
+                                {cropPrices.find(c => c.name.toLowerCase() === selectedCrop)?.roi || '18.5'}%
                             </div>
-                        </div>
-                    </Card>
+                        </Card>
+                    </div>
                 </div>
             </div>
 
-            {/* All Crops Price Table */}
-            <Card glass className="p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <PieChart className="text-emerald-500" size={24} />
-                    All Crop Prices
-                </h2>
-
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead>
-                            <tr className="text-left text-sm text-gray-500 border-b border-gray-200">
-                                <th className="pb-3 font-medium">Crop</th>
-                                <th className="pb-3 font-medium">Price (₹/qtl)</th>
-                                <th className="pb-3 font-medium">Change</th>
-                                <th className="pb-3 font-medium">Demand</th>
-                                <th className="pb-3 font-medium">Est. ROI</th>
-                                <th className="pb-3 font-medium">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {cropPrices.map((crop, idx) => (
-                                <motion.tr
-                                    key={crop.name}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    className="hover:bg-gray-50 transition-colors"
-                                >
-                                    <td className="py-4">
-                                        <span className="font-semibold text-gray-900">{crop.name}</span>
-                                    </td>
-                                    <td className="py-4">
-                                        <span className="font-bold text-gray-900">₹{crop.price.toFixed(0)}</span>
-                                    </td>
-                                    <td className="py-4">
-                                        <span className={`flex items-center gap-1 font-medium ${
-                                            crop.isPositive ? 'text-green-600' : 'text-red-600'
-                                        }`}>
-                                            {crop.isPositive ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
-                                            {crop.change}%
-                                        </span>
-                                    </td>
-                                    <td className="py-4">
-                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                            crop.demand === 'High' ? 'bg-green-100 text-green-700' :
-                                            crop.demand === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                                            'bg-red-100 text-red-700'
-                                        }`}>
-                                            {crop.demand}
-                                        </span>
-                                    </td>
-                                    <td className="py-4">
-                                        <span className="font-semibold text-purple-600">{crop.roi}%</span>
-                                    </td>
-                                    <td className="py-4">
-                                        <button
-                                            onClick={() => setSelectedCrop(crop.name.toLowerCase())}
-                                            className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-                                        >
-                                            View Details →
-                                        </button>
-                                    </td>
-                                </motion.tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </Card>
-
-            {/* Demand Trends & Predictions */}
+            {/* Bottom Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
                 {/* Demand Trends */}
                 <Card glass className="p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <Sparkles className="text-yellow-500" size={24} />
-                        Demand Trends
+                        Market Predictions
                     </h2>
 
                     <div className="space-y-4">
                         {demandTrends.map((trend, idx) => (
                             <motion.div
                                 key={trend.crop}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: idx * 0.1 }}
-                                className="p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                                className="p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-all flex items-center justify-between group"
                             >
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="font-semibold text-gray-900">{trend.crop}</span>
-                                    <span className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-                                        trend.trend === 'Rising' ? 'bg-green-100 text-green-700' :
-                                        trend.trend === 'Falling' ? 'bg-red-100 text-red-700' :
-                                        'bg-gray-100 text-gray-700'
-                                    }`}>
-                                        {trend.trend === 'Rising' ? <TrendingUp size={12} /> :
-                                         trend.trend === 'Falling' ? <TrendingDown size={12} /> : null}
-                                        {trend.trend}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-gray-600">{trend.reason}</p>
-                                <div className="mt-2 flex items-center gap-2">
-                                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-emerald-500 rounded-full"
-                                            style={{ width: `${trend.confidence}%` }}
-                                        />
+                                <div>
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-bold text-gray-900">{trend.crop}</span>
+                                        <span className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wide ${trend.trend === 'Rising' ? 'bg-green-100 text-green-700' :
+                                                trend.trend === 'Falling' ? 'bg-red-100 text-red-700' :
+                                                    'bg-gray-100 text-gray-700'
+                                            }`}>
+                                            {trend.trend === 'Rising' ? <TrendingUp size={10} /> :
+                                                trend.trend === 'Falling' ? <TrendingDown size={10} /> : null}
+                                            {trend.trend}
+                                        </span>
                                     </div>
-                                    <span className="text-xs text-gray-500">{trend.confidence}% confidence</span>
+                                    <p className="text-sm text-gray-500 group-hover:text-gray-700 transition-colors">{trend.reason}</p>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-xs text-gray-400 mb-1">Confidence</div>
+                                    <div className="radial-progress text-emerald-500 font-bold text-xs" style={{ "--value": trend.confidence, "--size": "2rem" }}>
+                                        {trend.confidence}%
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
@@ -510,7 +521,7 @@ const MarketInsights = () => {
 
                 {/* Profit Calculator */}
                 <Card glass className="p-6">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                         <DollarSign className="text-green-500" size={24} />
                         Quick Profit Calculator
                     </h2>
@@ -533,59 +544,67 @@ const ProfitCalculator = ({ selectedCrop, currentPrice }) => {
     const profitMargin = ((profit / totalRevenue) * 100).toFixed(1);
 
     return (
-        <div className="space-y-4">
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Quantity (quintals)
-                </label>
-                <input
-                    type="number"
-                    value={quantity}
-                    onChange={(e) => setQuantity(parseFloat(e.target.value) || 0)}
-                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
-                    min="1"
-                />
+        <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Quantity (qtl)
+                    </label>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            value={quantity}
+                            onChange={(e) => setQuantity(parseFloat(e.target.value) || 0)}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-semibold text-gray-900"
+                            min="1"
+                        />
+                        <span className="absolute right-3 top-3.5 text-xs text-gray-400">quintals</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                        Production Cost
+                    </label>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            value={costPerQuintal}
+                            onChange={(e) => setCostPerQuintal(parseFloat(e.target.value) || 0)}
+                            className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none font-semibold text-gray-900"
+                            min="100"
+                        />
+                        <span className="absolute right-3 top-3.5 text-xs text-gray-400">₹/qtl</span>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Production Cost (₹/quintal)
-                </label>
-                <input
-                    type="number"
-                    value={costPerQuintal}
-                    onChange={(e) => setCostPerQuintal(parseFloat(e.target.value) || 0)}
-                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500"
-                    min="100"
-                />
+            <div className="bg-gradient-to-br from-gray-50 to-emerald-50/30 rounded-xl p-4 border border-gray-100 space-y-3">
+                <div className="flex justify-between items-center">
+                    <span className="text-gray-600 text-sm">Est. Revenue</span>
+                    <span className="font-semibold text-gray-900">₹{totalRevenue.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-gray-600 text-sm">Total Cost</span>
+                    <span className="font-semibold text-red-500">- ₹{totalCost.toLocaleString()}</span>
+                </div>
+                <div className="h-px bg-gray-200 my-2" />
+                <div className="flex justify-between items-end">
+                    <span className="text-gray-900 font-bold">Net Profit</span>
+                    <div className="text-right">
+                        <div className={`text-2xl font-bold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            ₹{profit.toLocaleString()}
+                        </div>
+                        <div className={`text-xs font-medium ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {profitMargin}% Margin
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div className="pt-4 border-t border-gray-200 space-y-3">
-                <div className="flex justify-between">
-                    <span className="text-gray-600">Selling Price</span>
-                    <span className="font-semibold">₹{currentPrice || '---'}/qtl</span>
-                </div>
-                <div className="flex justify-between">
-                    <span className="text-gray-600">Total Revenue</span>
-                    <span className="font-semibold text-blue-600">₹{totalRevenue.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between">
-                    <span className="text-gray-600">Total Cost</span>
-                    <span className="font-semibold text-red-600">₹{totalCost.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between pt-2 border-t border-gray-200">
-                    <span className="text-gray-900 font-semibold">Net Profit</span>
-                    <span className={`text-xl font-bold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        ₹{profit.toLocaleString()}
-                    </span>
-                </div>
-                <div className="flex justify-between">
-                    <span className="text-gray-600">Profit Margin</span>
-                    <span className={`font-semibold ${profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {profitMargin}%
-                    </span>
-                </div>
-            </div>
+            <Button className="w-full bg-gray-900 hover:bg-black text-white py-3 rounded-xl shadow-lg shadow-gray-200">
+                Save Calculation
+            </Button>
         </div>
     );
 };

@@ -13,13 +13,13 @@ def detect_disease():
             # Read file bytes
             image_data = file.read()
         
-        name, symptoms, treatment = disease_model.predict(image_data)
+        name, symptoms, treatment_steps = disease_model.predict(image_data)
         
         return jsonify({
             "success": True,
             "disease": name,
             "symptoms": symptoms,
-            "treatment": treatment,
+            "treatment_steps": treatment_steps,
             "confidence": 0.95 # Mock
         })
     except Exception as e:

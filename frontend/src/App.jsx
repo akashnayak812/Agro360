@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import CropRecommendation from './components/CropRecommendation';
@@ -13,7 +14,8 @@ import Advisory from './components/Advisory';
 import Community from './components/Community';
 import VoiceAssistant from './components/VoiceAssistant';
 import AnimatedPage from './components/AnimatedPage';
-import LanguageSelector from './components/LanguageSelector';
+import LandingPage from './components/LandingPage';
+// import LanguageSelector from './components/LanguageSelector';
 import Login from './components/Login';
 import Register from './components/Register';
 import Developer from './components/Developer';
@@ -30,18 +32,21 @@ function AppContent() {
 
   return (
     <>
-      {isAuthPage ? (
+      {isAuthPage || location.pathname === '/' ? (
         <AnimatePresence mode="wait">
           <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<AnimatedPage><Login /></AnimatedPage>} />
             <Route path="/register" element={<AnimatedPage><Register /></AnimatedPage>} />
+            {/* Redirect any unknown routes to / if they are not authenticated pages mostly - though catch-all is below */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </AnimatePresence>
       ) : (
         <Layout>
           <AnimatePresence mode="wait">
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<AnimatedPage><Dashboard /></AnimatedPage>} />
+              <Route path="/dashboard" element={<AnimatedPage><Dashboard /></AnimatedPage>} />
               <Route path="/crop" element={<AnimatedPage><CropRecommendation /></AnimatedPage>} />
               <Route path="/fertilizer" element={<AnimatedPage><FertilizerRecommendation /></AnimatedPage>} />
               <Route path="/yield" element={<AnimatedPage><YieldPrediction /></AnimatedPage>} />
@@ -54,7 +59,7 @@ function AppContent() {
               <Route path="/market" element={<AnimatedPage><MarketInsights /></AnimatedPage>} />
               <Route path="/risk" element={<AnimatedPage><RiskAssessment /></AnimatedPage>} />
               <Route path="/farm3d" element={<AnimatedPage><Farm3DVisualization /></AnimatedPage>} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </AnimatePresence>
           <AIChatbot />
@@ -67,11 +72,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

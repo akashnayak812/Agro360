@@ -20,11 +20,26 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            console.log("Auth State Changed:", currentUser ? "User Logged In" : "No User");
             setUser(currentUser);
             setLoading(false);
         });
 
-        return () => unsubscribe();
+        // Fallback timeout in case Firebase hangs
+        const timer = setTimeout(() => {
+            setLoading((prev) => {
+                if (prev) {
+                    console.warn("Auth check timed out, forcing loading false");
+                    return false;
+                }
+                return prev;
+            });
+        }, 3000);
+
+        return () => {
+            unsubscribe();
+            clearTimeout(timer);
+        };
     }, []);
 
     const login = async (email, password) => {
@@ -74,6 +89,15 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Visual Loader Component
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+            </div>
+        );
+    }
+
     return (
         <AuthContext.Provider value={{
             user,
@@ -84,7 +108,7 @@ export const AuthProvider = ({ children }) => {
             loginWithGoogle,
             logout
         }}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 };

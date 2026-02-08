@@ -9,22 +9,25 @@ import {
     FlaskConical,
     ScanLine,
     Users,
-    CloudRain,
-    ThermometerSun,
     MapPin,
-    Loader2
+    Loader2,
+    Calendar,
+    Activity,
+    DollarSign
 } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { useAuth } from '../context/AuthContext';
+import WeatherWidget from './WeatherWidget'; // New component
+import StatCard from './StatCard'; // New component
 
 const modules = [
-    { title: 'Best Crop', desc: 'Find suitable crops based on soil & climate', path: '/crop', icon: Sprout, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { title: 'Fertilizer', desc: 'Get optimal nutrient recommendations', path: '/fertilizer', icon: Droplets, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { title: 'Yield Prediction', desc: 'Estimate your future harvest quantity', path: '/yield', icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { title: 'Soil Health', desc: 'Analyze detailed soil reports', path: '/soil', icon: FlaskConical, color: 'text-purple-500', bg: 'bg-purple-50' },
-    { title: 'Plant Doctor', desc: 'Detect diseases from leaf photos', path: '/disease', icon: ScanLine, color: 'text-red-500', bg: 'bg-red-50' },
-    { title: 'Community', desc: 'Connect with other farmers', path: '/community', icon: Users, color: 'text-pink-500', bg: 'bg-pink-50' },
+    { title: 'Best Crop', desc: 'Find suitable crops based on soil & climate', path: '/crop', icon: Sprout, color: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    { title: 'Fertilizer', desc: 'Get optimal nutrient recommendations', path: '/fertilizer', icon: Droplets, color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-100' },
+    { title: 'Yield Prediction', desc: 'Estimate your future harvest quantity', path: '/yield', icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
+    { title: 'Soil Health', desc: 'Analyze detailed soil reports', path: '/soil', icon: FlaskConical, color: 'text-purple-500', bg: 'bg-purple-50', border: 'border-purple-100' },
+    { title: 'Plant Doctor', desc: 'Detect diseases from leaf photos', path: '/disease', icon: ScanLine, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-100' },
+    { title: 'Community', desc: 'Connect with other farmers', path: '/community', icon: Users, color: 'text-pink-500', bg: 'bg-pink-50', border: 'border-pink-100' },
 ];
 
 const Dashboard = () => {
@@ -100,91 +103,188 @@ const Dashboard = () => {
             {/* Header Section */}
             <motion.header variants={item} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-800">
-                        Welcome back, {user?.displayName || user?.email?.split('@')[0] || 'Farmer'}
+                    <h2 className="text-3xl font-heading font-bold text-gray-800">
+                        Hello, {user?.displayName || user?.email?.split('@')[0] || 'Farmer'}! 👋
                     </h2>
-                    <div className="flex items-center gap-2 mt-1 text-gray-500">
+                    <div className="flex items-center gap-2 mt-2 text-gray-600">
                         {locationLoading ? (
-                            <span className="flex items-center gap-1 text-xs">
-                                <Loader2 size={12} className="animate-spin" /> Detecting location...
+                            <span className="flex items-center gap-2 text-sm bg-white/50 px-3 py-1 rounded-full border border-gray-200">
+                                <Loader2 size={14} className="animate-spin text-agro-green" /> Detecting location...
                             </span>
                         ) : (
-                            <span className="flex items-center gap-1 text-sm">
-                                <MapPin size={14} className="text-agro-green" />
-                                {location ? `${location.mandal || location.city}, ${location.district}, ${location.state}` : "Location not detected"}
-                            </span>
-                        )}
-
-                        {!location && (
-                            <button
-                                onClick={detectLocation}
-                                disabled={locationLoading}
-                                className="text-xs text-agro-green font-semibold hover:underline disabled:opacity-50"
-                            >
-                                {locationLoading ? "Detecting..." : "Detect Location"}
-                            </button>
+                            <div className="flex items-center gap-3">
+                                <span className="flex items-center gap-2 text-sm bg-white/50 px-3 py-1 rounded-full border border-gray-200 cursor-pointer hover:bg-white hover:border-agro-green transition-colors" onClick={!location ? detectLocation : undefined}>
+                                    <MapPin size={16} className="text-agro-green" />
+                                    {location ? `${location.mandal || location.city}, ${location.district}` : "Click to detect location"}
+                                </span>
+                                <span className="text-sm text-gray-400">|</span>
+                                <span className="text-sm font-medium text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
+                            </div>
                         )}
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-sm rounded-full border border-white/40 shadow-sm text-sm font-medium text-gray-600">
-                        <ThermometerSun size={18} className="text-amber-500" />
-                        <span>24°C</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-sm rounded-full border border-white/40 shadow-sm text-sm font-medium text-gray-600">
-                        <CloudRain size={18} className="text-blue-500" />
-                        <span>12%</span>
-                    </div>
+
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" className="hidden md:flex gap-2">
+                        <Calendar size={16} /> Schedule
+                    </Button>
+                    <Link to="/advisory">
+                        <Button className="bg-agro-green hover:bg-agro-darkGreen text-white shadow-lg shadow-agro-green/20">
+                            View Alerts
+                        </Button>
+                    </Link>
                 </div>
             </motion.header>
 
-            {/* Weather Alert */}
-            <motion.div variants={item}>
-                <Card glass className="bg-gradient-to-br from-blue-50/80 to-indigo-50/80 border-blue-100 flex flex-col md:flex-row items-center justify-between gap-6 p-8 relative overflow-hidden group">
-                    <div className="absolute right-0 top-0 -mt-10 -mr-10 h-64 w-64 bg-blue-400/10 rounded-full blur-3xl group-hover:bg-blue-400/20 transition-all duration-500" />
+            {/* Main Dashboard Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                    <div className="relative z-10 flex items-start gap-4">
-                        <div className="p-3 bg-blue-100 rounded-2xl text-blue-600">
-                            <CloudRain size={32} />
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-gray-900">Heavy rain expected tomorrow</h2>
-                            <p className="text-gray-600 mt-1 max-w-md">Based on local forecast, we advise preparing drainage systems to prevent waterlogging.</p>
-                        </div>
-                    </div>
+                {/* Left Column: Stats & Quick Actions */}
+                <div className="lg:col-span-2 space-y-8">
 
-                    <div className="relative z-10 flex-shrink-0">
-                        <Link to="/advisory">
-                            <Button variant="secondary" className="bg-white text-blue-600 border-blue-200 hover:bg-blue-50">
-                                View Advisory
-                                <ArrowRight size={18} className="ml-2" />
-                            </Button>
-                        </Link>
-                    </div>
-                </Card>
-            </motion.div>
+                    {/* Stats Row */}
+                    <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <StatCard
+                            title="Field Health"
+                            value="92%"
+                            icon={Activity}
+                            color="emerald"
+                            trend={5}
+                            delay={0.1}
+                        />
+                        <StatCard
+                            title="Active Crops"
+                            value="3"
+                            icon={Sprout}
+                            color="amber"
+                            delay={0.2}
+                        />
+                        <StatCard
+                            title="Monthly Revenue"
+                            value="$12.5k"
+                            icon={DollarSign}
+                            color="blue"
+                            trend={12}
+                            delay={0.3}
+                        />
+                    </motion.div>
 
-            {/* Modules Grid */}
-            <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {modules.map((mod) => (
-                    <Link to={mod.path} key={mod.title} className="block group">
-                        <Card hover className="h-full flex flex-col justify-between border-gray-100 bg-white/80">
-                            <div>
-                                <div className={`w-14 h-14 rounded-2xl ${mod.bg} ${mod.color} flex items-center justify-center mb-6 transition-transform group-hover:scale-110 duration-300`}>
-                                    <mod.icon size={28} />
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-agro-green transition-colors">{mod.title}</h3>
-                                <p className="text-gray-500 leading-relaxed">{mod.desc}</p>
+                    {/* Crop Growth Simulation */}
+                    <motion.div variants={item}>
+                        <Card className="p-6 bg-white/60 backdrop-blur-md border border-white/40 shadow-lg relative overflow-hidden">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                    <Sprout className="text-agro-green" size={20} />
+                                    Crop Growth Tracking
+                                </h3>
+                                <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Season: Kharif</span>
                             </div>
 
-                            <div className="mt-6 flex items-center text-sm font-semibold text-gray-400 group-hover:text-agro-green transition-colors">
-                                <span>Get Started</span>
-                                <ArrowRight size={16} className="ml-2 transform group-hover:translate-x-1 transition-transform" />
+                            <div className="space-y-6">
+                                {/* Crop Item 1 */}
+                                <div>
+                                    <div className="flex justify-between text-sm mb-2">
+                                        <span className="font-medium text-gray-700">Paddy Rice (Field A)</span>
+                                        <span className="text-agro-green font-bold">75% - Harvesting Soon</span>
+                                    </div>
+                                    <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: '75%' }}
+                                            transition={{ duration: 1.5, ease: "easeOut" }}
+                                            className="h-full bg-gradient-to-r from-agro-lightGreen to-agro-darkGreen rounded-full relative"
+                                        >
+                                            <div className="absolute inset-0 bg-white/20 animate-[shimmer_2s_infinite]" />
+                                        </motion.div>
+                                    </div>
+                                </div>
+
+                                {/* Crop Item 2 */}
+                                <div>
+                                    <div className="flex justify-between text-sm mb-2">
+                                        <span className="font-medium text-gray-700">Cotton (Field B)</span>
+                                        <span className="text-amber-500 font-bold">40% - Flowering Stage</span>
+                                    </div>
+                                    <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: '40%' }}
+                                            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                                            className="h-full bg-gradient-to-r from-amber-300 to-amber-500 rounded-full relative"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </Card>
-                    </Link>
-                ))}
-            </motion.div>
+                    </motion.div>
+
+                    {/* Quick Access Modules */}
+                    <motion.div variants={item}>
+                        <h3 className="text-lg font-bold text-gray-800 mb-4 px-1">Farm Tools</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {modules.map((mod) => (
+                                <Link to={mod.path} key={mod.title} className="block group">
+                                    <Card hover className={`h-full border ${mod.border} bg-white/90 backdrop-blur transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}>
+                                        <div className="p-5 flex flex-col h-full justify-between">
+                                            <div className="flex justify-between items-start">
+                                                <div className={`p-3 rounded-2xl ${mod.bg} ${mod.color} transition-transform group-hover:scale-110 duration-300`}>
+                                                    <mod.icon size={24} />
+                                                </div>
+                                                <div className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
+                                                    <ArrowRight size={20} />
+                                                </div>
+                                            </div>
+                                            <div className="mt-4">
+                                                <h3 className="text-lg font-bold text-gray-900 group-hover:text-agro-green transition-colors">{mod.title}</h3>
+                                                <p className="text-sm text-gray-500 mt-1 line-clamp-2">{mod.desc}</p>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </Link>
+                            ))}
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Right Column: Weather & Activity */}
+                <div className="space-y-8">
+                    <motion.div variants={item}>
+                        <WeatherWidget location={location} />
+                    </motion.div>
+
+                    {/* Recent Activity / Advisory Mock */}
+                    <motion.div variants={item}>
+                        <Card className="p-6 bg-white/80 backdrop-blur-md border border-gray-100 shadow-lg">
+                            <h3 className="text-lg font-bold text-gray-800 mb-4">Farm Advisory</h3>
+                            <div className="space-y-4">
+                                <div className="flex gap-3 items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                                    <div className="mt-1 w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-800">Pest Alert</p>
+                                        <p className="text-xs text-gray-500 mt-1">High risk of Aphids in Cotton fields due to humidity.</p>
+                                        <Link to="/disease" className="text-xs text-red-500 font-medium hover:underline mt-1 block">Check Plant Doctor →</Link>
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                                    <div className="mt-1 w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-800">Irrigation</p>
+                                        <p className="text-xs text-gray-500 mt-1">Schedule watering for tomorrow morning before sunrise.</p>
+                                    </div>
+                                </div>
+                                <div className="flex gap-3 items-start">
+                                    <div className="mt-1 w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-gray-800">Fertilizer</p>
+                                        <p className="text-xs text-gray-500 mt-1">Due for NPK application in Field A.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Card>
+                    </motion.div>
+                </div>
+
+            </div>
         </motion.div>
     );
 };

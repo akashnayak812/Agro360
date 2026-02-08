@@ -115,60 +115,63 @@ def get_all_prices():
 
 @market_bp.route('/trends', methods=['GET'])
 def get_trends():
-    """Get demand trends for crops"""
+    """Get demand trends for crops using Gemini AI"""
     try:
-        trends = [
+        # Default fallback trends
+        fallback_trends = [
             {
                 'crop': 'Tomato',
                 'trend': 'Rising',
                 'reason': 'Festival season approaching - increased demand',
-                'confidence': random.randint(75, 90)
+                'confidence': 85
             },
             {
                 'crop': 'Onion',
-                'trend': random.choice(['Stable', 'Rising']),
+                'trend': 'Stable', 
                 'reason': 'Good supply from Maharashtra regions',
-                'confidence': random.randint(70, 85)
+                'confidence': 78
             },
             {
                 'crop': 'Wheat',
                 'trend': 'Rising',
-                'reason': 'Export demand increasing, government procurement active',
-                'confidence': random.randint(78, 88)
+                'reason': 'Export demand increasing',
+                'confidence': 82
             },
             {
                 'crop': 'Cotton',
-                'trend': random.choice(['Falling', 'Stable']),
-                'reason': 'International cotton prices affecting local markets',
-                'confidence': random.randint(65, 80)
+                'trend': 'Falling',
+                'reason': 'International prices dropping',
+                'confidence': 70
             },
             {
                 'crop': 'Soybean',
                 'trend': 'Rising',
-                'reason': 'Biodiesel demand and oil extraction requirements',
-                'confidence': random.randint(72, 85)
-            },
-            {
-                'crop': 'Rice',
-                'trend': 'Stable',
-                'reason': 'Government buffer stock maintaining price stability',
-                'confidence': random.randint(80, 92)
-            },
-            {
-                'crop': 'Potato',
-                'trend': random.choice(['Falling', 'Stable']),
-                'reason': 'Cold storage releases increasing supply',
-                'confidence': random.randint(68, 82)
+                'reason': 'Biodiesel demand surge',
+                'confidence': 75
             }
         ]
+
+        from services.gemini_service import gemini_service
+        
+        # Try to get AI trends
+        ai_trends = gemini_service.analyze_market_trends(['Tomato', 'Onion', 'Wheat', 'Cotton', 'Soybean', 'Rice', 'Potato'])
+        
+        if ai_trends:
+            trends = ai_trends
+            source = 'AI (Gemini)'
+        else:
+            trends = fallback_trends
+            source = 'Fallback (Simulation)'
         
         return jsonify({
             'success': True,
             'trends': trends,
+            'source': source,
             'lastUpdated': datetime.now().isoformat()
         })
         
     except Exception as e:
+        print(f"Error in /trends: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @market_bp.route('/price-history', methods=['POST'])

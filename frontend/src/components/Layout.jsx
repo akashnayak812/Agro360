@@ -4,11 +4,11 @@ import Sidebar from './Sidebar';
 
 const Layout = ({ children }) => {
     return (
-        <div className="flex min-h-screen relative text-gray-900 font-sans">
+        <div className="flex min-h-screen relative font-sans overflow-hidden">
             <AnimatedBackground />
             <Sidebar />
-            <main className="flex-1 relative z-10 p-4 lg:p-6 lg:ml-0 overflow-x-hidden">
-                <div className="h-full w-full max-w-7xl mx-auto rounded-3xl lg:p-8">
+            <main className="flex-1 relative z-10 p-4 lg:p-8 ml-0 lg:ml-20 transition-[margin] duration-300">
+                <div className="h-full w-full max-w-[1600px] mx-auto">
                     {children}
                 </div>
             </main>

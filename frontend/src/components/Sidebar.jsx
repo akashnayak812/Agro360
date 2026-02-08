@@ -32,7 +32,7 @@ const Sidebar = () => {
     const navigate = useNavigate();
 
     const navItems = [
-        { path: '/', icon: LayoutDashboard, label: t('nav.dashboard') },
+        { path: '/dashboard', icon: LayoutDashboard, label: t('nav.dashboard') },
         { path: '/crop', icon: Sprout, label: t('nav.crop') },
         { path: '/fertilizer', icon: Droplets, label: t('nav.fertilizer') },
         { path: '/yield', icon: TrendingUp, label: t('nav.yield') },

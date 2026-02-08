@@ -60,18 +60,22 @@ class SoilHealthAnalyzer:
         # data: [N, P, K, pH, moisture]
         prompt = f"""
         Analyze soil health: N:{data[0]}, P:{data[1]}, K:{data[2]}, pH:{data[3]}, Moisture:{data[4]}%.
-        Classify as Good/Moderate/Poor and give 1 sentence advice.
-        Return JSON: {{ "status": "Good", "advice": "advice string" }}
+        
+        Return JSON with:
+        - "status": "Good", "Moderate", or "Poor"
+        - "advice": "Detailed advice on how to improve soil based on NPK values (2-3 sentences)"
+        - "recommended_crops": ["Crop1", "Crop2", "Crop3"] (List of 3 best crops for this soil)
         """
         response = gemini_service.generate_response(prompt)
         if response:
             try:
-                clean_response = response.replace('```json', '').replace('```', '')
+                clean_response = response.replace('```json', '').replace('```', '').strip()
                 res_json = json.loads(clean_response)
-                return res_json['status'], res_json['advice']
-            except:
+                return res_json.get('status', 'Moderate'), res_json.get('advice', 'Balanced fertilization needed.'), res_json.get('recommended_crops', [])
+            except Exception as e:
+                print(f"Error parsing soil analysis: {e}")
                 pass
-        return "Moderate (Fallback)", "Balanced fertilization needed."
+        return "Moderate (Fallback)", "Balanced fertilization needed.", []
 
 class DiseaseDetector:
     def predict(self, image_data):
@@ -81,10 +85,10 @@ class DiseaseDetector:
         {
             "disease": "Name of disease", 
             "symptoms": "Description of symptoms observed", 
-            "treatment": "Recommended treatment"
+            "treatment_steps": ["Step 1", "Step 2", "Step 3"]
         }
         If the image is not a plant or not clear, return:
-        { "disease": "Unknown", "symptoms": "Image not clear or not a plant", "treatment": "Please upload a clear image of a plant leaf." }
+        { "disease": "Unknown", "symptoms": "Image not clear or not a plant", "treatment_steps": ["Please upload a clear image of a plant leaf."] }
         """
         
         if image_data:
@@ -95,7 +99,7 @@ class DiseaseDetector:
                     # Clean potential markdown
                     clean_response = response.replace('```json', '').replace('```', '').strip()
                     res_json = json.loads(clean_response)
-                    return res_json.get('disease', 'Unknown'), res_json.get('symptoms', ''), res_json.get('treatment', '')
+                    return res_json.get('disease', 'Unknown'), res_json.get('symptoms', ''), res_json.get('treatment_steps', [])
                 except Exception as e:
                     print(f"Error parsing Gemini response: {e}")
                     pass
@@ -107,7 +111,7 @@ class DiseaseDetector:
         
         prompt_text = f"""
         Act as a plant pathologist. A farmer describes: "{scenario}".
-        Diagnose it. Return JSON: {{ "disease": "Name", "symptoms": "Description", "treatment": "Treatment" }}
+        Diagnose it. Return JSON: {{ "disease": "Name", "symptoms": "Description", "treatment_steps": ["Step 1", "Step 2"] }}
         """
         response = gemini_service.generate_response(prompt_text)
          
@@ -115,11 +119,11 @@ class DiseaseDetector:
              try:
                 clean_response = response.replace('```json', '').replace('```', '')
                 res_json = json.loads(clean_response)
-                return res_json['disease'], res_json['symptoms'], res_json['treatment']
+                return res_json['disease'], res_json['symptoms'], res_json['treatment_steps']
              except:
                 pass
         
-        return "Unknown", "Consult an expert", "None"
+        return "Unknown", "Consult an expert", ["Consult an expert"]
 
 # Singleton instances
 crop_model = CropRecommender()

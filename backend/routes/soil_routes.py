@@ -16,12 +16,13 @@ def analyze_soil():
             float(data.get('moisture', 50))
         ]
         
-        status, advice = soil_model.predict(features)
+        status, advice, recommended_crops = soil_model.predict(features)
         
         return jsonify({
             "success": True,
             "status": status,
             "advice": advice,
+            "recommended_crops": recommended_crops,
             "message": f"Soil health is {status}."
         })
     except Exception as e:
