@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '../lib/api';
 
 const RecentSearches = () => {
   const { t } = useTranslation();
@@ -12,7 +13,7 @@ const RecentSearches = () => {
 
   const fetchSearches = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/recent-searches`, {
+      const response = await fetch(`${API_URL}/api/auth/recent-searches`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -33,7 +34,7 @@ const RecentSearches = () => {
     if (!confirm('Are you sure you want to clear all recent searches?')) return;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/recent-searches`, {
+      const response = await fetch(`${API_URL}/api/auth/recent-searches`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

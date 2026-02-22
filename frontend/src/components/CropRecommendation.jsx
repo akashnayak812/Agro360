@@ -8,6 +8,7 @@ import InputModeToggle from './InputModeToggle';
 import LocationSelector from './LocationSelector';
 import SimpleSoilSelector from './SimpleSoilSelector';
 import WaterAvailabilitySelector from './WaterAvailabilitySelector';
+import { API_URL } from '../lib/api';
 import VoiceInput, { SpeakResult } from './VoiceInput';
 
 const CropRecommendation = () => {
@@ -70,7 +71,7 @@ const CropRecommendation = () => {
         setLoading(true);
         
         try {
-            const response = await fetch('http://localhost:5001/api/crop/recommend-simple', {
+            const response = await fetch(`${API_URL}/api/crop/recommend-simple`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -94,7 +95,7 @@ const CropRecommendation = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/crop/recommend', {
+            const response = await fetch(`${API_URL}/api/crop/recommend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

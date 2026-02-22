@@ -8,6 +8,7 @@ import FertilizerCard from './FertilizerCard';
 import InputModeToggle from './InputModeToggle';
 import LocationSelector from './LocationSelector';
 import SimpleSoilSelector from './SimpleSoilSelector';
+import { API_URL } from '../lib/api';
 import VoiceInput, { SpeakResult } from './VoiceInput';
 
 // Common crops list for easy selection
@@ -116,7 +117,7 @@ const FertilizerRecommendation = () => {
         
         try {
             // Get soil data based on soil type
-            const soilResponse = await fetch('http://localhost:5001/api/location/soil/by-type', {
+            const soilResponse = await fetch(`${API_URL}/api/location/soil/by-type`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ soil_type: simpleData.soilType }),
@@ -125,7 +126,7 @@ const FertilizerRecommendation = () => {
             
             if (soilData.success) {
                 // Get fertilizer recommendation
-                const response = await fetch('http://localhost:5001/api/fertilizer/recommend', {
+                const response = await fetch(`${API_URL}/api/fertilizer/recommend`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -159,7 +160,7 @@ const FertilizerRecommendation = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/fertilizer/recommend', {
+            const response = await fetch(`${API_URL}/api/fertilizer/recommend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

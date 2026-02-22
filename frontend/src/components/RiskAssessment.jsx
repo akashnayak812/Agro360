@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '../lib/api';
 import {
     AlertTriangle,
     Shield,
@@ -153,7 +154,7 @@ const RiskAssessment = () => {
         setLoading(true);
         try {
             // Try to fetch from API
-            const response = await fetch('http://localhost:5001/api/risk/assess', {
+            const response = await fetch(`${API_URL}/api/risk/assess`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ crop: selectedCrop, location })

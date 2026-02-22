@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ScanLine, Upload, Camera, X, Check, CheckCircle2, AlertOctagon, Activity, ChevronRight, Stethoscope } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
+import { API_URL } from '../lib/api';
 
 const DiseaseDetection = () => {
     const [image, setImage] = useState(null);
@@ -82,7 +83,7 @@ const DiseaseDetection = () => {
         formData.append('image', image);
 
         try {
-            const response = await fetch('http://localhost:5001/api/disease/detect', {
+            const response = await fetch(`${API_URL}/api/disease/detect`, {
                 method: 'POST',
                 body: formData,
             });

@@ -9,9 +9,9 @@ import {
     signInWithPopup
 } from 'firebase/auth';
 import PropTypes from 'prop-types';
+import { API_URL } from '../lib/api';
 
 const AuthContext = createContext(null);
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);

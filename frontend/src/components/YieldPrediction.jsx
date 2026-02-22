@@ -4,6 +4,7 @@ import { TrendingUp, Sprout, Map, CloudRain, Briefcase } from 'lucide-react';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
+import { API_URL } from '../lib/api';
 
 const YieldPrediction = () => {
     const [formData, setFormData] = useState({
@@ -20,7 +21,7 @@ const YieldPrediction = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/yield/predict', {
+            const response = await fetch(`${API_URL}/api/yield/predict`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

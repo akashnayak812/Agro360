@@ -1,0 +1,19 @@
+# Ignore these in Docker build context
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.env
+.env.*
+venv/
+.venv/
+.git/
+.gitignore
+*.md
+test_*.py
+debug_*.py
+verify_*.py
+list_models.py
+start_test.sh
+setup_mysql.py
+migrate_users.py

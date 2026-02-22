@@ -8,6 +8,7 @@ import { cn } from '../lib/utils';
 import NutrientMeter from './NutrientMeter';
 import InputModeToggle from './InputModeToggle';
 import LocationSelector from './LocationSelector';
+import { API_URL } from '../lib/api';
 import SimpleSoilSelector from './SimpleSoilSelector';
 import VoiceInput, { SpeakResult } from './VoiceInput';
 import WeatherWidget from './WeatherWidget';
@@ -95,7 +96,7 @@ const SoilAnalysis = () => {
             setLoading(true);
 
             try {
-                const response = await fetch('http://localhost:5001/api/soil/analyze-image', {
+                const response = await fetch(`${API_URL}/api/soil/analyze-image`, {
                     method: 'POST',
                     body: formData
                 });
@@ -133,7 +134,7 @@ const SoilAnalysis = () => {
 
         try {
             // Get soil data based on soil type
-            const response = await fetch('http://localhost:5001/api/location/soil/by-type', {
+            const response = await fetch(`${API_URL}/api/location/soil/by-type`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ soil_type: simpleData.soilType }),
@@ -142,7 +143,7 @@ const SoilAnalysis = () => {
 
             if (soilData.success) {
                 // Now analyze
-                const analyzeResponse = await fetch('http://localhost:5001/api/soil/analyze', {
+                const analyzeResponse = await fetch(`${API_URL}/api/soil/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -185,7 +186,7 @@ const SoilAnalysis = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/soil/analyze', {
+            const response = await fetch(`${API_URL}/api/soil/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

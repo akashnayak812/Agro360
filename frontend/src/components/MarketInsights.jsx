@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '../lib/api';
 import {
     TrendingUp,
     TrendingDown,
@@ -263,7 +264,7 @@ const MarketInsights = () => {
     const fetchLatestPrices = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/market/prices', {
+            const response = await fetch(`${API_URL}/api/market/prices`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ crop: selectedCrop, market: selectedMarket })

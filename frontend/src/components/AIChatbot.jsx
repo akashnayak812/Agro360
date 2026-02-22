@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Send, Minimize2, Maximize2, X, Trash2, MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import axios from 'axios';
+import { API_URL } from '../lib/api';
 
 const AIChatbot = () => {
   const [messages, setMessages] = useState([
@@ -78,7 +79,7 @@ const AIChatbot = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5001/api/chatbot/chat', {
+      const response = await axios.post(`${API_URL}/api/chatbot/chat`, {
         message: userMessage,
         language: 'en'
       });
@@ -112,7 +113,7 @@ const AIChatbot = () => {
 
   const clearChat = async () => {
     try {
-      await axios.post('http://localhost:5001/api/chatbot/clear');
+      await axios.post(`${API_URL}/api/chatbot/clear`);
       setMessages([
         { type: 'bot', text: 'Chat cleared! How can I help you today?' }
       ]);

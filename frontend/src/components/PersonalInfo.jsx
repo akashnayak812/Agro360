@@ -4,6 +4,7 @@ import { Card } from './ui/Card';
 import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '../lib/api';
 
 const PersonalInfo = () => {
   const { t } = useTranslation();
@@ -54,7 +55,7 @@ const PersonalInfo = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/api/auth/personal-info`, {
+      const response = await fetch(`${API_URL}/api/auth/personal-info`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

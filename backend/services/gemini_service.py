@@ -212,7 +212,6 @@ class GeminiService:
             # If all models fail (image analysis often doesn't rotate keys as strictly in this snippet, can add if needed)
             print("All image analysis models failed.")
             return None
-            return response.text
         except Exception as e:
             print(f"Gemini Image Analysis Error: {e}")
             return None

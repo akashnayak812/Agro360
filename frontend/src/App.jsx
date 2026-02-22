@@ -25,6 +25,7 @@ import MarketInsights from './components/MarketInsights';
 import RiskAssessment from './components/RiskAssessment';
 import Farm3DVisualization from './components/Farm3DVisualization';
 import AccessibilityWidget from './components/AccessibilityWidget';
+import AntiGravityCursor from './components/AntiGravityCursor';
 
 function AppContent() {
   const location = useLocation();
@@ -75,6 +76,7 @@ function App() {
     <ErrorBoundary>
       <AuthProvider>
         <Router>
+          <AntiGravityCursor />
           <AppContent />
         </Router>
       </AuthProvider>

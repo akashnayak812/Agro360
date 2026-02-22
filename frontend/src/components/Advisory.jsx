@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CloudRain, Sun, Wind, Cloud, Calendar, Thermometer, Droplets } from 'lucide-react';
 import { Card } from './ui/Card';
+import { API_URL } from '../lib/api';
 
 const Advisory = () => {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        fetch('http://localhost:5001/api/advisory/current')
+        fetch(`${API_URL}/api/advisory/current`)
             .then(res => res.json())
             .then(setData)
             .catch(console.error);

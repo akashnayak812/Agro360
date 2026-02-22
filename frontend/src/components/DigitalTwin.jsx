@@ -1,3 +1,4 @@
+import { API_URL } from '../lib/api';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -224,7 +225,7 @@ const DigitalTwin = () => {
     const runFullSimulation = async () => {
         setLoading(true);
         try {
-            const response = await fetch('http://localhost:5001/api/simulator/run', {
+            const response = await fetch(`${API_URL}/api/simulator/run`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

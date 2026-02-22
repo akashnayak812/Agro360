@@ -4,6 +4,7 @@ import { MessageSquare, User, Send, Heart, Share2, MoreHorizontal, Users } from 
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
+import { API_URL } from '../lib/api';
 
 const Community = () => {
     const [posts, setPosts] = useState([]);
@@ -11,7 +12,7 @@ const Community = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const fetchPosts = () => {
-        fetch('http://localhost:5001/api/community/posts')
+        fetch(`${API_URL}/api/community/posts`)
             .then(res => res.json())
             .then(data => {
                 setPosts(data.posts);
@@ -43,7 +44,7 @@ const Community = () => {
         setPosts([tempPost, ...posts]);
         setNewContent('');
 
-        await fetch('http://localhost:5001/api/community/posts', {
+        await fetch(`${API_URL}/api/community/posts`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

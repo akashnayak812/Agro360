@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { API_URL } from '../lib/api';
 import {
     ArrowRight,
     Sprout,
@@ -50,7 +51,7 @@ const Dashboard = () => {
     const [location, setLocation] = React.useState(null);
     const [locationLoading, setLocationLoading] = React.useState(false);
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
+    // API_URL is imported from ../lib/api
 
     const detectLocation = () => {
         if (!navigator.geolocation) {

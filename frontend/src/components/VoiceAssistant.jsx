@@ -3,6 +3,7 @@ import { Mic, MicOff, X, Activity, Globe, Volume2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Button } from './ui/Button';
+import { API_URL } from '../lib/api';
 
 const LANGUAGES = [
     { code: 'en-US', label: 'English', name: 'English' },
@@ -65,7 +66,7 @@ const VoiceAssistant = () => {
     const processCommand = async (text) => {
         setIsProcessing(true);
         try {
-            const res = await fetch('http://localhost:5001/api/voice/process', {
+            const res = await fetch(`${API_URL}/api/voice/process`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
