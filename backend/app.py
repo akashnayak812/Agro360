@@ -35,6 +35,8 @@ CORS(app, resources={r"/api/*": {"origins": [
     "http://localhost:3000",
     "https://*.netlify.app",
     "https://agro360.netlify.app",
+    "https://agro360-black.vercel.app",
+    "https://*.vercel.app",
 ]}})
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
