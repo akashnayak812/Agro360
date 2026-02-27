@@ -30,7 +30,12 @@ from routes.risk_routes import risk_bp
 app = Flask(__name__)
 app.config.from_object(Config)
 
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "https://*.netlify.app",
+    "https://agro360.netlify.app",
+]}})
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
