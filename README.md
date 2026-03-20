@@ -25,6 +25,8 @@ Agro360 is an intelligent agricultural platform that leverages machine learning 
 - **🦠 Disease Detection** - AI-powered plant disease identification using image recognition
 - **🌤️ Weather Advisory** - Real-time farming advisory based on weather conditions
 - **👥 Community Forum** - Platform for farmers to share knowledge and experiences
+- **📈 Market Insights** - Live market prices, tracking, and seasonal trends
+- **🏛️ Government Schemes** - Personalized eligibility checker and AI assistance for government benefits
 - **🎤 Voice Assistant** - Multilingual voice-powered assistant for hands-free interaction
 - **🌐 Multi-language Support** - Support for English, Hindi, and other regional languages
 - **🎨 3D Farm Visualization** - Interactive 3D farm scenes using Three.js
@@ -68,6 +70,8 @@ Agro360/
 │   │   ├── crop_routes.py         # Crop recommendation endpoints
 │   │   ├── disease_routes.py      # Disease detection endpoints
 │   │   ├── fertilizer_routes.py   # Fertilizer recommendation endpoints
+│   │   ├── market_routes.py       # Market insights endpoints
+│   │   ├── schemes_routes.py      # Government schemes endpoints
 │   │   ├── soil_routes.py         # Soil analysis endpoints
 │   │   ├── voice_routes.py        # Voice assistant endpoints
 │   │   └── yield_routes.py        # Yield prediction endpoints
@@ -94,6 +98,8 @@ Agro360/
         │   ├── DiseaseDetection.jsx
         │   ├── Advisory.jsx
         │   ├── Community.jsx
+        │   ├── MarketInsights.jsx
+        │   ├── GovtSchemes.jsx
         │   ├── VoiceAssistant.jsx
         │   ├── Layout.jsx
         │   ├── Sidebar.jsx
@@ -249,6 +255,18 @@ Open your browser and navigate to `http://localhost:5173`
   - Body: `{text, language}`
   - Returns: AI response with intent and language
 
+### Market Insights
+- **POST** `/api/market/trends`
+  - Body: `{crops}`
+  - Returns: Trend analysis for the specified crops
+
+### Government Schemes
+- **POST** `/api/schemes/ai-help`
+  - Body: `{scheme_id, question, language, scheme_details}`
+  - Returns: AI answer, key points, next steps, and helpline
+- **GET** `/api/schemes/all`
+  - Returns: Central and state schemes metadata
+
 ### Health Check
 - **GET** `/api/health`
   - Returns: API health status
@@ -260,6 +278,12 @@ Uses machine learning to analyze soil nutrients (Nitrogen, Phosphorus, Potassium
 
 ### Disease Detection
 Employs computer vision and deep learning to identify plant diseases from leaf images. Provides treatment recommendations and preventive measures.
+
+### Market Insights
+Provides real-time crop prices across mandis, visual trend charts, and personalized "when to sell" recommendations based on historical data.
+
+### Government Schemes
+A dedicated module helping farmers discover and apply for central and state government benefits, complete with an eligibility checker and a Gemini-powered "Kisaan Mitra" conversational helper.
 
 ### Voice Assistant
 Powered by Google Gemini AI, the voice assistant supports:

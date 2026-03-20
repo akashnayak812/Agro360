@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 import random
 from datetime import datetime, timedelta
+from services.market_service import MarketService
 
 market_bp = Blueprint('market', __name__)
 
@@ -256,3 +257,61 @@ def calculate_profit():
         
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
+
+@market_bp.route('/states', methods=['GET'])
+def get_states():
+    """Get all states currently in the local DB for Dynamic Insights."""
+    try:
+        states = MarketService.get_states()
+        if not states:
+            # If no states, trigger a sync to populate the database initially
+            MarketService.sync_market_data(limit=1000)
+            states = MarketService.get_states()
+
+        return jsonify({'success': True, 'states': states})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@market_bp.route('/markets-by-state', methods=['GET'])
+def get_markets_by_state():
+    """Get markets by state."""
+    state = request.args.get('state')
+    if not state:
+        return jsonify({'success': False, 'error': 'State is required'}), 400
+    try:
+        markets = MarketService.get_markets(state)
+        return jsonify({'success': True, 'markets': markets})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@market_bp.route('/crops', methods=['GET'])
+def get_crops():
+    """Get crops by market."""
+    market = request.args.get('market')
+    if not market:
+        return jsonify({'success': False, 'error': 'Market is required'}), 400
+    try:
+        crops = MarketService.get_crops(market)
+        return jsonify({'success': True, 'crops': crops})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@market_bp.route('/market-insights', methods=['GET'])
+def get_market_insights():
+    """Get insight details using state, market, and crop."""
+    state = request.args.get('state')
+    market = request.args.get('market')
+    crop = request.args.get('crop')
+
+    if not all([state, market, crop]):
+        return jsonify({'success': False, 'error': 'State, market and crop are required params'}), 400
+
+    try:
+        data = MarketService.get_market_insights(state, market, crop)
+        if data:
+            return jsonify({'success': True, 'data': data})
+        else:
+            return jsonify({'success': False, 'error': 'No data found'}), 404
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+

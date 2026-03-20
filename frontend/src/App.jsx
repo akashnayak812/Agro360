@@ -23,6 +23,7 @@ import AIChatbot from './components/AIChatbot';
 import DigitalTwin from './components/DigitalTwin';
 import MarketInsights from './components/MarketInsights';
 import RiskAssessment from './components/RiskAssessment';
+import GovtSchemes from './components/GovtSchemes';
 import Farm3DVisualization from './components/Farm3DVisualization';
 import AccessibilityWidget from './components/AccessibilityWidget';
 import AntiGravityCursor from './components/AntiGravityCursor';
@@ -60,6 +61,7 @@ function AppContent() {
               <Route path="/market" element={<AnimatedPage><MarketInsights /></AnimatedPage>} />
               <Route path="/risk" element={<AnimatedPage><RiskAssessment /></AnimatedPage>} />
               <Route path="/farm3d" element={<AnimatedPage><Farm3DVisualization /></AnimatedPage>} />
+              <Route path="/schemes" element={<AnimatedPage><GovtSchemes /></AnimatedPage>} />
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
             </Routes>
           </AnimatePresence>

@@ -11,6 +11,26 @@ load_dotenv()
 
 from config import Config
 
+app = Flask(__name__)
+app.config.from_object(Config)
+
+CORS(app, resources={r"/api/*": {"origins": [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    "http://localhost:5176",
+    "http://localhost:3000",
+    "https://*.netlify.app",
+    "https://agro360.netlify.app",
+    "https://agro360-black.vercel.app",
+    "https://*.vercel.app",
+]}})
+jwt = JWTManager(app)
+bcrypt = Bcrypt(app)
+
+from extensions import db
+db.init_app(app)
+
 from routes.crop_routes import crop_bp
 from routes.fertilizer_routes import fertilizer_bp
 from routes.yield_routes import yield_bp
@@ -26,21 +46,7 @@ from routes.location_routes import location_bp
 from routes.simulator_routes import simulator_bp
 from routes.market_routes import market_bp
 from routes.risk_routes import risk_bp
-
-app = Flask(__name__)
-app.config.from_object(Config)
-
-CORS(app, resources={r"/api/*": {"origins": [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "https://*.netlify.app",
-    "https://agro360.netlify.app",
-    "https://agro360-black.vercel.app",
-    "https://*.vercel.app",
-]}})
-jwt = JWTManager(app)
-bcrypt = Bcrypt(app)
-db = SQLAlchemy(app)
+from routes.schemes_routes import schemes_bp
 
 # MySQL Connection
 try:
@@ -71,6 +77,7 @@ app.register_blueprint(location_bp, url_prefix='/api/location')
 app.register_blueprint(simulator_bp, url_prefix='/api/simulator')
 app.register_blueprint(market_bp, url_prefix='/api/market')
 app.register_blueprint(risk_bp, url_prefix='/api/risk')
+app.register_blueprint(schemes_bp, url_prefix='/api/schemes')
 
 @app.route('/')
 def home():
