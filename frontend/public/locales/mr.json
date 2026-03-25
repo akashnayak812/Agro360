@@ -1,0 +1,109 @@
+{
+  "welcome": "Agro360 मध्ये आपले स्वागत",
+  "subtitle": "उज्ज्वल भविष्यासाठी स्मार्ट शेती",
+  "ask_assistant": "Agro360 ला विचारा...",
+  "nav": {
+    "dashboard": "डॅशबोर्ड",
+    "crop": "पीक शिफारस",
+    "fertilizer": "खत",
+    "yield": "उत्पादन अंदाज",
+    "soil": "मातीचे आरोग्य",
+    "disease": "रोग ओळख",
+    "advisory": "सल्ला",
+    "community": "समुदाय",
+    "simulator": "फार्म सिम्युलेटर",
+    "market": "बाजार माहिती",
+    "risk": "जोखीम मूल्यांकन",
+    "farm3d": "3D शेत दृश्य",
+    "schemes": "सरकारी योजना",
+    "developer": "डेव्हलपर"
+  },
+  "voice": {
+    "listening": "ऐकत आहे...",
+    "processing": "विचार करत आहे...",
+    "error": "क्षमा करा, समजले नाही."
+  },
+  "soil": {
+    "leaf_growth": "पानांची वाढ",
+    "flowering": "फुले आणि फळे",
+    "plant_strength": "रोपांची ताकद",
+    "good": "चांगले",
+    "moderate": "मध्यम",
+    "poor": "सुधारणा आवश्यक"
+  },
+  "landing": {
+    "features": "वैशिष्ट्ये",
+    "howItWorks": "कसे कार्य करते",
+    "about": "बद्दल",
+    "getStarted": "सुरू करा",
+    "goToDashboard": "डॅशबोर्डवर जा",
+    "comprehensiveTools": "सर्वसमावेशक साधने",
+    "readyToModernize": "तुमचे शेत आधुनिक करण्यास तयार आहात?",
+    "createFreeAccount": "मोफत खाते तयार करा",
+    "privacyPolicy": "गोपनीयता धोरण",
+    "termsOfService": "सेवा अटी",
+    "allRightsReserved": "सर्व हक्क राखीव."
+  },
+  "dashboard": {
+    "hello": "नमस्कार",
+    "farmer": "शेतकरी",
+    "detectingLocation": "स्थान शोधत आहे...",
+    "clickToDetect": "स्थान शोधण्यासाठी क्लिक करा",
+    "schedule": "वेळापत्रक",
+    "viewAlerts": "सूचना पहा",
+    "fieldHealth": "शेताचे आरोग्य",
+    "activeCrops": "सक्रिय पिके",
+    "monthlyRevenue": "मासिक उत्पन्न",
+    "farmTools": "शेती साधने",
+    "farmAdvisory": "कृषी सल्ला"
+  },
+  "auth": {
+    "welcomeBack": "परत स्वागत",
+    "signInDesc": "तुमच्या स्मार्ट शेतात प्रवेश करण्यासाठी साइन इन करा",
+    "emailAddress": "ईमेल पत्ता",
+    "password": "पासवर्ड",
+    "signIn": "साइन इन",
+    "signInWithGoogle": "Google ने साइन इन",
+    "noAccount": "खाते नाही?",
+    "createAccount": "खाते तयार करा"
+  },
+  "common": {
+    "loading": "लोड होत आहे...",
+    "error": "काहीतरी चूक झाली",
+    "retry": "पुन्हा प्रयत्न करा",
+    "cancel": "रद्द करा",
+    "save": "जतन करा",
+    "submit": "सबमिट करा",
+    "search": "शोधा",
+    "signOut": "साइन आउट",
+    "logout": "लॉग आउट"
+  },
+  "language": {
+    "selectLanguage": "भाषा निवडा",
+    "indian": "भारतीय भाषा",
+    "international": "आंतरराष्ट्रीय भाषा"
+  },
+  "chatbot": {
+    "title": "Agro360 AI सहाय्यक",
+    "subtitle": "नेहमी मदतीसाठी येथे",
+    "placeholder": "शेती, पिके, नेव्हिगेशन बद्दल विचारा...",
+    "send": "पाठवा",
+    "clear": "चॅट साफ करा",
+    "help": "मदत",
+    "close": "बंद करा",
+    "voiceTooltip": "बोला",
+    "speakTooltip": "मोठ्याने वाचा",
+    "dragHint": "हेडर ड्रॅग करा • पाठवण्यासाठी Enter दाबा",
+    "errorConnect": "क्षमस्व, सर्व्हरशी जोडण्यात समस्या आहे.",
+    "errorGeneral": "क्षमस्व, त्रुटी आली. कृपया पुन्हा प्रयत्न करा.",
+    "cleared": "चॅट साफ! आज मी तुम्हाला कशी मदत करू शकतो?",
+    "navigatingTo": "{{page}} कडे जात आहोत...",
+    "greeting": "नमस्कार! मी तुमचा Agro360 AI सहाय्यक आहे. शेती, पिके बद्दल विचारा किंवा अॅपमध्ये नेव्हिगेट करा!",
+    "suggestedPrompts": [
+      "पीक सल्ला",
+      "माती आरोग्य",
+      "डॅशबोर्ड उघडा",
+      "बाजार भाव"
+    ]
+  }
+}

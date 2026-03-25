@@ -1,0 +1,120 @@
+{
+  "welcome": "Willkommen bei Agro360",
+  "subtitle": "Intelligente Landwirtschaft für eine bessere Zukunft",
+  "ask_assistant": "Fragen Sie Agro360...",
+  "nav": {
+    "dashboard": "Dashboard",
+    "crop": "Pflanzenempfehlung",
+    "fertilizer": "Dünger",
+    "yield": "Ertragsvorhersage",
+    "soil": "Bodengesundheit",
+    "disease": "Krankheitserkennung",
+    "advisory": "Beratung",
+    "community": "Gemeinschaft",
+    "simulator": "Farm-Simulator",
+    "market": "Markteinblicke",
+    "risk": "Risikobewertung",
+    "farm3d": "3D-Farmansicht",
+    "schemes": "Regierungsprogramme",
+    "developer": "Entwickler"
+  },
+  "voice": {
+    "listening": "Höre zu...",
+    "processing": "Denke nach...",
+    "error": "Entschuldigung, ich habe das nicht verstanden."
+  },
+  "soil": {
+    "leaf_growth": "Blattwachstum",
+    "flowering": "Blüten & Früchte",
+    "plant_strength": "Pflanzenstärke",
+    "good": "Gut",
+    "moderate": "Mäßig",
+    "poor": "Verbesserungsbedarf"
+  },
+  "landing": {
+    "features": "Funktionen",
+    "howItWorks": "So funktioniert es",
+    "about": "Über uns",
+    "getStarted": "Loslegen",
+    "goToDashboard": "Zum Dashboard",
+    "farmingMeetsAI": "Landwirtschaft trifft auf",
+    "artificialIntelligence": "Künstliche Intelligenz",
+    "comprehensiveTools": "Umfassende Werkzeuge",
+    "toolsDesc": "Alles, was Sie für Ihre Farm brauchen, vom Boden bis zum Verkauf.",
+    "readyToModernize": "Bereit, Ihre Farm zu modernisieren?",
+    "joinFarmers": "Schließen Sie sich Tausenden von Landwirten an, die KI nutzen, um besser, schneller und intelligenter anzubauen.",
+    "createFreeAccount": "Kostenloses Konto erstellen",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "termsOfService": "Nutzungsbedingungen",
+    "allRightsReserved": "Alle Rechte vorbehalten."
+  },
+  "dashboard": {
+    "hello": "Hallo",
+    "farmer": "Landwirt",
+    "detectingLocation": "Standort wird ermittelt...",
+    "clickToDetect": "Klicken Sie zur Standorterkennung",
+    "schedule": "Zeitplan",
+    "viewAlerts": "Warnungen anzeigen",
+    "fieldHealth": "Feldgesundheit",
+    "activeCrops": "Aktive Kulturen",
+    "monthlyRevenue": "Monatliche Einnahmen",
+    "farmTools": "Landwirtschaftliche Werkzeuge",
+    "farmAdvisory": "Landwirtschaftliche Beratung"
+  },
+  "auth": {
+    "welcomeBack": "Willkommen zurück",
+    "signInDesc": "Melden Sie sich an, um auf Ihre intelligente Farm zuzugreifen",
+    "emailAddress": "E-Mail-Adresse",
+    "enterEmail": "Geben Sie Ihre E-Mail ein",
+    "password": "Passwort",
+    "enterPassword": "Geben Sie Ihr Passwort ein",
+    "signingIn": "Anmeldung...",
+    "signIn": "Anmelden",
+    "orContinueWith": "Oder weiter mit",
+    "signInWithGoogle": "Mit Google anmelden",
+    "noAccount": "Kein Konto?",
+    "createAccount": "Konto erstellen"
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Etwas ist schiefgelaufen",
+    "retry": "Erneut versuchen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "submit": "Absenden",
+    "back": "Zurück",
+    "next": "Weiter",
+    "close": "Schließen",
+    "search": "Suchen",
+    "signOut": "Abmelden",
+    "logout": "Abmelden"
+  },
+  "language": {
+    "selectLanguage": "Sprache wählen",
+    "indian": "Indische Sprachen",
+    "international": "Internationale Sprachen"
+  },
+  "chatbot": {
+    "title": "Agro360 KI-Assistent",
+    "subtitle": "Immer hier, um zu helfen",
+    "placeholder": "Fragen zu Landwirtschaft, Kulturen, Navigation...",
+    "send": "Senden",
+    "clear": "Chat löschen",
+    "help": "Hilfe",
+    "close": "Schließen",
+    "voiceTooltip": "Sprechen",
+    "speakTooltip": "Vorlesen",
+    "dragHint": "Kopfzeile ziehen • Enter zum Senden",
+    "errorConnect": "Entschuldigung, Verbindungsproblem mit dem Server.",
+    "errorGeneral": "Entschuldigung, ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "cleared": "Chat gelöscht! Wie kann ich Ihnen heute helfen?",
+    "navigatingTo": "Navigiere zu {{page}}...",
+    "greeting": "Hallo! Ich bin Ihr Agro360 KI-Assistent. Fragen Sie mich zur Landwirtschaft oder navigieren Sie durch die App!",
+    "suggestedPrompts": [
+      "Anbautipps",
+      "Bodengesundheit",
+      "Dashboard öffnen",
+      "Marktpreise"
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "welcome": "Agro360 میں خوش آمدید",
+  "subtitle": "بہتر مستقبل کے لیے سمارٹ کھیتی",
+  "ask_assistant": "Agro360 سے پوچھیں...",
+  "nav": {
+    "dashboard": "ڈیش بورڈ",
+    "crop": "فصل کی سفارش",
+    "fertilizer": "کھاد",
+    "yield": "پیداوار کی پیشگوئی",
+    "soil": "مٹی کی صحت",
+    "disease": "بیماری کی شناخت",
+    "advisory": "مشاورت",
+    "community": "برادری",
+    "simulator": "فارم سمولیٹر",
+    "market": "بازار کی معلومات",
+    "risk": "خطرے کا جائزہ",
+    "farm3d": "3D فارم ویو",
+    "schemes": "سرکاری اسکیمیں",
+    "developer": "ڈیولپر"
+  },
+  "voice": {
+    "listening": "سن رہا ہوں...",
+    "processing": "سوچ رہا ہوں...",
+    "error": "معذرت، سمجھ نہیں آیا۔"
+  },
+  "soil": {
+    "leaf_growth": "پتوں کی نشوونما",
+    "flowering": "پھول اور پھل",
+    "plant_strength": "پودوں کی طاقت",
+    "good": "اچھا",
+    "moderate": "درمیانہ",
+    "poor": "بہتری کی ضرورت"
+  },
+  "landing": {
+    "features": "خصوصیات",
+    "howItWorks": "کیسے کام کرتا ہے",
+    "about": "کے بارے میں",
+    "getStarted": "شروع کریں",
+    "goToDashboard": "ڈیش بورڈ پر جائیں",
+    "comprehensiveTools": "جامع اوزار",
+    "readyToModernize": "اپنے کھیت کو جدید بنانے کے لیے تیار ہیں؟",
+    "createFreeAccount": "مفت اکاؤنٹ بنائیں",
+    "privacyPolicy": "رازداری کی پالیسی",
+    "termsOfService": "سروس کی شرائط",
+    "allRightsReserved": "جملہ حقوق محفوظ ہیں۔"
+  },
+  "dashboard": {
+    "hello": "السلام علیکم",
+    "farmer": "کسان",
+    "detectingLocation": "مقام تلاش ہو رہا ہے...",
+    "clickToDetect": "مقام تلاش کرنے کے لیے کلک کریں",
+    "schedule": "شیڈول",
+    "viewAlerts": "انتباہات دیکھیں",
+    "fieldHealth": "کھیت کی صحت",
+    "activeCrops": "فعال فصلیں",
+    "monthlyRevenue": "ماہانہ آمدنی",
+    "farmTools": "کھیتی کے اوزار",
+    "farmAdvisory": "زرعی مشاورت"
+  },
+  "auth": {
+    "welcomeBack": "واپسی پر خوش آمدید",
+    "signInDesc": "اپنے سمارٹ فارم تک رسائی کے لیے سائن ان کریں",
+    "emailAddress": "ای میل پتہ",
+    "password": "پاس ورڈ",
+    "signIn": "سائن ان",
+    "signInWithGoogle": "Google سے سائن ان",
+    "noAccount": "اکاؤنٹ نہیں ہے؟",
+    "createAccount": "اکاؤنٹ بنائیں"
+  },
+  "common": {
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "کچھ غلط ہو گیا",
+    "retry": "دوبارہ کوشش کریں",
+    "cancel": "منسوخ",
+    "save": "محفوظ کریں",
+    "submit": "جمع کرائیں",
+    "search": "تلاش کریں",
+    "signOut": "سائن آؤٹ",
+    "logout": "لاگ آؤٹ"
+  },
+  "language": {
+    "selectLanguage": "زبان منتخب کریں",
+    "indian": "ہندوستانی زبانیں",
+    "international": "بین الاقوامی زبانیں"
+  },
+  "chatbot": {
+    "title": "Agro360 AI معاون",
+    "subtitle": "ہمیشہ مدد کے لیے یہاں",
+    "placeholder": "کاشتکاری، فصلوں، نیویگیشن کے بارے میں پوچھیں...",
+    "send": "بھیجیں",
+    "clear": "چیٹ صاف کریں",
+    "help": "مدد",
+    "close": "بند کریں",
+    "voiceTooltip": "بولیں",
+    "speakTooltip": "اونچی آواز میں پڑھیں",
+    "dragHint": "ہیڈر گھسیٹیں • بھیجنے کے لیے Enter دبائیں",
+    "errorConnect": "معذرت، سرور سے جڑنے میں مسئلہ ہے۔",
+    "errorGeneral": "معذرت، ایک خرابی ہوئی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "cleared": "چیٹ صاف! آج میں آپ کی کیسے مدد کر سکتا ہوں؟",
+    "navigatingTo": "{{page}} پر جا رہے ہیں...",
+    "greeting": "السلام علیکم! میں آپ کا Agro360 AI معاون ہوں۔ کاشتکاری، فصلوں کے بارے میں پوچھیں یا ایپ میں نیویگیٹ کریں!",
+    "suggestedPrompts": [
+      "فصل مشورہ",
+      "مٹی صحت",
+      "ڈیش بورڈ کھولیں",
+      "منڈی بھاؤ"
+    ]
+  }
+}

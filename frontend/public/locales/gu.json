@@ -1,0 +1,109 @@
+{
+  "welcome": "Agro360 માં આપનું સ્વાગત છે",
+  "subtitle": "વધુ સારા ભવિષ્ય માટે સ્માર્ટ ખેતી",
+  "ask_assistant": "Agro360 ને પૂછો...",
+  "nav": {
+    "dashboard": "ડેશબોર્ડ",
+    "crop": "પાક ભલામણ",
+    "fertilizer": "ખાતર",
+    "yield": "ઉપજ આગાહી",
+    "soil": "જમીન આરોગ્ય",
+    "disease": "રોગ ઓળખ",
+    "advisory": "સલાહ",
+    "community": "સમુદાય",
+    "simulator": "ફાર્મ સિમ્યુલેટર",
+    "market": "બજાર માહિતી",
+    "risk": "જોખમ આકારણી",
+    "farm3d": "3D ખેતર દૃશ્ય",
+    "schemes": "સરકારી યોજનાઓ",
+    "developer": "ડેવલપર"
+  },
+  "voice": {
+    "listening": "સાંભળી રહ્યો છું...",
+    "processing": "વિચારી રહ્યો છું...",
+    "error": "માફ કરશો, સમજાયું નહીં."
+  },
+  "soil": {
+    "leaf_growth": "પાંદડાનો વિકાસ",
+    "flowering": "ફૂલ અને ફળ",
+    "plant_strength": "છોડની તાકાત",
+    "good": "સારું",
+    "moderate": "મધ્યમ",
+    "poor": "સુધારણા જરૂરી"
+  },
+  "landing": {
+    "features": "લક્ષણો",
+    "howItWorks": "કેવી રીતે કામ કરે છે",
+    "about": "વિશે",
+    "getStarted": "શરૂ કરો",
+    "goToDashboard": "ડેશબોર્ડ પર જાઓ",
+    "comprehensiveTools": "વ્યાપક સાધનો",
+    "readyToModernize": "તમારું ખેતર આધુનિક બનાવવા તૈયાર છો?",
+    "createFreeAccount": "મફત ખાતું બનાવો",
+    "privacyPolicy": "ગોપનીયતા નીતિ",
+    "termsOfService": "સેવાની શરતો",
+    "allRightsReserved": "બધા હકો અનામત."
+  },
+  "dashboard": {
+    "hello": "નમસ્તે",
+    "farmer": "ખેડૂત",
+    "detectingLocation": "સ્થાન શોધી રહ્યા છીએ...",
+    "clickToDetect": "સ્થાન શોધવા ક્લિક કરો",
+    "schedule": "સમયપત્રક",
+    "viewAlerts": "ચેતવણીઓ જુઓ",
+    "fieldHealth": "ખેતરનું આરોગ્ય",
+    "activeCrops": "સક્રિય પાક",
+    "monthlyRevenue": "માસિક આવક",
+    "farmTools": "ખેતી સાધનો",
+    "farmAdvisory": "કૃષિ સલાહ"
+  },
+  "auth": {
+    "welcomeBack": "પાછા આવ્યા સ્વાગત",
+    "signInDesc": "તમારા સ્માર્ટ ખેતરમાં પ્રવેશ કરવા સાઇન ઇન કરો",
+    "emailAddress": "ઈમેલ સરનામું",
+    "password": "પાસવર્ડ",
+    "signIn": "સાઇન ઇન",
+    "signInWithGoogle": "Google થી સાઇન ઇન",
+    "noAccount": "ખાતું નથી?",
+    "createAccount": "ખાતું બનાવો"
+  },
+  "common": {
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "error": "કંઈક ખોટું થયું",
+    "retry": "ફરી પ્રયાસ કરો",
+    "cancel": "રદ કરો",
+    "save": "સાચવો",
+    "submit": "સબમિટ કરો",
+    "search": "શોધો",
+    "signOut": "સાઇન આઉટ",
+    "logout": "લોગ આઉટ"
+  },
+  "language": {
+    "selectLanguage": "ભાષા પસંદ કરો",
+    "indian": "ભારતીય ભાષાઓ",
+    "international": "આંતરરાષ્ટ્રીય ભાષાઓ"
+  },
+  "chatbot": {
+    "title": "Agro360 AI સહાયક",
+    "subtitle": "હંમેશા મદદ માટે અહીં",
+    "placeholder": "ખેતી, પાક, નેવિગેશન વિશે પૂછો...",
+    "send": "મોકલો",
+    "clear": "ચેટ સાફ કરો",
+    "help": "મદદ",
+    "close": "બંધ કરો",
+    "voiceTooltip": "બોલો",
+    "speakTooltip": "મોટેથી વાંચો",
+    "dragHint": "હેડર ખેંચો • મોકલવા Enter દબાવો",
+    "errorConnect": "માફ કરજો, સર્વર સાથે કનેક્ટ કરવામાં સમસ્યા છે.",
+    "errorGeneral": "માફ કરજો, ભૂલ થઈ. કૃપા કરી ફરી પ્રયાસ કરો.",
+    "cleared": "ચેટ સાફ! આજે હું તમને કેવી રીતે મદદ કરી શકું?",
+    "navigatingTo": "{{page}} પર જઈ રહ્યા છીએ...",
+    "greeting": "નમસ્તે! હું તમારો Agro360 AI સહાયક છું. ખેતી, પાક વિશે પૂછો અથવા એપ્લિકેશનમાં નેવિગેટ કરો!",
+    "suggestedPrompts": [
+      "પાક સલાહ",
+      "જમીન આરોગ્ય",
+      "ડેશબોર્ડ ખોલો",
+      "બજાર ભાવ"
+    ]
+  }
+}

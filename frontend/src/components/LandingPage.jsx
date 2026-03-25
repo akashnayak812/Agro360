@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, Suspense } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
     Sprout,
     BrainCircuit,
@@ -14,8 +15,9 @@ import {
     Activity,
     Smartphone
 } from 'lucide-react';
-import HeroSection from './HeroSection'; // Reusing the Hero logic for the top section
+import HeroSection from './HeroSection';
 import { useAuth } from '../context/AuthContext';
+import LanguageSelector from './LanguageSelector';
 
 const Section = ({ children, className = "" }) => (
     <section className={`py-20 px-6 md:px-12 relative overflow-hidden ${className}`}>
@@ -25,22 +27,22 @@ const Section = ({ children, className = "" }) => (
 
 const LandingPage = () => {
     const { user } = useAuth();
+    const { t } = useTranslation();
 
-    // Smooth scroll utility features
     const features = [
-        { icon: BrainCircuit, title: "AI Disease Detection", desc: "Identify plant diseases instantly with 98% accuracy using our advanced computer vision models." },
-        { icon: Sprout, title: "Smart Crop Recommendations", desc: "Get data-driven suggestions for the best crops to plant based on your soil and climate data." },
-        { icon: Activity, title: "Real-time Soil Analysis", desc: "Monitor NPK levels, moisture, and pH balance to ensure optimal growing conditions." },
-        { icon: TrendingUp, title: "Yield Prediction", desc: "Forecast your harvest quantity and quality using historical data and predictive analytics." },
-        { icon: ShieldCheck, title: "Risk Assessment", desc: "Stay ahead of weather patterns and pest outbreaks with proactive alerts and advisories." },
-        { icon: Users, title: "Farmer Community", desc: "Connect, share knowledge, and trade with a network of modern farmers." }
+        { icon: BrainCircuit, title: t('landing.aiDiseaseDetection'), desc: t('landing.aiDiseaseDesc') },
+        { icon: Sprout, title: t('landing.smartCropRec'), desc: t('landing.smartCropDesc') },
+        { icon: Activity, title: t('landing.realtimeSoil'), desc: t('landing.realtimeSoilDesc') },
+        { icon: TrendingUp, title: t('landing.yieldPrediction'), desc: t('landing.yieldPredDesc') },
+        { icon: ShieldCheck, title: t('landing.riskAssessment'), desc: t('landing.riskDesc') },
+        { icon: Users, title: t('landing.farmerCommunity'), desc: t('landing.communityDesc') }
     ];
 
     const steps = [
-        { num: "01", title: "Capture", desc: "Take a photo of your crop or upload soil data via the dashboard." },
-        { num: "02", title: "Analyze", desc: "Our AI processes the input using millions of data points." },
-        { num: "03", title: "Diagnose", desc: "Receive instant health reports and actionable treatment plans." },
-        { num: "04", title: "Optimize", desc: "Apply recommendations to boost yield and reduce waste." }
+        { num: "01", title: t('landing.capture'), desc: t('landing.captureDesc') },
+        { num: "02", title: t('landing.analyze'), desc: t('landing.analyzeDesc') },
+        { num: "03", title: t('landing.diagnose'), desc: t('landing.diagnoseDesc') },
+        { num: "04", title: t('landing.optimize'), desc: t('landing.optimizeDesc') }
     ];
 
     return (
@@ -55,18 +57,23 @@ const LandingPage = () => {
                     <span className="font-syncopate font-bold text-white text-xl tracking-wider">AGRO<span className="text-agro-green">360</span></span>
                 </div>
                 <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-                    <a href="#features" className="hover:text-white transition-colors">Features</a>
-                    <a href="#how-it-works" className="hover:text-white transition-colors">How it Works</a>
-                    <a href="#about" className="hover:text-white transition-colors">About</a>
+                    <a href="#features" className="hover:text-white transition-colors">{t('landing.features')}</a>
+                    <a href="#how-it-works" className="hover:text-white transition-colors">{t('landing.howItWorks')}</a>
+                    <a href="#about" className="hover:text-white transition-colors">{t('landing.about')}</a>
                 </div>
-                <Link to={user ? "/dashboard" : "/login"}>
-                    <button className="px-6 py-2 rounded-full bg-white text-agro-darkGreen font-semibold text-sm hover:bg-agro-green hover:text-white transition-all duration-300 transform hover:scale-105">
-                        {user ? "Go to Dashboard" : "Get Started"}
-                    </button>
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Suspense fallback={null}>
+                        <LanguageSelector />
+                    </Suspense>
+                    <Link to={user ? "/dashboard" : "/login"}>
+                        <button className="px-6 py-2 rounded-full bg-white text-agro-darkGreen font-semibold text-sm hover:bg-agro-green hover:text-white transition-all duration-300 transform hover:scale-105">
+                            {user ? t('landing.goToDashboard') : t('landing.getStarted')}
+                        </button>
+                    </Link>
+                </div>
             </nav>
 
-            {/* Hero Section (Reused but integrated) */}
+            {/* Hero Section */}
             <div className="relative h-screen">
                 <HeroSection isSplash={false} />
                 <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center animate-bounce">
@@ -75,24 +82,24 @@ const LandingPage = () => {
             </div>
 
             {/* About / Value Prop */}
-            <Section className="bg-white">
+            <Section className="bg-white" id="about">
                 <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
                     <div>
                         <h2 className="text-4xl md:text-5xl font-heading font-bold text-gray-900 mb-6 leading-tight">
-                            Farming Meets <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-agro-green to-agro-lime-400">Artificial Intelligence</span>
+                            {t('landing.farmingMeetsAI')} <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-agro-green to-agro-lime-400">{t('landing.artificialIntelligence')}</span>
                         </h2>
                         <p className="text-lg text-gray-600 mb-8 leading-relaxed">
-                            Agro360 is your digital agricultural companion. We bridge the gap between traditional farming and modern technology, creating a digital twin of your farm to optimize every decision you make.
+                            {t('landing.aboutDesc')}
                         </p>
                         <div className="flex gap-4">
                             <div className="flex flex-col gap-2 p-4 bg-agro-cream rounded-2xl border border-agro-green/10">
                                 <span className="text-3xl font-bold text-agro-darkGreen">98%</span>
-                                <span className="text-sm text-gray-500 font-medium">Accuracy in Detection</span>
+                                <span className="text-sm text-gray-500 font-medium">{t('landing.accuracy')}</span>
                             </div>
                             <div className="flex flex-col gap-2 p-4 bg-agro-cream rounded-2xl border border-agro-green/10">
                                 <span className="text-3xl font-bold text-agro-darkGreen">24/7</span>
-                                <span className="text-sm text-gray-500 font-medium">Real-time Monitoring</span>
+                                <span className="text-sm text-gray-500 font-medium">{t('landing.realtime')}</span>
                             </div>
                         </div>
                     </div>
@@ -111,8 +118,8 @@ const LandingPage = () => {
             <Section className="bg-slate-900 text-white" id="how-it-works">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
-                        <span className="text-agro-green font-mono text-sm tracking-widest uppercase mb-2 block">Process</span>
-                        <h2 className="text-3xl md:text-4xl font-heading font-bold">How Agro360 Works</h2>
+                        <span className="text-agro-green font-mono text-sm tracking-widest uppercase mb-2 block">{t('landing.process')}</span>
+                        <h2 className="text-3xl md:text-4xl font-heading font-bold">{t('landing.howAgro360Works')}</h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -133,12 +140,12 @@ const LandingPage = () => {
                 </div>
             </Section>
 
-            {/* Features Staggered Grid */}
+            {/* Features Grid */}
             <Section id="features" className="bg-agro-cream">
                 <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-5xl font-heading font-bold text-gray-900 mb-4">Comprehensive Tools</h2>
-                        <p className="text-gray-500 max-w-2xl mx-auto">Everything you need to manage your farm, from soil to sale.</p>
+                        <h2 className="text-3xl md:text-5xl font-heading font-bold text-gray-900 mb-4">{t('landing.comprehensiveTools')}</h2>
+                        <p className="text-gray-500 max-w-2xl mx-auto">{t('landing.toolsDesc')}</p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -169,30 +176,28 @@ const LandingPage = () => {
                     <div className="flex-1">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-agro-green text-xs font-bold uppercase tracking-wider mb-6">
                             <Cpu size={14} />
-                            <span>Powered by Gemini 2.0</span>
+                            <span>{t('landing.poweredBy')}</span>
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">Why AI matter in Agriculture?</h2>
+                        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6">{t('landing.whyAI')}</h2>
                         <div className="space-y-6 text-gray-300">
-                            <p>
-                                Traditional farming relies on intuition. AI farming relies on <strong>precision</strong>. With Agro360, you're not just guessing; you're knowing.
-                            </p>
+                            <p>{t('landing.aiParagraph')}</p>
                             <ul className="space-y-4">
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-agro-green flex items-center justify-center text-black text-xs font-bold">✓</div>
                                     <div>
-                                        <strong className="text-white">Early Detection:</strong> Spot diseases before they spread to your entire crop.
+                                        <strong className="text-white">{t('landing.earlyDetection')}</strong> {t('landing.earlyDetectionDesc')}
                                     </div>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-agro-green flex items-center justify-center text-black text-xs font-bold">✓</div>
                                     <div>
-                                        <strong className="text-white">Resource Optimization:</strong> Save water and fertilizer by applying exactly what's needed.
+                                        <strong className="text-white">{t('landing.resourceOptimization')}</strong> {t('landing.resourceOptDesc')}
                                     </div>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <div className="mt-1 w-5 h-5 rounded-full bg-agro-green flex items-center justify-center text-black text-xs font-bold">✓</div>
                                     <div>
-                                        <strong className="text-white">Yield Maximization:</strong> Predictive analytics to help you harvest at the perfect time.
+                                        <strong className="text-white">{t('landing.yieldMaximization')}</strong> {t('landing.yieldMaxDesc')}
                                     </div>
                                 </li>
                             </ul>
@@ -200,10 +205,9 @@ const LandingPage = () => {
                     </div>
                     <div className="flex-1">
                         <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-3xl relative">
-                            {/* Code snippet decoration */}
                             <div className="font-mono text-xs text-green-400">
                                 <div className="mb-2 text-gray-500">// AI Model Analysis</div>
-                                <div><span className="text-purple-400">const</span> <span className="text-blue-400">analyzeCrop</span> = <span className="text-purple-400">async</span> (data) ={'>'} {'{'}</div>
+                                <div><span className="text-purple-400">const</span> <span className="text-blue-400">analyzeCrop</span> = <span className="text-purple-400">async</span> (data) =&gt; {'{'}</div>
                                 <div className="pl-4"><span className="text-purple-400">const</span> health = <span className="text-purple-400">await</span> model.predict(data);</div>
                                 <div className="pl-4"><span className="text-purple-400">if</span> (health.risk {'>'} <span className="text-orange-400">0.8</span>) {'{'}</div>
                                 <div className="pl-8">alert(<span className="text-amber-300">'Early Blight Detected'</span>);</div>
@@ -218,13 +222,13 @@ const LandingPage = () => {
             {/* Testimonials */}
             <Section className="bg-white">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-3xl font-heading font-bold mb-12">Trusted by Modern Farmers</h2>
+                    <h2 className="text-3xl font-heading font-bold mb-12">{t('landing.trustedByFarmers')}</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="p-8 bg-gray-50 rounded-3xl text-left">
                             <div className="flex gap-1 text-yellow-500 mb-4">
                                 {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
                             </div>
-                            <p className="text-gray-600 mb-6 italic">"Agro360 saved my potato harvest this year. The early blight detection was spot on, weeks before I could see it with my own eyes."</p>
+                            <p className="text-gray-600 mb-6 italic">"{t('landing.testimonial1')}"</p>
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full bg-gray-300" />
                                 <div>
@@ -237,7 +241,7 @@ const LandingPage = () => {
                             <div className="flex gap-1 text-yellow-500 mb-4">
                                 {[...Array(5)].map((_, i) => <span key={i}>★</span>)}
                             </div>
-                            <p className="text-gray-600 mb-6 italic">"The soil analysis feature helps me apply the exact amount of fertilizer. I've saved 30% on costs this season."</p>
+                            <p className="text-gray-600 mb-6 italic">"{t('landing.testimonial2')}"</p>
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 rounded-full bg-gray-300" />
                                 <div>
@@ -254,34 +258,34 @@ const LandingPage = () => {
             <footer className="bg-agro-darkGreen text-white py-20 px-6">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10">
                     <div className="text-center md:text-left">
-                        <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">Ready to modernize <br />your farm?</h2>
-                        <p className="text-agro-lightGreen text-lg mb-8 max-w-md">Join thousands of farmers using AI to grow better, faster, and smarter.</p>
+                        <h2 className="text-3xl md:text-5xl font-heading font-bold mb-4">{t('landing.readyToModernize')}</h2>
+                        <p className="text-agro-lightGreen text-lg mb-8 max-w-md">{t('landing.joinFarmers')}</p>
                         <Link to="/register">
                             <button className="px-8 py-4 rounded-full bg-white text-agro-darkGreen font-bold text-lg hover:bg-agro-green hover:text-white transition-all shadow-lg hover:shadow-xl">
-                                Create Free Account
+                                {t('landing.createFreeAccount')}
                             </button>
                         </Link>
                     </div>
                     <div className="grid grid-cols-2 gap-12 text-sm text-agro-lightGreen/80">
                         <div className="flex flex-col gap-4">
-                            <span className="font-bold text-white uppercase tracking-wider">Platform</span>
-                            <a href="#" className="hover:text-white transition-colors">Features</a>
-                            <a href="#" className="hover:text-white transition-colors">Pricing</a>
-                            <a href="#" className="hover:text-white transition-colors">API</a>
+                            <span className="font-bold text-white uppercase tracking-wider">{t('landing.platform')}</span>
+                            <a href="#features" className="hover:text-white transition-colors">{t('landing.features')}</a>
+                            <a href="#" className="hover:text-white transition-colors">{t('landing.pricing')}</a>
+                            <a href="#" className="hover:text-white transition-colors">{t('landing.api')}</a>
                         </div>
                         <div className="flex flex-col gap-4">
-                            <span className="font-bold text-white uppercase tracking-wider">Company</span>
-                            <a href="#" className="hover:text-white transition-colors">About Us</a>
-                            <a href="#" className="hover:text-white transition-colors">Careers</a>
-                            <a href="#" className="hover:text-white transition-colors">Contact</a>
+                            <span className="font-bold text-white uppercase tracking-wider">{t('landing.company')}</span>
+                            <a href="#about" className="hover:text-white transition-colors">{t('landing.aboutUs')}</a>
+                            <a href="#" className="hover:text-white transition-colors">{t('landing.careers')}</a>
+                            <a href="#" className="hover:text-white transition-colors">{t('landing.contact')}</a>
                         </div>
                     </div>
                 </div>
                 <div className="max-w-6xl mx-auto mt-20 pt-8 border-t border-white/10 flex justify-between items-center text-xs text-white/40">
-                    <div>© 2024 Agro360. All rights reserved.</div>
+                    <div>© 2024 Agro360. {t('landing.allRightsReserved')}</div>
                     <div className="flex gap-6">
-                        <a href="#">Privacy Policy</a>
-                        <a href="#">Terms of Service</a>
+                        <a href="#">{t('landing.privacyPolicy')}</a>
+                        <a href="#">{t('landing.termsOfService')}</a>
                     </div>
                 </div>
             </footer>

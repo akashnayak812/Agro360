@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { API_URL } from '../lib/api';
 import {
     ArrowRight,
@@ -19,19 +20,11 @@ import {
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { useAuth } from '../context/AuthContext';
-import WeatherWidget from './WeatherWidget'; // New component
-import StatCard from './StatCard'; // New component
-
-const modules = [
-    { title: 'Best Crop', desc: 'Find suitable crops based on soil & climate', path: '/crop', icon: Sprout, color: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-100' },
-    { title: 'Fertilizer', desc: 'Get optimal nutrient recommendations', path: '/fertilizer', icon: Droplets, color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-100' },
-    { title: 'Yield Prediction', desc: 'Estimate your future harvest quantity', path: '/yield', icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
-    { title: 'Soil Health', desc: 'Analyze detailed soil reports', path: '/soil', icon: FlaskConical, color: 'text-purple-500', bg: 'bg-purple-50', border: 'border-purple-100' },
-    { title: 'Plant Doctor', desc: 'Detect diseases from leaf photos', path: '/disease', icon: ScanLine, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-100' },
-    { title: 'Community', desc: 'Connect with other farmers', path: '/community', icon: Users, color: 'text-pink-500', bg: 'bg-pink-50', border: 'border-pink-100' },
-];
+import WeatherWidget from './WeatherWidget';
+import StatCard from './StatCard';
 
 const Dashboard = () => {
+    const { t } = useTranslation();
     const { user } = useAuth();
     const container = {
         hidden: { opacity: 0 },
@@ -51,7 +44,14 @@ const Dashboard = () => {
     const [location, setLocation] = React.useState(null);
     const [locationLoading, setLocationLoading] = React.useState(false);
 
-    // API_URL is imported from ../lib/api
+    const modules = [
+        { title: t('dashboard.bestCrop'), desc: t('dashboard.bestCropDesc'), path: '/crop', icon: Sprout, color: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+        { title: t('nav.fertilizer'), desc: t('dashboard.fertilizerDesc'), path: '/fertilizer', icon: Droplets, color: 'text-blue-500', bg: 'bg-blue-50', border: 'border-blue-100' },
+        { title: t('nav.yield'), desc: t('dashboard.yieldPredDesc'), path: '/yield', icon: TrendingUp, color: 'text-amber-500', bg: 'bg-amber-50', border: 'border-amber-100' },
+        { title: t('nav.soil'), desc: t('dashboard.soilHealthDesc'), path: '/soil', icon: FlaskConical, color: 'text-purple-500', bg: 'bg-purple-50', border: 'border-purple-100' },
+        { title: t('dashboard.plantDoctor'), desc: t('dashboard.plantDoctorDesc'), path: '/disease', icon: ScanLine, color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-100' },
+        { title: t('nav.community'), desc: t('dashboard.communityDesc'), path: '/community', icon: Users, color: 'text-pink-500', bg: 'bg-pink-50', border: 'border-pink-100' },
+    ];
 
     const detectLocation = () => {
         if (!navigator.geolocation) {
@@ -105,18 +105,18 @@ const Dashboard = () => {
             <motion.header variants={item} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h2 className="text-3xl font-heading font-bold text-gray-800">
-                        Hello, {user?.displayName || user?.email?.split('@')[0] || 'Farmer'}! 👋
+                        {t('dashboard.hello')}, {user?.displayName || user?.email?.split('@')[0] || t('dashboard.farmer')}! 👋
                     </h2>
                     <div className="flex items-center gap-2 mt-2 text-gray-600">
                         {locationLoading ? (
                             <span className="flex items-center gap-2 text-sm bg-white/50 px-3 py-1 rounded-full border border-gray-200">
-                                <Loader2 size={14} className="animate-spin text-agro-green" /> Detecting location...
+                                <Loader2 size={14} className="animate-spin text-agro-green" /> {t('dashboard.detectingLocation')}
                             </span>
                         ) : (
                             <div className="flex items-center gap-3">
                                 <span className="flex items-center gap-2 text-sm bg-white/50 px-3 py-1 rounded-full border border-gray-200 cursor-pointer hover:bg-white hover:border-agro-green transition-colors" onClick={!location ? detectLocation : undefined}>
                                     <MapPin size={16} className="text-agro-green" />
-                                    {location ? `${location.mandal || location.city}, ${location.district}` : "Click to detect location"}
+                                    {location ? `${location.mandal || location.city}, ${location.district}` : t('dashboard.clickToDetect')}
                                 </span>
                                 <span className="text-sm text-gray-400">|</span>
                                 <span className="text-sm font-medium text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
@@ -127,11 +127,11 @@ const Dashboard = () => {
 
                 <div className="flex items-center gap-3">
                     <Button variant="outline" className="hidden md:flex gap-2">
-                        <Calendar size={16} /> Schedule
+                        <Calendar size={16} /> {t('dashboard.schedule')}
                     </Button>
                     <Link to="/advisory">
                         <Button className="bg-agro-green hover:bg-agro-darkGreen text-white shadow-lg shadow-agro-green/20">
-                            View Alerts
+                            {t('dashboard.viewAlerts')}
                         </Button>
                     </Link>
                 </div>
@@ -146,7 +146,7 @@ const Dashboard = () => {
                     {/* Stats Row */}
                     <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <StatCard
-                            title="Field Health"
+                            title={t('dashboard.fieldHealth')}
                             value="92%"
                             icon={Activity}
                             color="emerald"
@@ -154,14 +154,14 @@ const Dashboard = () => {
                             delay={0.1}
                         />
                         <StatCard
-                            title="Active Crops"
+                            title={t('dashboard.activeCrops')}
                             value="3"
                             icon={Sprout}
                             color="amber"
                             delay={0.2}
                         />
                         <StatCard
-                            title="Monthly Revenue"
+                            title={t('dashboard.monthlyRevenue')}
                             value="$12.5k"
                             icon={DollarSign}
                             color="blue"
@@ -176,17 +176,17 @@ const Dashboard = () => {
                             <div className="flex justify-between items-center mb-6">
                                 <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                                     <Sprout className="text-agro-green" size={20} />
-                                    Crop Growth Tracking
+                                    {t('dashboard.cropGrowthTracking')}
                                 </h3>
-                                <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Season: Kharif</span>
+                                <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">{t('dashboard.season')}</span>
                             </div>
 
                             <div className="space-y-6">
                                 {/* Crop Item 1 */}
                                 <div>
                                     <div className="flex justify-between text-sm mb-2">
-                                        <span className="font-medium text-gray-700">Paddy Rice (Field A)</span>
-                                        <span className="text-agro-green font-bold">75% - Harvesting Soon</span>
+                                        <span className="font-medium text-gray-700">{t('dashboard.paddyRice')}</span>
+                                        <span className="text-agro-green font-bold">75% - {t('dashboard.harvestingSoon')}</span>
                                     </div>
                                     <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                                         <motion.div
@@ -203,8 +203,8 @@ const Dashboard = () => {
                                 {/* Crop Item 2 */}
                                 <div>
                                     <div className="flex justify-between text-sm mb-2">
-                                        <span className="font-medium text-gray-700">Cotton (Field B)</span>
-                                        <span className="text-amber-500 font-bold">40% - Flowering Stage</span>
+                                        <span className="font-medium text-gray-700">{t('dashboard.cotton')}</span>
+                                        <span className="text-amber-500 font-bold">40% - {t('dashboard.floweringStage')}</span>
                                     </div>
                                     <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                                         <motion.div
@@ -221,10 +221,10 @@ const Dashboard = () => {
 
                     {/* Quick Access Modules */}
                     <motion.div variants={item}>
-                        <h3 className="text-lg font-bold text-gray-800 mb-4 px-1">Farm Tools</h3>
+                        <h3 className="text-lg font-bold text-gray-800 mb-4 px-1">{t('dashboard.farmTools')}</h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {modules.map((mod) => (
-                                <Link to={mod.path} key={mod.title} className="block group">
+                                <Link to={mod.path} key={mod.path} className="block group">
                                     <Card hover className={`h-full border ${mod.border} bg-white/90 backdrop-blur transition-all duration-300 hover:shadow-lg hover:-translate-y-1`}>
                                         <div className="p-5 flex flex-col h-full justify-between">
                                             <div className="flex justify-between items-start">
@@ -253,31 +253,31 @@ const Dashboard = () => {
                         <WeatherWidget location={location} />
                     </motion.div>
 
-                    {/* Recent Activity / Advisory Mock */}
+                    {/* Recent Activity / Advisory */}
                     <motion.div variants={item}>
                         <Card className="p-6 bg-white/80 backdrop-blur-md border border-gray-100 shadow-lg">
-                            <h3 className="text-lg font-bold text-gray-800 mb-4">Farm Advisory</h3>
+                            <h3 className="text-lg font-bold text-gray-800 mb-4">{t('dashboard.farmAdvisory')}</h3>
                             <div className="space-y-4">
                                 <div className="flex gap-3 items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
                                     <div className="mt-1 w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-800">Pest Alert</p>
-                                        <p className="text-xs text-gray-500 mt-1">High risk of Aphids in Cotton fields due to humidity.</p>
-                                        <Link to="/disease" className="text-xs text-red-500 font-medium hover:underline mt-1 block">Check Plant Doctor →</Link>
+                                        <p className="text-sm font-semibold text-gray-800">{t('dashboard.pestAlert')}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{t('dashboard.pestAlertDesc')}</p>
+                                        <Link to="/disease" className="text-xs text-red-500 font-medium hover:underline mt-1 block">{t('dashboard.checkPlantDoctor')}</Link>
                                     </div>
                                 </div>
                                 <div className="flex gap-3 items-start pb-4 border-b border-gray-100 last:border-0 last:pb-0">
                                     <div className="mt-1 w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-800">Irrigation</p>
-                                        <p className="text-xs text-gray-500 mt-1">Schedule watering for tomorrow morning before sunrise.</p>
+                                        <p className="text-sm font-semibold text-gray-800">{t('dashboard.irrigation')}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{t('dashboard.irrigationDesc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-3 items-start">
                                     <div className="mt-1 w-2 h-2 rounded-full bg-green-500 flex-shrink-0" />
                                     <div>
-                                        <p className="text-sm font-semibold text-gray-800">Fertilizer</p>
-                                        <p className="text-xs text-gray-500 mt-1">Due for NPK application in Field A.</p>
+                                        <p className="text-sm font-semibold text-gray-800">{t('dashboard.fertilizerAlert')}</p>
+                                        <p className="text-xs text-gray-500 mt-1">{t('dashboard.fertilizerAlertDesc')}</p>
                                     </div>
                                 </div>
                             </div>

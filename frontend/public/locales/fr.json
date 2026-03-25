@@ -1,0 +1,120 @@
+{
+  "welcome": "Bienvenue sur Agro360",
+  "subtitle": "Agriculture intelligente pour un avenir meilleur",
+  "ask_assistant": "Demandez à Agro360...",
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "crop": "Recommandation de cultures",
+    "fertilizer": "Engrais",
+    "yield": "Prévision de rendement",
+    "soil": "Santé du sol",
+    "disease": "Détection des maladies",
+    "advisory": "Conseil",
+    "community": "Communauté",
+    "simulator": "Simulateur de ferme",
+    "market": "Informations du marché",
+    "risk": "Évaluation des risques",
+    "farm3d": "Vue 3D de la ferme",
+    "schemes": "Programmes gouvernementaux",
+    "developer": "Développeur"
+  },
+  "voice": {
+    "listening": "Écoute...",
+    "processing": "Réflexion...",
+    "error": "Désolé, je n'ai pas compris."
+  },
+  "soil": {
+    "leaf_growth": "Croissance des feuilles",
+    "flowering": "Fleurs et fruits",
+    "plant_strength": "Force de la plante",
+    "good": "Bon",
+    "moderate": "Modéré",
+    "poor": "À améliorer"
+  },
+  "landing": {
+    "features": "Fonctionnalités",
+    "howItWorks": "Comment ça marche",
+    "about": "À propos",
+    "getStarted": "Commencer",
+    "goToDashboard": "Aller au tableau de bord",
+    "farmingMeetsAI": "L'agriculture rencontre",
+    "artificialIntelligence": "L'Intelligence Artificielle",
+    "comprehensiveTools": "Outils complets",
+    "toolsDesc": "Tout ce dont vous avez besoin pour gérer votre ferme, du sol à la vente.",
+    "readyToModernize": "Prêt à moderniser votre ferme ?",
+    "joinFarmers": "Rejoignez des milliers d'agriculteurs utilisant l'IA pour cultiver mieux, plus vite et plus intelligemment.",
+    "createFreeAccount": "Créer un compte gratuit",
+    "privacyPolicy": "Politique de confidentialité",
+    "termsOfService": "Conditions d'utilisation",
+    "allRightsReserved": "Tous droits réservés."
+  },
+  "dashboard": {
+    "hello": "Bonjour",
+    "farmer": "Agriculteur",
+    "detectingLocation": "Détection de la position...",
+    "clickToDetect": "Cliquez pour détecter la position",
+    "schedule": "Planning",
+    "viewAlerts": "Voir les alertes",
+    "fieldHealth": "Santé du champ",
+    "activeCrops": "Cultures actives",
+    "monthlyRevenue": "Revenus mensuels",
+    "farmTools": "Outils agricoles",
+    "farmAdvisory": "Conseil agricole"
+  },
+  "auth": {
+    "welcomeBack": "Bon retour",
+    "signInDesc": "Connectez-vous pour accéder à votre ferme intelligente",
+    "emailAddress": "Adresse e-mail",
+    "enterEmail": "Entrez votre e-mail",
+    "password": "Mot de passe",
+    "enterPassword": "Entrez votre mot de passe",
+    "signingIn": "Connexion...",
+    "signIn": "Se connecter",
+    "orContinueWith": "Ou continuez avec",
+    "signInWithGoogle": "Se connecter avec Google",
+    "noAccount": "Pas de compte ?",
+    "createAccount": "Créer un compte"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "submit": "Soumettre",
+    "back": "Retour",
+    "next": "Suivant",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "signOut": "Déconnexion",
+    "logout": "Déconnexion"
+  },
+  "language": {
+    "selectLanguage": "Choisir la langue",
+    "indian": "Langues indiennes",
+    "international": "Langues internationales"
+  },
+  "chatbot": {
+    "title": "Agro360 Assistant IA",
+    "subtitle": "Toujours là pour aider",
+    "placeholder": "Posez vos questions sur l'agriculture, les cultures, la navigation...",
+    "send": "Envoyer",
+    "clear": "Effacer le chat",
+    "help": "Aide",
+    "close": "Fermer",
+    "voiceTooltip": "Parler",
+    "speakTooltip": "Lire à voix haute",
+    "dragHint": "Faites glisser l'en-tête • Entrée pour envoyer",
+    "errorConnect": "Désolé, problème de connexion au serveur.",
+    "errorGeneral": "Désolé, une erreur s'est produite. Veuillez réessayer.",
+    "cleared": "Chat effacé ! Comment puis-je vous aider aujourd'hui ?",
+    "navigatingTo": "Navigation vers {{page}}...",
+    "greeting": "Bonjour ! Je suis votre assistant IA Agro360. Posez-moi des questions sur l'agriculture ou naviguez dans l'application !",
+    "suggestedPrompts": [
+      "Conseils culture",
+      "Santé du sol",
+      "Ouvrir tableau de bord",
+      "Prix du marché"
+    ]
+  }
+}

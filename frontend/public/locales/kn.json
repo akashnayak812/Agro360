@@ -1,0 +1,109 @@
+{
+  "welcome": "Agro360ಗೆ ಸ್ವಾಗತ",
+  "subtitle": "ಉತ್ತಮ ಭವಿಷ್ಯಕ್ಕಾಗಿ ಸ್ಮಾರ್ಟ್ ಕೃಷಿ",
+  "ask_assistant": "Agro360 ಅನ್ನು ಕೇಳಿ...",
+  "nav": {
+    "dashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್",
+    "crop": "ಬೆಳೆ ಶಿಫಾರಸು",
+    "fertilizer": "ಗೊಬ್ಬರ",
+    "yield": "ಇಳುವರಿ ಮುನ್ಸೂಚನೆ",
+    "soil": "ಮಣ್ಣಿನ ಆರೋಗ್ಯ",
+    "disease": "ರೋಗ ಪತ್ತೆ",
+    "advisory": "ಸಲಹೆ",
+    "community": "ಸಮುದಾಯ",
+    "simulator": "ಕೃಷಿ ಸಿಮ್ಯುಲೇಟರ್",
+    "market": "ಮಾರುಕಟ್ಟೆ ಮಾಹಿತಿ",
+    "risk": "ಅಪಾಯ ಮೌಲ್ಯಮಾಪನ",
+    "farm3d": "3D ಕೃಷಿ ನೋಟ",
+    "schemes": "ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು",
+    "developer": "ಡೆವಲಪರ್"
+  },
+  "voice": {
+    "listening": "ಕೇಳುತ್ತಿದ್ದೇನೆ...",
+    "processing": "ಯೋಚಿಸುತ್ತಿದ್ದೇನೆ...",
+    "error": "ಕ್ಷಮಿಸಿ, ಅರ್ಥವಾಗಲಿಲ್ಲ."
+  },
+  "soil": {
+    "leaf_growth": "ಎಲೆ ಬೆಳವಣಿಗೆ",
+    "flowering": "ಹೂವು ಮತ್ತು ಹಣ್ಣು",
+    "plant_strength": "ಗಿಡಗಳ ಶಕ್ತಿ",
+    "good": "ಉತ್ತಮ",
+    "moderate": "ಮಧ್ಯಮ",
+    "poor": "ಸುಧಾರಣೆ ಬೇಕು"
+  },
+  "landing": {
+    "features": "ವೈಶಿಷ್ಟ್ಯಗಳು",
+    "howItWorks": "ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+    "about": "ಬಗ್ಗೆ",
+    "getStarted": "ಪ್ರಾರಂಭಿಸಿ",
+    "goToDashboard": "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಹೋಗಿ",
+    "comprehensiveTools": "ಸಮಗ್ರ ಸಾಧನಗಳು",
+    "readyToModernize": "ನಿಮ್ಮ ಹೊಲವನ್ನು ಆಧುನೀಕರಿಸಲು ಸಿದ್ಧರೆ?",
+    "createFreeAccount": "ಉಚಿತ ಖಾತೆ ರಚಿಸಿ",
+    "privacyPolicy": "ಗೌಪ್ಯತಾ ನೀತಿ",
+    "termsOfService": "ಸೇವಾ ನಿಯಮಗಳು",
+    "allRightsReserved": "ಎಲ್ಲಾ ಹಕ್ಕುಗಳನ್ನು ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ."
+  },
+  "dashboard": {
+    "hello": "ನಮಸ್ಕಾರ",
+    "farmer": "ರೈತ",
+    "detectingLocation": "ಸ್ಥಳ ಪತ್ತೆಹಚ್ಚಲಾಗುತ್ತಿದೆ...",
+    "clickToDetect": "ಸ್ಥಳ ಪತ್ತೆ ಮಾಡಲು ಕ್ಲಿಕ್ ಮಾಡಿ",
+    "schedule": "ವೇಳಾಪಟ್ಟಿ",
+    "viewAlerts": "ಎಚ್ಚರಿಕೆಗಳನ್ನು ನೋಡಿ",
+    "fieldHealth": "ಹೊಲದ ಆರೋಗ್ಯ",
+    "activeCrops": "ಸಕ್ರಿಯ ಬೆಳೆಗಳು",
+    "monthlyRevenue": "ಮಾಸಿಕ ಆದಾಯ",
+    "farmTools": "ಕೃಷಿ ಸಾಧನಗಳು",
+    "farmAdvisory": "ಕೃಷಿ ಸಲಹೆ"
+  },
+  "auth": {
+    "welcomeBack": "ಮರಳಿ ಸ್ವಾಗತ",
+    "signInDesc": "ನಿಮ್ಮ ಸ್ಮಾರ್ಟ್ ಹೊಲಕ್ಕೆ ಪ್ರವೇಶಿಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ",
+    "emailAddress": "ಇಮೇಲ್ ವಿಳಾಸ",
+    "password": "ಪಾಸ್‌ವರ್ಡ್",
+    "signIn": "ಸೈನ್ ಇನ್",
+    "signInWithGoogle": "Google ನೊಂದಿಗೆ ಸೈನ್ ಇನ್",
+    "noAccount": "ಖಾತೆ ಇಲ್ಲವೇ?",
+    "createAccount": "ಖಾತೆ ರಚಿಸಿ"
+  },
+  "common": {
+    "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ...",
+    "error": "ಏನೋ ತಪ್ಪಾಗಿದೆ",
+    "retry": "ಮರುಪ್ರಯತ್ನಿಸಿ",
+    "cancel": "ರದ್ದು",
+    "save": "ಉಳಿಸಿ",
+    "submit": "ಸಲ್ಲಿಸಿ",
+    "search": "ಹುಡುಕಿ",
+    "signOut": "ಸೈನ್ ಔಟ್",
+    "logout": "ಲಾಗ್ ಔಟ್"
+  },
+  "language": {
+    "selectLanguage": "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ",
+    "indian": "ಭಾರತೀಯ ಭಾಷೆಗಳು",
+    "international": "ಅಂತರಾಷ್ಟ್ರೀಯ ಭಾಷೆಗಳು"
+  },
+  "chatbot": {
+    "title": "Agro360 AI ಸಹಾಯಕ",
+    "subtitle": "ಯಾವಾಗಲೂ ಸಹಾಯಕ್ಕೆ ಇಲ್ಲಿ",
+    "placeholder": "ಕೃಷಿ, ಬೆಳೆಗಳು, ನ್ಯಾವಿಗೇಶನ್ ಬಗ್ಗೆ ಕೇಳಿ...",
+    "send": "ಕಳುಹಿಸಿ",
+    "clear": "ಚಾಟ್ ಅಳಿಸಿ",
+    "help": "ಸಹಾಯ",
+    "close": "ಮುಚ್ಚಿ",
+    "voiceTooltip": "ಮಾತನಾಡಿ",
+    "speakTooltip": "ಜೋರಾಗಿ ಓದಿ",
+    "dragHint": "ಹೆಡರ್ ಎಳೆಯಿರಿ • ಕಳುಹಿಸಲು Enter ಒತ್ತಿ",
+    "errorConnect": "ಕ್ಷಮಿಸಿ, ಸರ್ವರ್‌ಗೆ ಸಂಪರ್ಕಿಸಲು ಸಮಸ್ಯೆ ಇದೆ.",
+    "errorGeneral": "ಕ್ಷಮಿಸಿ, ದೋಷ ಸಂಭವಿಸಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "cleared": "ಚಾಟ್ ಅಳಿಸಲಾಗಿದೆ! ಇಂದು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?",
+    "navigatingTo": "{{page}} ಗೆ ನ್ಯಾವಿಗೇಟ್ ಮಾಡುತ್ತಿದ್ದೇವೆ...",
+    "greeting": "ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ Agro360 AI ಸಹಾಯಕ. ಕೃಷಿ, ಬೆಳೆಗಳ ಬಗ್ಗೆ ಕೇಳಿ ಅಥವಾ ಆ್ಯಪ್‌ನಲ್ಲಿ ನ್ಯಾವಿಗೇಟ್ ಮಾಡಿ!",
+    "suggestedPrompts": [
+      "ಬೆಳೆ ಸಲಹೆ",
+      "ಮಣ್ಣಿನ ಆರೋಗ್ಯ",
+      "ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ತೆರೆ",
+      "ಮಾರುಕಟ್ಟೆ ಬೆಲೆ"
+    ]
+  }
+}

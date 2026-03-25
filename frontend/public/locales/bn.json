@@ -1,0 +1,109 @@
+{
+  "welcome": "Agro360-এ স্বাগতম",
+  "subtitle": "উন্নত ভবিষ্যতের জন্য স্মার্ট চাষ",
+  "ask_assistant": "Agro360-কে জিজ্ঞাসা করুন...",
+  "nav": {
+    "dashboard": "ড্যাশবোর্ড",
+    "crop": "ফসল সুপারিশ",
+    "fertilizer": "সার",
+    "yield": "ফলন পূর্বাভাস",
+    "soil": "মাটির স্বাস্থ্য",
+    "disease": "রোগ সনাক্তকরণ",
+    "advisory": "পরামর্শ",
+    "community": "সম্প্রদায়",
+    "simulator": "ফার্ম সিমুলেটর",
+    "market": "বাজার তথ্য",
+    "risk": "ঝুঁকি মূল্যায়ন",
+    "farm3d": "3D ফার্ম ভিউ",
+    "schemes": "সরকারি প্রকল্প",
+    "developer": "ডেভেলপার"
+  },
+  "voice": {
+    "listening": "শুনছি...",
+    "processing": "ভাবছি...",
+    "error": "দুঃখিত, বুঝতে পারিনি।"
+  },
+  "soil": {
+    "leaf_growth": "পাতার বৃদ্ধি",
+    "flowering": "ফুল ও ফল",
+    "plant_strength": "গাছের শক্তি",
+    "good": "ভালো",
+    "moderate": "মাঝারি",
+    "poor": "উন্নতি প্রয়োজন"
+  },
+  "landing": {
+    "features": "বৈশিষ্ট্য",
+    "howItWorks": "কীভাবে কাজ করে",
+    "about": "সম্পর্কে",
+    "getStarted": "শুরু করুন",
+    "goToDashboard": "ড্যাশবোর্ডে যান",
+    "comprehensiveTools": "ব্যাপক সরঞ্জাম",
+    "readyToModernize": "আপনার খামার আধুনিক করতে প্রস্তুত?",
+    "createFreeAccount": "বিনামূল্যে অ্যাকাউন্ট তৈরি করুন",
+    "privacyPolicy": "গোপনীয়তা নীতি",
+    "termsOfService": "সেবার শর্তাবলী",
+    "allRightsReserved": "সর্বস্বত্ব সংরক্ষিত।"
+  },
+  "dashboard": {
+    "hello": "নমস্কার",
+    "farmer": "কৃষক",
+    "detectingLocation": "অবস্থান সনাক্ত করা হচ্ছে...",
+    "clickToDetect": "অবস্থান সনাক্ত করতে ক্লিক করুন",
+    "schedule": "সময়সূচী",
+    "viewAlerts": "সতর্কতা দেখুন",
+    "fieldHealth": "মাঠের স্বাস্থ্য",
+    "activeCrops": "সক্রিয় ফসল",
+    "monthlyRevenue": "মাসিক আয়",
+    "farmTools": "খামার সরঞ্জাম",
+    "farmAdvisory": "কৃষি পরামর্শ"
+  },
+  "auth": {
+    "welcomeBack": "ফিরে আসায় স্বাগতম",
+    "signInDesc": "আপনার স্মার্ট খামারে প্রবেশ করতে সাইন ইন করুন",
+    "emailAddress": "ইমেইল ঠিকানা",
+    "password": "পাসওয়ার্ড",
+    "signIn": "সাইন ইন",
+    "signInWithGoogle": "Google দিয়ে সাইন ইন",
+    "noAccount": "অ্যাকাউন্ট নেই?",
+    "createAccount": "অ্যাকাউন্ট তৈরি করুন"
+  },
+  "common": {
+    "loading": "লোড হচ্ছে...",
+    "error": "কিছু ভুল হয়েছে",
+    "retry": "পুনরায় চেষ্টা করুন",
+    "cancel": "বাতিল",
+    "save": "সংরক্ষণ",
+    "submit": "জমা দিন",
+    "search": "খুঁজুন",
+    "signOut": "সাইন আউট",
+    "logout": "লগ আউট"
+  },
+  "language": {
+    "selectLanguage": "ভাষা নির্বাচন করুন",
+    "indian": "ভারতীয় ভাষা",
+    "international": "আন্তর্জাতিক ভাষা"
+  },
+  "chatbot": {
+    "title": "Agro360 AI সহায়ক",
+    "subtitle": "সবসময় সাহায্যের জন্য এখানে",
+    "placeholder": "কৃষি, ফসল, নেভিগেশন সম্পর্কে জিজ্ঞাসা করুন...",
+    "send": "পাঠান",
+    "clear": "চ্যাট সাফ করুন",
+    "help": "সাহায্য",
+    "close": "বন্ধ করুন",
+    "voiceTooltip": "বলুন",
+    "speakTooltip": "জোরে পড়ুন",
+    "dragHint": "হেডার টেনে সরান • পাঠাতে Enter চাপুন",
+    "errorConnect": "দুঃখিত, সার্ভারের সাথে সংযোগ করতে সমস্যা হচ্ছে।",
+    "errorGeneral": "দুঃখিত, একটি ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "cleared": "চ্যাট সাফ! আজ আমি কীভাবে সাহায্য করতে পারি?",
+    "navigatingTo": "{{page}} এ নেভিগেট করছি...",
+    "greeting": "নমস্কার! আমি আপনার Agro360 AI সহায়ক। কৃষি, ফসল সম্পর্কে জিজ্ঞাসা করুন বা অ্যাপে নেভিগেট করুন!",
+    "suggestedPrompts": [
+      "ফসল পরামর্শ",
+      "মাটির স্বাস্থ্য",
+      "ড্যাশবোর্ড খুলুন",
+      "বাজার দর"
+    ]
+  }
+}

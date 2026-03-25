@@ -80,3 +80,43 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #81C784;
 }
+
+/* ===== RTL Support ===== */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] main {
+  margin-left: 0 !important;
+  margin-right: 0;
+}
+
+@media (min-width: 1024px) {
+  [dir="rtl"] main {
+    margin-left: 0 !important;
+    margin-right: 5rem; /* lg:mr-20 equivalent */
+  }
+}
+
+[dir="rtl"] .flex-row-reverse-rtl {
+  flex-direction: row-reverse;
+}
+
+/* RTL sidebar positioning */
+[dir="rtl"] aside {
+  left: auto;
+  right: 0;
+}
+
+/* Fix icon spacing in RTL */
+[dir="rtl"] .gap-3 > svg,
+[dir="rtl"] .gap-2 > svg {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Ensure dropdown menus stay properly positioned in RTL */
+[dir="rtl"] #language-selector .absolute {
+  right: 0;
+  left: auto;
+}

@@ -1,0 +1,120 @@
+{
+  "welcome": "Bienvenido a Agro360",
+  "subtitle": "Agricultura inteligente para un futuro mejor",
+  "ask_assistant": "Pregunta a Agro360...",
+  "nav": {
+    "dashboard": "Panel",
+    "crop": "Recomendación de cultivos",
+    "fertilizer": "Fertilizante",
+    "yield": "Predicción de rendimiento",
+    "soil": "Salud del suelo",
+    "disease": "Detección de enfermedades",
+    "advisory": "Asesoría",
+    "community": "Comunidad",
+    "simulator": "Simulador de granja",
+    "market": "Información del mercado",
+    "risk": "Evaluación de riesgos",
+    "farm3d": "Vista 3D de granja",
+    "schemes": "Esquemas gubernamentales",
+    "developer": "Desarrollador"
+  },
+  "voice": {
+    "listening": "Escuchando...",
+    "processing": "Pensando...",
+    "error": "Lo siento, no entendí."
+  },
+  "soil": {
+    "leaf_growth": "Crecimiento de hojas",
+    "flowering": "Flores y frutos",
+    "plant_strength": "Fuerza de la planta",
+    "good": "Bueno",
+    "moderate": "Moderado",
+    "poor": "Necesita mejorar"
+  },
+  "landing": {
+    "features": "Características",
+    "howItWorks": "Cómo funciona",
+    "about": "Acerca de",
+    "getStarted": "Comenzar",
+    "goToDashboard": "Ir al panel",
+    "farmingMeetsAI": "La agricultura se encuentra con",
+    "artificialIntelligence": "Inteligencia Artificial",
+    "comprehensiveTools": "Herramientas completas",
+    "toolsDesc": "Todo lo que necesitas para gestionar tu granja, del suelo a la venta.",
+    "readyToModernize": "¿Listo para modernizar tu granja?",
+    "joinFarmers": "Únete a miles de agricultores que usan IA para cultivar mejor, más rápido e inteligente.",
+    "createFreeAccount": "Crear cuenta gratuita",
+    "privacyPolicy": "Política de privacidad",
+    "termsOfService": "Términos de servicio",
+    "allRightsReserved": "Todos los derechos reservados."
+  },
+  "dashboard": {
+    "hello": "Hola",
+    "farmer": "Agricultor",
+    "detectingLocation": "Detectando ubicación...",
+    "clickToDetect": "Haz clic para detectar ubicación",
+    "schedule": "Horario",
+    "viewAlerts": "Ver alertas",
+    "fieldHealth": "Salud del campo",
+    "activeCrops": "Cultivos activos",
+    "monthlyRevenue": "Ingresos mensuales",
+    "farmTools": "Herramientas agrícolas",
+    "farmAdvisory": "Asesoría agrícola"
+  },
+  "auth": {
+    "welcomeBack": "Bienvenido de nuevo",
+    "signInDesc": "Inicia sesión para acceder a tu granja inteligente",
+    "emailAddress": "Dirección de correo",
+    "enterEmail": "Ingresa tu correo",
+    "password": "Contraseña",
+    "enterPassword": "Ingresa tu contraseña",
+    "signingIn": "Iniciando sesión...",
+    "signIn": "Iniciar sesión",
+    "orContinueWith": "O continúa con",
+    "signInWithGoogle": "Iniciar sesión con Google",
+    "noAccount": "¿No tienes cuenta?",
+    "createAccount": "Crear cuenta"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "retry": "Reintentar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "submit": "Enviar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "close": "Cerrar",
+    "search": "Buscar",
+    "signOut": "Cerrar sesión",
+    "logout": "Cerrar sesión"
+  },
+  "language": {
+    "selectLanguage": "Seleccionar idioma",
+    "indian": "Idiomas indios",
+    "international": "Idiomas internacionales"
+  },
+  "chatbot": {
+    "title": "Agro360 Asistente IA",
+    "subtitle": "Siempre aquí para ayudar",
+    "placeholder": "Pregunte sobre agricultura, cultivos, navegación...",
+    "send": "Enviar",
+    "clear": "Borrar chat",
+    "help": "Ayuda",
+    "close": "Cerrar",
+    "voiceTooltip": "Hablar",
+    "speakTooltip": "Leer en voz alta",
+    "dragHint": "Arrastra el encabezado • Enter para enviar",
+    "errorConnect": "Lo sentimos, hay un problema de conexión con el servidor.",
+    "errorGeneral": "Lo sentimos, ocurrió un error. Por favor, inténtelo de nuevo.",
+    "cleared": "¡Chat borrado! ¿Cómo puedo ayudarte hoy?",
+    "navigatingTo": "Navegando a {{page}}...",
+    "greeting": "¡Hola! Soy tu asistente de IA Agro360. ¡Pregúntame sobre agricultura, cultivos o navega por la app!",
+    "suggestedPrompts": [
+      "Consejo de cultivos",
+      "Salud del suelo",
+      "Abrir panel",
+      "Precios de mercado"
+    ]
+  }
+}

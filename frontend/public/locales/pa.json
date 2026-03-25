@@ -1,0 +1,109 @@
+{
+  "welcome": "Agro360 ਵਿੱਚ ਤੁਹਾਡਾ ਸੁਆਗਤ ਹੈ",
+  "subtitle": "ਬਿਹਤਰ ਭਵਿੱਖ ਲਈ ਸਮਾਰਟ ਖੇਤੀ",
+  "ask_assistant": "Agro360 ਨੂੰ ਪੁੱਛੋ...",
+  "nav": {
+    "dashboard": "ਡੈਸ਼ਬੋਰਡ",
+    "crop": "ਫ਼ਸਲ ਸਿਫ਼ਾਰਸ਼",
+    "fertilizer": "ਖਾਦ",
+    "yield": "ਝਾੜ ਭਵਿੱਖਬਾਣੀ",
+    "soil": "ਮਿੱਟੀ ਦੀ ਸਿਹਤ",
+    "disease": "ਰੋਗ ਪਛਾਣ",
+    "advisory": "ਸਲਾਹ",
+    "community": "ਭਾਈਚਾਰਾ",
+    "simulator": "ਖੇਤ ਸਿਮੂਲੇਟਰ",
+    "market": "ਮੰਡੀ ਜਾਣਕਾਰੀ",
+    "risk": "ਜੋਖ਼ਮ ਮੁਲਾਂਕਣ",
+    "farm3d": "3D ਖੇਤ ਦ੍ਰਿਸ਼",
+    "schemes": "ਸਰਕਾਰੀ ਯੋਜਨਾਵਾਂ",
+    "developer": "ਡਿਵੈਲਪਰ"
+  },
+  "voice": {
+    "listening": "ਸੁਣ ਰਿਹਾ ਹਾਂ...",
+    "processing": "ਸੋਚ ਰਿਹਾ ਹਾਂ...",
+    "error": "ਮਾਫ਼ ਕਰਨਾ, ਸਮਝ ਨਹੀਂ ਆਇਆ।"
+  },
+  "soil": {
+    "leaf_growth": "ਪੱਤੇ ਦਾ ਵਾਧਾ",
+    "flowering": "ਫੁੱਲ ਤੇ ਫਲ",
+    "plant_strength": "ਬੂਟੇ ਦੀ ਤਾਕਤ",
+    "good": "ਚੰਗਾ",
+    "moderate": "ਮੱਧਮ",
+    "poor": "ਸੁਧਾਰ ਲੋੜੀਂਦਾ"
+  },
+  "landing": {
+    "features": "ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ",
+    "howItWorks": "ਕਿਵੇਂ ਕੰਮ ਕਰਦਾ ਹੈ",
+    "about": "ਬਾਰੇ",
+    "getStarted": "ਸ਼ੁਰੂ ਕਰੋ",
+    "goToDashboard": "ਡੈਸ਼ਬੋਰਡ ਤੇ ਜਾਓ",
+    "comprehensiveTools": "ਵਿਆਪਕ ਔਜ਼ਾਰ",
+    "readyToModernize": "ਆਪਣੇ ਖੇਤ ਨੂੰ ਆਧੁਨਿਕ ਬਣਾਉਣ ਲਈ ਤਿਆਰ ਹੋ?",
+    "createFreeAccount": "ਮੁਫ਼ਤ ਖਾਤਾ ਬਣਾਓ",
+    "privacyPolicy": "ਗੋਪਨੀਯਤਾ ਨੀਤੀ",
+    "termsOfService": "ਸੇਵਾ ਦੀਆਂ ਸ਼ਰਤਾਂ",
+    "allRightsReserved": "ਸਾਰੇ ਹੱਕ ਰਾਖਵੇਂ ਹਨ।"
+  },
+  "dashboard": {
+    "hello": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ",
+    "farmer": "ਕਿਸਾਨ",
+    "detectingLocation": "ਟਿਕਾਣਾ ਲੱਭ ਰਿਹਾ ਹੈ...",
+    "clickToDetect": "ਟਿਕਾਣਾ ਲੱਭਣ ਲਈ ਕਲਿੱਕ ਕਰੋ",
+    "schedule": "ਸਮਾਂ-ਸੂਚੀ",
+    "viewAlerts": "ਚੇਤਾਵਨੀਆਂ ਵੇਖੋ",
+    "fieldHealth": "ਖੇਤ ਦੀ ਸਿਹਤ",
+    "activeCrops": "ਸਰਗਰਮ ਫ਼ਸਲਾਂ",
+    "monthlyRevenue": "ਮਹੀਨਾਵਾਰ ਆਮਦਨ",
+    "farmTools": "ਖੇਤੀ ਔਜ਼ਾਰ",
+    "farmAdvisory": "ਖੇਤੀ ਸਲਾਹ"
+  },
+  "auth": {
+    "welcomeBack": "ਵਾਪਸ ਆਉਣ ਤੇ ਜੀ ਆਇਆਂ ਨੂੰ",
+    "signInDesc": "ਆਪਣੇ ਸਮਾਰਟ ਖੇਤ ਵਿੱਚ ਦਾਖਲ ਹੋਣ ਲਈ ਸਾਈਨ ਇਨ ਕਰੋ",
+    "emailAddress": "ਈਮੇਲ ਪਤਾ",
+    "password": "ਪਾਸਵਰਡ",
+    "signIn": "ਸਾਈਨ ਇਨ",
+    "signInWithGoogle": "Google ਨਾਲ ਸਾਈਨ ਇਨ",
+    "noAccount": "ਖਾਤਾ ਨਹੀਂ ਹੈ?",
+    "createAccount": "ਖਾਤਾ ਬਣਾਓ"
+  },
+  "common": {
+    "loading": "ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...",
+    "error": "ਕੁਝ ਗਲਤ ਹੋਇਆ",
+    "retry": "ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ",
+    "cancel": "ਰੱਦ ਕਰੋ",
+    "save": "ਸੇਵ ਕਰੋ",
+    "submit": "ਜਮ੍ਹਾਂ ਕਰੋ",
+    "search": "ਲੱਭੋ",
+    "signOut": "ਸਾਈਨ ਆਉਟ",
+    "logout": "ਲੌਗ ਆਉਟ"
+  },
+  "language": {
+    "selectLanguage": "ਭਾਸ਼ਾ ਚੁਣੋ",
+    "indian": "ਭਾਰਤੀ ਭਾਸ਼ਾਵਾਂ",
+    "international": "ਅੰਤਰਰਾਸ਼ਟਰੀ ਭਾਸ਼ਾਵਾਂ"
+  },
+  "chatbot": {
+    "title": "Agro360 AI ਸਹਾਇਕ",
+    "subtitle": "ਹਮੇਸ਼ਾ ਮਦਦ ਲਈ ਇੱਥੇ",
+    "placeholder": "ਖੇਤੀ, ਫ਼ਸਲਾਂ, ਨੈਵੀਗੇਸ਼ਨ ਬਾਰੇ ਪੁੱਛੋ...",
+    "send": "ਭੇਜੋ",
+    "clear": "ਚੈਟ ਸਾਫ਼ ਕਰੋ",
+    "help": "ਮਦਦ",
+    "close": "ਬੰਦ ਕਰੋ",
+    "voiceTooltip": "ਬੋਲੋ",
+    "speakTooltip": "ਉੱਚੀ ਆਵਾਜ਼ ਵਿੱਚ ਪੜ੍ਹੋ",
+    "dragHint": "ਹੈਡਰ ਖਿੱਚੋ • ਭੇਜਣ ਲਈ Enter ਦਬਾਓ",
+    "errorConnect": "ਮੁਆਫ਼ ਕਰਨਾ, ਸਰਵਰ ਨਾਲ ਜੁੜਨ ਵਿੱਚ ਸਮੱਸਿਆ ਹੈ।",
+    "errorGeneral": "ਮੁਆਫ਼ ਕਰਨਾ, ਗਲਤੀ ਹੋਈ। ਕਿਰਪਾ ਕਰਕੇ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ।",
+    "cleared": "ਚੈਟ ਸਾਫ਼! ਅੱਜ ਮੈਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦਾ ਹਾਂ?",
+    "navigatingTo": "{{page}} 'ਤੇ ਜਾ ਰਹੇ ਹਾਂ...",
+    "greeting": "ਸਤ ਸ੍ਰੀ ਅਕਾਲ! ਮੈਂ ਤੁਹਾਡਾ Agro360 AI ਸਹਾਇਕ ਹਾਂ। ਖੇਤੀ, ਫ਼ਸਲਾਂ ਬਾਰੇ ਪੁੱਛੋ ਜਾਂ ਐਪ ਵਿੱਚ ਨੈਵੀਗੇਟ ਕਰੋ!",
+    "suggestedPrompts": [
+      "ਫ਼ਸਲ ਸਲਾਹ",
+      "ਮਿੱਟੀ ਸਿਹਤ",
+      "ਡੈਸ਼ਬੋਰਡ ਖੋਲੋ",
+      "ਮੰਡੀ ਭਾਅ"
+    ]
+  }
+}

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import { LogIn, Mail, Lock, Loader2 } from 'lucide-react';
 import AnimatedBackground from './AnimatedBackground';
 
 const Login = () => {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login, loginWithGoogle, error } = useAuth();
@@ -48,8 +50,8 @@ const Login = () => {
                         >
                             <LogIn className="w-8 h-8 text-white" />
                         </motion.div>
-                        <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
-                        <p className="text-gray-300">Sign in to access your smart farm</p>
+                        <h2 className="text-3xl font-bold text-white mb-2">{t('auth.welcomeBack')}</h2>
+                        <p className="text-gray-300">{t('auth.signInDesc')}</p>
                     </div>
 
                     {error && (
@@ -65,7 +67,7 @@ const Login = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-300 ml-1">Email Address</label>
+                            <label className="text-sm font-medium text-gray-300 ml-1">{t('auth.emailAddress')}</label>
                             <div className="relative group">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-green-400 transition-colors" />
                                 <input
@@ -73,14 +75,14 @@ const Login = () => {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     className="w-full bg-black/20 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all"
-                                    placeholder="Enter your email"
+                                    placeholder={t('auth.enterEmail')}
                                     required
                                 />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-gray-300 ml-1">Password</label>
+                            <label className="text-sm font-medium text-gray-300 ml-1">{t('auth.password')}</label>
                             <div className="relative group">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-green-400 transition-colors" />
                                 <input
@@ -88,7 +90,7 @@ const Login = () => {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     className="w-full bg-black/20 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all"
-                                    placeholder="Enter your password"
+                                    placeholder={t('auth.enterPassword')}
                                     required
                                 />
                             </div>
@@ -102,11 +104,11 @@ const Login = () => {
                             {loading ? (
                                 <>
                                     <Loader2 className="w-5 h-5 animate-spin" />
-                                    Signing In...
+                                    {t('auth.signingIn')}
                                 </>
                             ) : (
                                 <>
-                                    Sign In
+                                    {t('auth.signIn')}
                                 </>
                             )}
                         </button>
@@ -118,7 +120,7 @@ const Login = () => {
                                 <span className="w-full border-t border-white/10" />
                             </div>
                             <div className="relative flex justify-center text-xs uppercase">
-                                <span className="bg-transparent px-2 text-gray-400">Or continue with</span>
+                                <span className="bg-transparent px-2 text-gray-400">{t('auth.orContinueWith')}</span>
                             </div>
                         </div>
 
@@ -145,15 +147,15 @@ const Login = () => {
                                     fill="#EA4335"
                                 />
                             </svg>
-                            Sign in with Google
+                            {t('auth.signInWithGoogle')}
                         </button>
                     </div>
 
                     <div className="mt-6 text-center">
                         <p className="text-gray-400 text-sm">
-                            Don't have an account?{' '}
+                            {t('auth.noAccount')}{' '}
                             <Link to="/register" className="text-green-400 hover:text-green-300 font-medium hover:underline transition-colors">
-                                Create Account
+                                {t('auth.createAccount')}
                             </Link>
                         </p>
                     </div>
