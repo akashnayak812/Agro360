@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ScanLine, Upload, Camera, X, Check, CheckCircle2, AlertOctagon, Activity, ChevronRight, Stethoscope } from 'lucide-react';
 import { Card } from './ui/Card';
@@ -14,6 +15,7 @@ const DiseaseDetection = () => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const fileInputRef = useRef(null);
+    const { i18n } = useTranslation();
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -81,6 +83,7 @@ const DiseaseDetection = () => {
 
         const formData = new FormData();
         formData.append('image', image);
+        formData.append('language', i18n.language);
 
         try {
             const response = await fetch(`${API_URL}/api/disease/detect`, {

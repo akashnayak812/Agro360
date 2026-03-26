@@ -10,6 +10,7 @@ crop_bp = Blueprint('crop_bp', __name__)
 def recommend_crop():
     try:
         data = request.json
+        language = data.get('language', 'en')
         # Expecting: {"N": 90, "P": 42, "K": 43, "temperature": 20.8, "humidity": 82, "ph": 6.5, "rainfall": 202.9}
         features = [
             float(data.get('N')),
@@ -31,16 +32,27 @@ def recommend_crop():
                 "temperature": features[3], "humidity": features[4],
                 "ph": features[5], "rainfall": features[6],
             }
-            decision = run_decision_engine(decision_inputs, prediction)
+            decision = run_decision_engine(decision_inputs, prediction, language)
         except Exception as de_err:
             current_app.logger.warning("Decision engine error: %s", de_err)
         # --- End decision engine integration ---
         
+        # Translate message and prediction if needed
+        message = f"Based on the soil and weather conditions, {prediction} is the best suitable crop."
+        if language and language != 'en':
+            from services.gemini_service import gemini_service
+            translated_pred = gemini_service.translate_text(prediction, language)
+            prompt = f"Translate the following recommendation message. Replace the English crop name with the translated crop name. Return ONLY the translated string:\n\n{message}"
+            translated_msg = gemini_service.generate_response(prompt, language)
+            
+            prediction = translated_pred if translated_pred else prediction
+            message = translated_msg.strip() if translated_msg else message
+
         return jsonify({
             "success": True,
             "crop": prediction,
             "confidence": confidence,
-            "message": f"Based on the soil and weather conditions, {prediction} is the best suitable crop.",
+            "message": message,
             "decision": decision
         })
     except Exception as e:
@@ -60,6 +72,7 @@ def recommend_crop_simple():
     """
     try:
         data = request.json
+        language = data.get('language', 'en')
         
         # Convert simple inputs to technical values
         technical = convert_simple_to_technical(data)
@@ -101,16 +114,27 @@ def recommend_crop_simple():
                 "ph": technical.get('ph', features[5]),
                 "rainfall": technical.get('rainfall', features[6]),
             }
-            decision = run_decision_engine(decision_inputs, prediction)
+            decision = run_decision_engine(decision_inputs, prediction, language)
         except Exception as de_err:
             current_app.logger.warning("Decision engine error (simple): %s", de_err)
         # --- End decision engine integration ---
         
+        # Translate message and prediction if needed
+        message = f"Based on your location and soil, {prediction} is the best crop for you!"
+        if language and language != 'en':
+            from services.gemini_service import gemini_service
+            translated_pred = gemini_service.translate_text(prediction, language)
+            prompt = f"Translate the following recommendation message. Replace the English crop name with the translated crop name. Return ONLY the translated string:\n\n{message}"
+            translated_msg = gemini_service.generate_response(prompt, language)
+            
+            prediction = translated_pred if translated_pred else prediction
+            message = translated_msg.strip() if translated_msg else message
+
         return jsonify({
             "success": True,
             "crop": prediction,
             "confidence": confidence,
-            "message": f"Based on your location and soil, {prediction} is the best crop for you!",
+            "message": message,
             "location": {
                 "state": data.get('state'),
                 "district": data.get('district')

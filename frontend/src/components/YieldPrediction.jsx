@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { TrendingUp, Sprout, Map, CloudRain, Briefcase } from 'lucide-react';
 import { Card } from './ui/Card';
@@ -12,6 +13,7 @@ const YieldPrediction = () => {
     });
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
+    const { i18n } = useTranslation();
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -24,7 +26,7 @@ const YieldPrediction = () => {
             const response = await fetch(`${API_URL}/api/yield/predict`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, language: i18n.language }),
             });
             const data = await response.json();
             setResult(data);

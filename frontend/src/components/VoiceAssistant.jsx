@@ -22,8 +22,20 @@ const VoiceAssistant = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedLang, setSelectedLang] = useState('en-US');
     const [showLangMenu, setShowLangMenu] = useState(false);
+    const { i18n } = useTranslation();
 
     const recognitionRef = useRef(null);
+
+    useEffect(() => {
+        const langMap = {
+            'en': 'en-US',
+            'hi': 'hi-IN',
+            'te': 'te-IN'
+        };
+        if (i18n.language && langMap[i18n.language]) {
+            setSelectedLang(langMap[i18n.language]);
+        }
+    }, [i18n.language]);
 
     useEffect(() => {
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {

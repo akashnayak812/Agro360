@@ -357,6 +357,29 @@ def generate_explanation(
     return explanations
 
 
+def get_alternative_crops(inputs: CropInputs, predicted_crop: str) -> list[str]:
+    """
+    Calculate suitability scores for all crops and return the top 2-3
+    alternatives (excluding the predicted crop).
+    """
+    alternatives = []
+    predicted_lower = predicted_crop.lower()
+    
+    for crop in CROP_REQUIREMENTS.keys():
+        if crop == predicted_lower:
+            continue
+            
+        score = compute_suitability_score(inputs, crop)
+        # Only consider crops that have a reasonable soil match (score >= 40)
+        if score >= 40:
+            alternatives.append((crop, score))
+            
+    # Sort by suitability score descending
+    alternatives.sort(key=lambda x: x[1], reverse=True)
+    
+    # Return top 2 or 3 fallback crops as capitalized strings
+    return [crop.capitalize() for crop, _ in alternatives[:3]]
+
 # ──────────────────────────────────────────────────────────────────
 # Section 5: Public entry point
 # ──────────────────────────────────────────────────────────────────
@@ -364,7 +387,7 @@ def generate_explanation(
 REQUIRED_KEYS = {"N", "P", "K", "temperature", "humidity", "ph", "rainfall"}
 
 
-def run_decision_engine(inputs: dict, predicted_crop: str) -> dict:
+def run_decision_engine(inputs: dict, predicted_crop: str, language: str = 'en') -> dict:
     """
     Orchestrate the full decision pipeline.
 
@@ -418,12 +441,37 @@ def run_decision_engine(inputs: dict, predicted_crop: str) -> dict:
     explanation = generate_explanation(
         crop_inputs, predicted_crop, scores, risk_level
     )
+    
+    alternatives = get_alternative_crops(crop_inputs, predicted_crop)
+
+    if language and language != 'en':
+        try:
+            from services.gemini_service import gemini_service
+            
+            # Translate explanations
+            translated_expl = []
+            for exp in explanation:
+                prompt = f"Translate the following explanation. Return ONLY the translated string without quotes:\n\n{exp}"
+                trans = gemini_service.generate_response(prompt, language)
+                translated_expl.append(trans.strip() if trans else exp)
+            explanation = translated_expl
+            
+            # Translate alternatives
+            translated_alts = []
+            for alt in alternatives:
+                trans_alt = gemini_service.translate_text(alt, language)
+                translated_alts.append(trans_alt if trans_alt else alt)
+            alternatives = translated_alts
+        except Exception as e:
+            import logging
+            logging.error(f"Translation failed in decision engine: {e}")
 
     return {
         "recommended_crop": predicted_crop,
         "final_score": final_score,
         "scores": scores,
         "risk_level": risk_level,
+        "alternatives": alternatives,
         "explanation": explanation,
     }
 

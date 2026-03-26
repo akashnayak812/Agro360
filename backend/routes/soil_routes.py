@@ -7,6 +7,7 @@ soil_bp = Blueprint('soil_bp', __name__)
 def analyze_soil():
     try:
         data = request.json
+        language = data.get('language', 'en')
         # Expecting: {"N": 90, "P": 42, "K": 43, "ph": 6.5, "moisture": 50}
         features = [
             float(data.get('N')),
@@ -16,7 +17,7 @@ def analyze_soil():
             float(data.get('moisture', 50))
         ]
         
-        status, advice, recommended_crops = soil_model.predict(features)
+        status, advice, recommended_crops = soil_model.predict(features, language)
         
         return jsonify({
             "success": True,

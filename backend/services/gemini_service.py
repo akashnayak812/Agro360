@@ -6,6 +6,24 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+LANGUAGE_MAP = {
+    'en': 'English',
+    'hi': 'Hindi',
+    'te': 'Telugu',
+    'ta': 'Tamil',
+    'kn': 'Kannada',
+    'mr': 'Marathi',
+    'bn': 'Bengali',
+    'gu': 'Gujarati',
+    'pa': 'Punjabi',
+    'ml': 'Malayalam',
+    'ur': 'Urdu',
+    'de': 'German',
+    'es': 'Spanish',
+    'fr': 'French',
+    'zh': 'Chinese'
+}
+
 # Configure Gemini from environment variable
 class GeminiService:
     def __init__(self):
@@ -13,7 +31,8 @@ class GeminiService:
         self.api_keys = [
             os.environ.get("GEMINI_API_KEY"),
             os.environ.get("GEMINI_API_KEY_2"),
-            os.environ.get("GEMINI_API_KEY_3")
+            os.environ.get("GEMINI_API_KEY_3"),
+            os.environ.get("GEMINI_API_KEY_4")
         ]
         # Filter out None values
         self.api_keys = [key for key in self.api_keys if key]
@@ -173,7 +192,7 @@ class GeminiService:
                 "success": False
             }
 
-    def generate_response(self, prompt):
+    def generate_response(self, prompt, language='en'):
         """
         Generic method to generate content from Gemini based on a prompt.
         Used by ML models for predictions.
@@ -181,6 +200,11 @@ class GeminiService:
         if not self.client:
             print("Gemini client not initialized - API key missing")
             return None
+        
+        target_lang = LANGUAGE_MAP.get(language, 'English')
+        lang_instruction = f"\n\nRespond entirely in {target_lang}. If the language is '{language}', respond in {target_lang}. Default to English if unsure."
+        full_prompt = prompt + lang_instruction
+
         try:
             # Retry logic with key rotation
             max_retries = len(self.api_keys)
@@ -191,7 +215,7 @@ class GeminiService:
                     try:
                          response = self.client.models.generate_content(
                             model=model,
-                            contents=prompt
+                            contents=full_prompt
                         )
                          return response.text
                     except Exception as e:
@@ -208,13 +232,18 @@ class GeminiService:
             print(f"Gemini Generation Error: {e}")
             return None
 
-    def analyze_image(self, prompt, image_data):
+    def analyze_image(self, prompt, image_data, language='en'):
         """
         Analyze an image using Gemini's vision capabilities.
         """
         if not self.client:
             print("Gemini client not initialized - API key missing")
             return None
+        
+        target_lang = LANGUAGE_MAP.get(language, 'English')
+        lang_instruction = f"\n\nRespond entirely in {target_lang}. If the language is '{language}', respond in {target_lang}."
+        full_prompt = prompt + lang_instruction
+
         try:
             # For image analysis, use the vision-capable model
             models_to_try = [self.model_name] + self.fallback_models
@@ -223,7 +252,7 @@ class GeminiService:
                 try:
                     response = self.client.models.generate_content(
                         model=model,
-                        contents=[prompt, image_data]
+                        contents=[full_prompt, image_data]
                     )
                     return response.text
                 except Exception as e:
@@ -277,5 +306,20 @@ class GeminiService:
         except Exception as e:
             print(f"Gemini Market Analysis Error: {e}")
             return None
+
+    def translate_text(self, text, language):
+        """
+        Translates short ML predictions (e.g. crop names, disease names) to the target language.
+        """
+        if language == 'en' or not text:
+            return text
+        
+        target_lang = LANGUAGE_MAP.get(language, 'English')
+        prompt = f"Translate the word or short phrase '{text}' to {target_lang}. Return ONLY the translated word/phrase, with no extra punctuation, whitespace, or explanation."
+        
+        translated = self.generate_response(prompt, language='en')
+        if translated:
+            return translated.strip()
+        return text
 
 gemini_service = GeminiService()

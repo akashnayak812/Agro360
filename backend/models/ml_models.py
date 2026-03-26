@@ -56,7 +56,7 @@ class YieldPredictor:
         return 4.5
 
 class SoilHealthAnalyzer:
-    def predict(self, data):
+    def predict(self, data, language='en'):
         # data: [N, P, K, pH, moisture]
         prompt = f"""
         Analyze soil health: N:{data[0]}, P:{data[1]}, K:{data[2]}, pH:{data[3]}, Moisture:{data[4]}%.
@@ -66,7 +66,7 @@ class SoilHealthAnalyzer:
         - "advice": "Detailed advice on how to improve soil based on NPK values (2-3 sentences)"
         - "recommended_crops": ["Crop1", "Crop2", "Crop3"] (List of 3 best crops for this soil)
         """
-        response = gemini_service.generate_response(prompt)
+        response = gemini_service.generate_response(prompt, language)
         if response:
             try:
                 clean_response = response.replace('```json', '').replace('```', '').strip()
@@ -78,7 +78,7 @@ class SoilHealthAnalyzer:
         return "Moderate (Fallback)", "Balanced fertilization needed.", []
 
 class DiseaseDetector:
-    def predict(self, image_data):
+    def predict(self, image_data, language='en'):
         prompt = """
         Analyze this plant leaf image. Identify the disease (if any).
         Return purely JSON in this format:
@@ -93,7 +93,7 @@ class DiseaseDetector:
         
         if image_data:
             print("Sending image to Gemini for analysis...")
-            response = gemini_service.analyze_image(prompt, image_data)
+            response = gemini_service.analyze_image(prompt, image_data, language)
             if response:
                 try:
                     # Clean potential markdown
@@ -113,7 +113,7 @@ class DiseaseDetector:
         Act as a plant pathologist. A farmer describes: "{scenario}".
         Diagnose it. Return JSON: {{ "disease": "Name", "symptoms": "Description", "treatment_steps": ["Step 1", "Step 2"] }}
         """
-        response = gemini_service.generate_response(prompt_text)
+        response = gemini_service.generate_response(prompt_text, language)
          
         if response:
              try:

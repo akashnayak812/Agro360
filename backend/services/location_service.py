@@ -189,10 +189,10 @@ def get_weather_by_coordinates(lat, lon):
     """
     try:
         # Using a free weather API (OpenWeatherMap)
-        api_key = os.getenv('OPENWEATHER_API_KEY', 'demo')
+        api_key = os.getenv('OPENWEATHER_API_KEY')
         
-        # If no API key, return average values based on season
-        if api_key == 'demo':
+        # If no API key or demo key, return average values based on season
+        if api_key == 'demo' or not api_key:
             import datetime
             month = datetime.datetime.now().month
             

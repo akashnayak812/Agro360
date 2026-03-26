@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from services.gemini_service import gemini_service
 from datetime import datetime
 import json
@@ -7,6 +7,7 @@ advisory_bp = Blueprint('advisory_bp', __name__)
 
 @advisory_bp.route('/current', methods=['GET'])
 def get_advisory():
+    language = request.args.get('language', 'en')
     # In real app, fetch real weather. Here we simulate random valid weather.
     import random
     weather_conditions = ["Sunny", "Rainy", "Cloudy", "Windy"]
@@ -26,7 +27,7 @@ def get_advisory():
     }}
     """
     
-    response = gemini_service.generate_response(prompt)
+    response = gemini_service.generate_response(prompt, language)
     if response:
         try:
             clean_response = response.replace('```json', '').replace('```', '')

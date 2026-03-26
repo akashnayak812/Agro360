@@ -46,7 +46,7 @@ const RiskBadge = ({ level, t }) => {
 // ─── Helper: DecisionPanel ───────────────────────────────────────
 const DecisionPanel = ({ decision, t }) => {
     if (!decision) return null;
-    const { scores, risk_level, final_score, explanation } = decision;
+    const { scores, risk_level, final_score, explanation, alternatives } = decision;
     return (
         <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -106,12 +106,28 @@ const DecisionPanel = ({ decision, t }) => {
                     ))}
                 </ul>
             )}
+
+            {/* Alternative Crops */}
+            {alternatives && alternatives.length > 0 && (
+                <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <h5 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                        {t('decision.alternative_crops') || 'Alternative Crops'}
+                    </h5>
+                    <div className="flex flex-wrap gap-2">
+                        {alternatives.map((crop, idx) => (
+                            <span key={idx} className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg text-sm font-medium border border-gray-200 dark:border-gray-700">
+                                {crop}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
         </motion.div>
     );
 };
 
 const CropRecommendation = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
     
@@ -178,7 +194,8 @@ const CropRecommendation = () => {
                     state: simpleData.state,
                     district: simpleData.district,
                     soil_type: simpleData.soilType,
-                    water: simpleData.water
+                    water: simpleData.water,
+                    language: i18n.language
                 }),
             });
             const data = await response.json();
@@ -198,7 +215,7 @@ const CropRecommendation = () => {
             const response = await fetch(`${API_URL}/api/crop/recommend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, language: i18n.language }),
             });
             const data = await response.json();
             setResult(data);

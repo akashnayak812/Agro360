@@ -8,6 +8,7 @@ yield_bp = Blueprint('yield_bp', __name__)
 def predict_yield():
     try:
         data = request.json
+        language = data.get('language', 'en')
         # Expecting: {"crop": "Rice", "area": 10, "rainfall": 150, "fertilizer": 500}
         
         # Mock encoding for crop if needed, but here we just pass simplified numeric args
@@ -21,11 +22,18 @@ def predict_yield():
         
         prediction = yield_model.predict(features)
         
+        message = f"Estimated yield for {data.get('area')} hectares is {prediction} tons."
+        if language and language != 'en':
+            from services.gemini_service import gemini_service
+            prompt = f"Translate the following message. Return ONLY the translated string:\n\n{message}"
+            trans_msg = gemini_service.generate_response(prompt, language)
+            message = trans_msg.strip() if trans_msg else message
+
         return jsonify({
             "success": True,
             "predicted_yield": prediction,
             "unit": "tons",
-            "message": f"Estimated yield for {data.get('area')} hectares is {prediction} tons."
+            "message": message
         })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500

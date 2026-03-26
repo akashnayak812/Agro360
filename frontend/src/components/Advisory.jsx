@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { CloudRain, Sun, Wind, Cloud, Calendar, Thermometer, Droplets } from 'lucide-react';
 import { Card } from './ui/Card';
@@ -6,13 +7,14 @@ import { API_URL } from '../lib/api';
 
 const Advisory = () => {
     const [data, setData] = useState(null);
+    const { i18n } = useTranslation();
 
     useEffect(() => {
-        fetch(`${API_URL}/api/advisory/current`)
+        fetch(`${API_URL}/api/advisory/current?language=${i18n.language}`)
             .then(res => res.json())
             .then(setData)
             .catch(console.error);
-    }, []);
+    }, [i18n.language]);
 
     const WeatherIcon = ({ condition, size = 48 }) => {
         switch (condition) {

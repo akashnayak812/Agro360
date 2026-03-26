@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { FlaskConical, Activity, Droplets, CheckCircle2, AlertTriangle, XCircle, Camera, Upload, Mic, Sprout, Wind, Sun } from 'lucide-react';
 import { Card } from './ui/Card';
@@ -18,6 +19,7 @@ import { SOIL_TYPES } from './SimpleSoilSelector';
 const SoilAnalysis = () => {
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
+    const { i18n } = useTranslation();
 
     // Simple mode state
     const [simpleData, setSimpleData] = useState({
@@ -151,7 +153,8 @@ const SoilAnalysis = () => {
                         P: soilData.P,
                         K: soilData.K,
                         ph: soilData.ph,
-                        moisture: 50
+                        moisture: 50,
+                        language: i18n.language
                     }),
                 });
                 const data = await analyzeResponse.json();
@@ -189,7 +192,7 @@ const SoilAnalysis = () => {
             const response = await fetch(`${API_URL}/api/soil/analyze`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, language: i18n.language }),
             });
             const data = await response.json();
             setResult({

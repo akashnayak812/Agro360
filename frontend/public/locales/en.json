@@ -213,6 +213,7 @@
     "low_risk": "Low Risk",
     "medium_risk": "Moderate Risk",
     "high_risk": "High Risk",
-    "no_decision_data": "Decision analysis unavailable"
+    "no_decision_data": "Decision analysis unavailable",
+    "alternative_crops": "Alternative Crops"
   }
 }

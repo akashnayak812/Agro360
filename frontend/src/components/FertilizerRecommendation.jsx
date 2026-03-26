@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { Droplets, Sprout, Activity, Beaker, Mic } from 'lucide-react';
 import { Card } from './ui/Card';
@@ -30,6 +31,7 @@ const COMMON_CROPS = [
 const FertilizerRecommendation = () => {
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
+    const { i18n } = useTranslation();
     
     // Simple mode state
     const [simpleData, setSimpleData] = useState({
@@ -134,7 +136,8 @@ const FertilizerRecommendation = () => {
                         P: soilData.P,
                         K: soilData.K,
                         ph: soilData.ph,
-                        crop: simpleData.selectedCrop
+                        crop: simpleData.selectedCrop,
+                        language: i18n.language
                     }),
                 });
                 const data = await response.json();
@@ -163,7 +166,7 @@ const FertilizerRecommendation = () => {
             const response = await fetch(`${API_URL}/api/fertilizer/recommend`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, language: i18n.language }),
             });
             const data = await response.json();
             setResult(data);
