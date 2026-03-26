@@ -2,7 +2,6 @@
   "welcome": "Welcome to Agro360",
   "subtitle": "Smart Farming for a Better Future",
   "ask_assistant": "Ask Agro360...",
-
   "nav": {
     "dashboard": "Dashboard",
     "crop": "Crop Recommendation",
@@ -19,13 +18,11 @@
     "schemes": "Govt Schemes",
     "developer": "Developer"
   },
-
   "voice": {
     "listening": "Listening...",
     "processing": "Thinking...",
     "error": "Sorry, I didn't catch that."
   },
-
   "soil": {
     "leaf_growth": "Leaf Growth",
     "flowering": "Flowers & Fruits",
@@ -37,7 +34,6 @@
     "moderate": "Moderate",
     "poor": "Needs Improvement"
   },
-
   "fertilizer": {
     "cow_dung": "Cow dung manure or Urea",
     "bone_meal": "Bone meal or DAP fertilizer",
@@ -46,7 +42,6 @@
     "need_flower": "Soil needs help for flowering",
     "need_strength": "Plants need more strength"
   },
-
   "landing": {
     "features": "Features",
     "howItWorks": "How it Works",
@@ -108,7 +103,6 @@
     "termsOfService": "Terms of Service",
     "allRightsReserved": "All rights reserved."
   },
-
   "dashboard": {
     "hello": "Hello",
     "farmer": "Farmer",
@@ -143,7 +137,6 @@
     "fertilizerAlert": "Fertilizer",
     "fertilizerAlertDesc": "Due for NPK application in Field A."
   },
-
   "auth": {
     "welcomeBack": "Welcome Back",
     "signInDesc": "Sign in to access your smart farm",
@@ -167,7 +160,6 @@
     "haveAccount": "Already have an account?",
     "signInLink": "Sign In"
   },
-
   "common": {
     "loading": "Loading...",
     "error": "Something went wrong",
@@ -184,13 +176,11 @@
     "accessAccount": "Access your account",
     "logout": "Logout"
   },
-
   "language": {
     "selectLanguage": "Select Language",
     "indian": "Indian Languages",
     "international": "International Languages"
   },
-
   "chatbot": {
     "title": "Agro360 AI Assistant",
     "subtitle": "Always here to help",
@@ -207,6 +197,22 @@
     "cleared": "Chat cleared! How can I help you today?",
     "navigatingTo": "Navigating to {{page}}...",
     "greeting": "Hello! I'm your Agro360 AI assistant. Ask me anything about farming, crops, or use me to navigate the app!",
-    "suggestedPrompts": ["Crop advice", "Soil health tips", "Go to Dashboard", "Market prices"]
+    "suggestedPrompts": [
+      "Crop advice",
+      "Soil health tips",
+      "Go to Dashboard",
+      "Market prices"
+    ]
+  },
+  "decision": {
+    "risk_level": "Risk Level",
+    "why_this_crop": "Why this crop?",
+    "suitability": "Suitability",
+    "profitability": "Profitability",
+    "final_score": "Final Score",
+    "low_risk": "Low Risk",
+    "medium_risk": "Moderate Risk",
+    "high_risk": "High Risk",
+    "no_decision_data": "Decision analysis unavailable"
   }
 }

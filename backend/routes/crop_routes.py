@@ -1,6 +1,7 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from models.ml_models import crop_model
 from services.location_service import convert_simple_to_technical, get_soil_data_by_type, SOIL_TYPE_DATA
+from services.decision_engine import run_decision_engine
 import numpy as np
 
 crop_bp = Blueprint('crop_bp', __name__)
@@ -22,11 +23,25 @@ def recommend_crop():
         
         prediction, confidence = crop_model.predict(np.array([features]))
         
+        # --- Decision engine integration (NEW) ---
+        decision = None
+        try:
+            decision_inputs = {
+                "N": features[0], "P": features[1], "K": features[2],
+                "temperature": features[3], "humidity": features[4],
+                "ph": features[5], "rainfall": features[6],
+            }
+            decision = run_decision_engine(decision_inputs, prediction)
+        except Exception as de_err:
+            current_app.logger.warning("Decision engine error: %s", de_err)
+        # --- End decision engine integration ---
+        
         return jsonify({
             "success": True,
             "crop": prediction,
             "confidence": confidence,
-            "message": f"Based on the soil and weather conditions, {prediction} is the best suitable crop."
+            "message": f"Based on the soil and weather conditions, {prediction} is the best suitable crop.",
+            "decision": decision
         })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -74,6 +89,23 @@ def recommend_crop_simple():
         # Get soil type info for response
         soil_info = SOIL_TYPE_DATA.get(data.get('soil_type', ''), {})
         
+        # --- Decision engine integration (NEW) ---
+        decision = None
+        try:
+            decision_inputs = {
+                "N": technical.get('N', features[0]),
+                "P": technical.get('P', features[1]),
+                "K": technical.get('K', features[2]),
+                "temperature": technical.get('temperature', features[3]),
+                "humidity": technical.get('humidity', features[4]),
+                "ph": technical.get('ph', features[5]),
+                "rainfall": technical.get('rainfall', features[6]),
+            }
+            decision = run_decision_engine(decision_inputs, prediction)
+        except Exception as de_err:
+            current_app.logger.warning("Decision engine error (simple): %s", de_err)
+        # --- End decision engine integration ---
+        
         return jsonify({
             "success": True,
             "crop": prediction,
@@ -96,7 +128,8 @@ def recommend_crop_simple():
                 "type": data.get('soil_type'),
                 "name": soil_info.get('name', 'Unknown'),
                 "recommended_crops": soil_info.get('crops', [])
-            }
+            },
+            "decision": decision
         })
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500

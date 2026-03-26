@@ -129,5 +129,16 @@
       "டாஷ்போர்டு திற",
       "சந்தை விலைகள்"
     ]
+  },
+  "decision": {
+    "risk_level": "[TRANSLATE]",
+    "why_this_crop": "[TRANSLATE]",
+    "suitability": "[TRANSLATE]",
+    "profitability": "[TRANSLATE]",
+    "final_score": "[TRANSLATE]",
+    "low_risk": "[TRANSLATE]",
+    "medium_risk": "[TRANSLATE]",
+    "high_risk": "[TRANSLATE]",
+    "no_decision_data": "[TRANSLATE]"
   }
 }

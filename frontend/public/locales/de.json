@@ -116,5 +116,16 @@
       "Dashboard öffnen",
       "Marktpreise"
     ]
+  },
+  "decision": {
+    "risk_level": "[TRANSLATE]",
+    "why_this_crop": "[TRANSLATE]",
+    "suitability": "[TRANSLATE]",
+    "profitability": "[TRANSLATE]",
+    "final_score": "[TRANSLATE]",
+    "low_risk": "[TRANSLATE]",
+    "medium_risk": "[TRANSLATE]",
+    "high_risk": "[TRANSLATE]",
+    "no_decision_data": "[TRANSLATE]"
   }
 }

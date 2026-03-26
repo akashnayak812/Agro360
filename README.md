@@ -30,6 +30,7 @@ Agro360 is an intelligent agricultural platform that leverages machine learning 
 - **🎤 Voice Assistant** - Multilingual voice-powered assistant for hands-free interaction
 - **🌐 Multi-language Support** - Support for English, Hindi, and other regional languages
 - **🎨 3D Farm Visualization** - Interactive 3D farm scenes using Three.js
+- **🔐 User Authentication** - Secure JWT-based authentication and user profiles
 
 ## 🛠️ Tech Stack
 
@@ -41,7 +42,7 @@ Agro360 is an intelligent agricultural platform that leverages machine learning 
   - NumPy & Pandas - Data processing
 - **AI Integration:** Google Gemini AI - Natural language processing and conversational AI
 - **Computer Vision:** OpenCV - Image processing for disease detection
-- **Database:** MongoDB (placeholder for future implementation)
+- **Database:** MySQL with SQLAlchemy ORM
 - **CORS:** Flask-CORS for cross-origin requests
 
 ### Frontend
@@ -172,8 +173,15 @@ npm install
 # API Keys
 GEMINI_API_KEY=your_gemini_api_key_here
 
-# MongoDB (if using)
-MONGO_URI=mongodb://localhost:27017/agro360
+# MySQL Database
+MYSQL_HOST=localhost
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_password
+MYSQL_DATABASE=agro360
+
+# JWT Authentication
+JWT_SECRET_KEY=your_jwt_secret_key
 
 # Flask Settings
 FLASK_ENV=development
@@ -215,6 +223,13 @@ The frontend will run on `http://localhost:5173` (or the port shown in terminal)
 Open your browser and navigate to `http://localhost:5173`
 
 ## 🔌 API Endpoints
+
+### Authentication
+- **POST** `/api/auth/register` - Register a new user
+- **POST** `/api/auth/login` - Login and get JWT token
+- **GET** `/api/auth/me` - Get user profile (requires JWT)
+- **PUT** `/api/auth/personal-info` - Update user personal info
+- **POST/GET/DELETE** `/api/auth/recent-searches` - Manage user recent searches
 
 ### Crop Recommendation
 - **POST** `/api/crop/recommend`

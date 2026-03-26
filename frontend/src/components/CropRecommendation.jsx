@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sprout, Leaf, Activity, Droplets, Thermometer, Wind, CloudRain, Mic, Volume2 } from 'lucide-react';
+import { Sprout, Leaf, Activity, Droplets, Thermometer, Wind, CloudRain, Mic, Volume2, ShieldCheck, TrendingUp, BarChart3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
@@ -11,7 +12,106 @@ import WaterAvailabilitySelector from './WaterAvailabilitySelector';
 import { API_URL } from '../lib/api';
 import VoiceInput, { SpeakResult } from './VoiceInput';
 
+// ─── Helper: ScoreBar ────────────────────────────────────────────
+const ScoreBar = ({ label, value, colorClass, icon: Icon }) => (
+    <div className="flex items-center gap-3">
+        {Icon && <Icon size={16} className="text-gray-500 flex-shrink-0" />}
+        <span className="text-sm font-medium text-gray-600 w-28 flex-shrink-0">{label}</span>
+        <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
+            <div
+                className={`h-full rounded-full transition-all duration-700 ease-out ${colorClass}`}
+                style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+            />
+        </div>
+        <span className="text-sm font-semibold text-gray-700 w-12 text-right">{value.toFixed(0)}%</span>
+    </div>
+);
+
+// ─── Helper: RiskBadge ───────────────────────────────────────────
+const RiskBadge = ({ level, t }) => {
+    const config = {
+        Low:    { bg: 'bg-green-100',  text: 'text-green-800',  label: t('decision.low_risk') },
+        Medium: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: t('decision.medium_risk') },
+        High:   { bg: 'bg-red-100',    text: 'text-red-800',    label: t('decision.high_risk') },
+    };
+    const c = config[level] || config.Medium;
+    return (
+        <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${c.bg} ${c.text}`}>
+            <ShieldCheck size={14} />
+            {c.label}
+        </span>
+    );
+};
+
+// ─── Helper: DecisionPanel ───────────────────────────────────────
+const DecisionPanel = ({ decision, t }) => {
+    if (!decision) return null;
+    const { scores, risk_level, final_score, explanation } = decision;
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-6 p-5 border rounded-xl bg-white dark:bg-gray-900 shadow-sm w-full text-left"
+        >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+                <h4 className="text-base font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+                    <BarChart3 size={18} className="text-emerald-600" />
+                    {t('decision.why_this_crop')}
+                </h4>
+                <RiskBadge level={risk_level} t={t} />
+            </div>
+
+            {/* Score bars */}
+            <div className="space-y-3 mb-4">
+                <ScoreBar
+                    label={t('decision.suitability')}
+                    value={scores.suitability}
+                    colorClass="bg-emerald-500"
+                    icon={Leaf}
+                />
+                <ScoreBar
+                    label={t('decision.profitability')}
+                    value={scores.profitability}
+                    colorClass="bg-blue-500"
+                    icon={TrendingUp}
+                />
+                <ScoreBar
+                    label={t('decision.risk_level')}
+                    value={scores.risk}
+                    colorClass="bg-amber-500"
+                    icon={ShieldCheck}
+                />
+            </div>
+
+            {/* Final score */}
+            <div className="flex items-center justify-between px-4 py-2 bg-emerald-50 dark:bg-emerald-900 rounded-lg mb-4">
+                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
+                    {t('decision.final_score')}
+                </span>
+                <span className="text-lg font-bold text-emerald-800 dark:text-emerald-200">
+                    {final_score.toFixed(0)} / 100
+                </span>
+            </div>
+
+            {/* Explanation bullets */}
+            {explanation && explanation.length > 0 && (
+                <ul className="space-y-1.5">
+                    {explanation.map((line, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
+                            <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
+                            {line}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </motion.div>
+    );
+};
+
 const CropRecommendation = () => {
+    const { t } = useTranslation();
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
     
@@ -364,6 +464,11 @@ const CropRecommendation = () => {
                             <div className="bg-white/60 backdrop-blur-sm px-6 py-3 rounded-full border border-emerald-200 text-emerald-700 font-medium mt-4">
                                 AI Confidence: <span className="font-bold">{(result.confidence * 100).toFixed(1)}%</span>
                             </div>
+
+                            {/* Decision Panel — NEW (renders only when decision exists) */}
+                            {result.decision && (
+                                <DecisionPanel decision={result.decision} t={t} />
+                            )}
                         </Card>
                     ) : (
                         <Card className="h-full flex flex-col justify-center items-center text-center p-8 bg-gray-50/50 border-dashed">
