@@ -10,6 +10,7 @@ import PriceTrendChart from './market/PriceTrendChart';
 import MandiList from './market/MandiList';
 import SeasonalCalendar from './market/SeasonalCalendar';
 import MarketAlerts from './market/MarketAlerts';
+import LiveMandiSearch from './LiveMandiSearch';
 
 // Import data
 import { cropMarketData, CATEGORIES } from './market/marketData';
@@ -264,6 +265,11 @@ const MarketInsights = () => {
             selectedState={selectedState}
             onStateChange={setSelectedState}
           />
+        </Section>
+
+        {/* ═══ SECTION 1.5 — Live APMC Mandi Search ═══ */}
+        <Section delay={0.05} className="mt-8 mb-8">
+          <LiveMandiSearch />
         </Section>
 
         {/* ═══ SECTION 2 — Quick Stats Row ═══ */}

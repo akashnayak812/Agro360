@@ -4,16 +4,49 @@ import { motion } from 'framer-motion';
 import { CloudRain, Sun, Wind, Cloud, Calendar, Thermometer, Droplets } from 'lucide-react';
 import { Card } from './ui/Card';
 import { API_URL } from '../lib/api';
+import { useAuth } from '../context/AuthContext';
 
 const Advisory = () => {
     const [data, setData] = useState(null);
     const { i18n } = useTranslation();
+    const { user } = useAuth();
 
     useEffect(() => {
-        fetch(`${API_URL}/api/advisory/current?language=${i18n.language}`)
-            .then(res => res.json())
-            .then(setData)
-            .catch(console.error);
+        const fetchAdvisory = async () => {
+            try {
+                let weatherData = null;
+                try {
+                    const { fetchWeatherByIP } = await import('../services/weatherApi');
+                    weatherData = await fetchWeatherByIP();
+                } catch (err) {
+                    console.error("IP Weather failed, falling back to mock data:", err);
+                }
+
+                let farmProfile = null;
+                if (user) {
+                    const profileStr = localStorage.getItem(`agro360_farm_profile_${user.uid}`);
+                    if (profileStr) {
+                        try { farmProfile = JSON.parse(profileStr); } catch (e) { }
+                    }
+                }
+
+                const response = await fetch(`${API_URL}/api/advisory/current`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        language: i18n.language,
+                        weather: weatherData,
+                        farmProfile
+                    })
+                });
+                
+                const resultData = await response.json();
+                setData(resultData);
+            } catch (error) {
+                console.error("Advisory fetch failed:", error);
+            }
+        };
+        fetchAdvisory();
     }, [i18n.language]);
 
     const WeatherIcon = ({ condition, size = 48 }) => {
@@ -75,7 +108,7 @@ const Advisory = () => {
                             </div>
                             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 min-w-[120px] border border-white/10">
                                 <Wind size={24} className="mx-auto mb-2 text-blue-200" />
-                                <div className="text-2xl font-bold">12 <span className="text-sm font-normal">km/h</span></div>
+                                <div className="text-2xl font-bold">{data.weather.windSpeed || 12} <span className="text-sm font-normal">km/h</span></div>
                                 <div className="text-xs text-blue-200">Wind Speed</div>
                             </div>
                         </div>

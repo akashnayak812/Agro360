@@ -27,9 +27,12 @@ import {
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
+import { fetchWeatherByIP } from '../services/weatherApi';
+import { useAuth } from '../context/AuthContext';
 
 const DigitalTwin = () => {
     const { t } = useTranslation();
+    const { user } = useAuth();
     const [isSimulating, setIsSimulating] = useState(false);
     const [simulationSpeed, setSimulationSpeed] = useState(1);
     const [currentDay, setCurrentDay] = useState(1);
@@ -45,6 +48,33 @@ const DigitalTwin = () => {
         fertilizerBudget: 5000,
         seasonDuration: 120
     });
+
+    const [farmParams, setFarmParams] = useState({
+        area: 5,
+        cropType: 'rice',
+        soilType: 'clay',
+        irrigationMethod: 'sprinkler'
+    });
+
+    // Auto-fill from Farm Profile
+    useEffect(() => {
+        if (user) {
+            const profile = localStorage.getItem(`agro360_farm_profile_${user.uid}`);
+            if (profile) {
+                try {
+                    const parsed = JSON.parse(profile);
+                    setFarmParams(prev => ({
+                        ...prev,
+                        area: parsed.fieldArea ? parseFloat(parsed.fieldArea) : prev.area,
+                        cropType: parsed.defaultCrop || prev.cropType,
+                        soilType: parsed.soilType || prev.soilType
+                    }));
+                } catch (e) {
+                    console.error("Failed to parse farm profile", e);
+                }
+            }
+        }
+    }, [user]);
 
     const [weatherConditions, setWeatherConditions] = useState({
         temperature: 28,
@@ -90,6 +120,25 @@ const DigitalTwin = () => {
         { value: 'flood', label: 'Flood (बाढ़ सिंचाई)' },
         { value: 'rainfed', label: 'Rainfed (वर्षा आधारित)' }
     ];
+
+    const handleSyncLiveWeather = async () => {
+        try {
+            setLoading(true);
+            const data = await fetchWeatherByIP();
+            setWeatherConditions(prev => ({
+                ...prev,
+                temperature: data.temperature ?? prev.temperature,
+                humidity: data.humidity ?? prev.humidity,
+                rainfall: data.rainfall ?? prev.rainfall,
+                windSpeed: data.windSpeed ?? prev.windSpeed,
+            }));
+        } catch (error) {
+            console.error("Failed to sync live weather:", error);
+            alert("Could not fetch live weather. Please ensure Location permissions are granted.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // Simulation logic
     const runSimulationStep = () => {
@@ -431,10 +480,21 @@ const DigitalTwin = () => {
 
                 {/* Weather Conditions */}
                 <Card glass className="p-6 space-y-6">
-                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <CloudRain className="text-blue-500" size={24} />
-                        Weather Conditions
-                    </h2>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <CloudRain className="text-blue-500" size={24} />
+                            Weather Conditions
+                        </h2>
+                        <Button
+                            onClick={handleSyncLiveWeather}
+                            disabled={loading || isSimulating}
+                            variant="outline"
+                            className="flex items-center gap-2 text-sm bg-blue-50 hover:bg-blue-100 border-blue-200 text-blue-700 h-9"
+                        >
+                            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+                            Sync Live
+                        </Button>
+                    </div>
 
                     <div className="space-y-4">
                         <div>

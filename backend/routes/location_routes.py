@@ -9,6 +9,7 @@ from services.location_service import (
     get_regional_soil_data,
     get_soil_data_by_type,
     convert_simple_to_technical,
+    get_location_details,
     STATES_DISTRICTS,
     SOIL_TYPE_DATA,
     WATER_AVAILABILITY
@@ -212,5 +213,28 @@ def convert_simple_inputs():
             "success": True,
             "technical_values": result
         })
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+@location_bp.route('/reverse-geocode', methods=['POST'])
+def reverse_geocode():
+    """
+    Reverse geocode coordinates to get state and district.
+    Accepts: {lat, lon}
+    """
+    try:
+        data = request.json
+        lat = data.get('lat')
+        lon = data.get('lon')
+        
+        if not lat or not lon:
+            return jsonify({
+                "success": False,
+                "error": "Please provide lat and lon"
+            }), 400
+            
+        location_data = get_location_details(lat, lon)
+        return jsonify(location_data)
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500

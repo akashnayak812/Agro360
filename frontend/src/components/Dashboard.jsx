@@ -22,6 +22,8 @@ import { Button } from './ui/Button';
 import { useAuth } from '../context/AuthContext';
 import WeatherWidget from './WeatherWidget';
 import StatCard from './StatCard';
+import FarmProfileModal from './FarmProfileModal';
+import { Layers } from 'lucide-react';
 
 const Dashboard = () => {
     const { t } = useTranslation();
@@ -43,6 +45,7 @@ const Dashboard = () => {
 
     const [location, setLocation] = React.useState(null);
     const [locationLoading, setLocationLoading] = React.useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
 
     const modules = [
         { title: t('dashboard.bestCrop'), desc: t('dashboard.bestCropDesc'), path: '/crop', icon: Sprout, color: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-100' },
@@ -126,6 +129,9 @@ const Dashboard = () => {
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <Button variant="outline" onClick={() => setIsProfileModalOpen(true)} className="hidden md:flex gap-2 border-agro-green/30 text-agro-green hover:bg-agro-green/10">
+                        <Layers size={16} /> Farm Profile
+                    </Button>
                     <Button variant="outline" className="hidden md:flex gap-2">
                         <Calendar size={16} /> {t('dashboard.schedule')}
                     </Button>
@@ -286,6 +292,11 @@ const Dashboard = () => {
                 </div>
 
             </div>
+
+            <FarmProfileModal 
+                isOpen={isProfileModalOpen} 
+                onClose={() => setIsProfileModalOpen(false)} 
+            />
         </motion.div>
     );
 };
