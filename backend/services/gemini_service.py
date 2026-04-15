@@ -32,7 +32,9 @@ class GeminiService:
             os.environ.get("GEMINI_API_KEY"),
             os.environ.get("GEMINI_API_KEY_2"),
             os.environ.get("GEMINI_API_KEY_3"),
-            os.environ.get("GEMINI_API_KEY_4")
+            os.environ.get("GEMINI_API_KEY_4"),
+            os.environ.get("GEMINI_API_KEY_5"),
+            os.environ.get("GEMINI_API_KEY_6")
         ]
         # Filter out None values
         self.api_keys = [key for key in self.api_keys if key]
@@ -40,7 +42,7 @@ class GeminiService:
         self.current_key_index = 0
         self.client = None
         self.model_name = "gemini-2.5-flash"
-        self.fallback_models = ["gemini-2.0-flash", "gemini-2.0-flash-lite-001", "gemini-flash-latest"]
+        self.fallback_models = ["gemini-3-flash-preview", "gemini-2.5-flash-lite", "gemini-flash-latest"]
 
         self._initialize_client()
 

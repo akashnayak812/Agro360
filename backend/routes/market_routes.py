@@ -37,49 +37,80 @@ MARKETS = {
 
 @market_bp.route('/prices', methods=['POST'])
 def get_prices():
-    """Get current market prices for a crop"""
+    """Get current market prices for a crop — fetches live data from AGMARKNET."""
     try:
         data = request.json
         crop = data.get('crop', 'wheat').lower()
         market = data.get('market', 'all')
         
+        # Try fetching live data from AGMARKNET
+        live_records = MarketService._fetch_live_direct(commodity=crop.capitalize(), limit=20)
+        
+        if live_records:
+            # Pick the most relevant record (exact market match or first)
+            record = live_records[0]
+            for r in live_records:
+                if market != 'all' and r.get('market', '').lower() == market.lower():
+                    record = r
+                    break
+            
+            current_price = float(record.get('modal_price', 0) or 0)
+            min_price = float(record.get('min_price', 0) or 0)
+            max_price = float(record.get('max_price', 0) or 0)
+            
+            # Calculate change by comparing with a second record if available
+            change = 0
+            change_percent = 0
+            if len(live_records) > 1:
+                prev_price = float(live_records[1].get('modal_price', 0) or 0)
+                if prev_price > 0:
+                    change = current_price - prev_price
+                    change_percent = round((change / prev_price) * 100, 2)
+            
+            msp = MSP_PRICES.get(crop, current_price * 0.9)
+            
+            return jsonify({
+                'success': True,
+                'priceData': {
+                    'crop': crop,
+                    'currentPrice': round(current_price),
+                    'previousPrice': round(current_price - change),
+                    'change': round(change),
+                    'changePercent': change_percent,
+                    'isPositive': change >= 0,
+                    'high24h': round(max_price),
+                    'low24h': round(min_price),
+                    'volume': '-',
+                    'msp': msp,
+                    'unit': 'per quintal',
+                    'market': record.get('market', 'AGMARKNET'),
+                    'arrival_date': record.get('arrival_date', ''),
+                    'lastUpdated': datetime.now().isoformat(),
+                    'source': 'AGMARKNET (Live)'
+                }
+            })
+        
+        # Fallback: use base prices if API is unreachable
         base_price = BASE_PRICES.get(crop, 2000)
-        
-        # Add market-specific variation
-        market_variation = random.uniform(-0.05, 0.05)
-        current_price = base_price * (1 + market_variation)
-        
-        # Calculate 24h change
-        change_percent = random.uniform(-3, 5)
-        change = current_price * (change_percent / 100)
-        previous_price = current_price - change
-        
-        # Calculate 24h high/low
-        high_24h = current_price * random.uniform(1.01, 1.03)
-        low_24h = current_price * random.uniform(0.97, 0.99)
-        
-        # Trading volume
-        volume = random.randint(5000, 20000)
-        
-        # MSP
         msp = MSP_PRICES.get(crop, base_price * 0.9)
         
         return jsonify({
             'success': True,
             'priceData': {
                 'crop': crop,
-                'currentPrice': round(current_price),
-                'previousPrice': round(previous_price),
-                'change': round(change),
-                'changePercent': round(change_percent, 2),
-                'isPositive': change >= 0,
-                'high24h': round(high_24h),
-                'low24h': round(low_24h),
-                'volume': volume,
+                'currentPrice': round(base_price),
+                'previousPrice': round(base_price),
+                'change': 0,
+                'changePercent': 0,
+                'isPositive': True,
+                'high24h': round(base_price * 1.02),
+                'low24h': round(base_price * 0.98),
+                'volume': '-',
                 'msp': msp,
                 'unit': 'per quintal',
                 'market': MARKETS.get(market, {'name': 'All Markets'})['name'],
-                'lastUpdated': datetime.now().isoformat()
+                'lastUpdated': datetime.now().isoformat(),
+                'source': 'Base Reference (Offline)'
             }
         })
         
@@ -88,21 +119,40 @@ def get_prices():
 
 @market_bp.route('/all-prices', methods=['GET'])
 def get_all_prices():
-    """Get prices for all crops"""
+    """Get prices for all crops — fetches live data from AGMARKNET."""
     try:
+        # Fetch a broad batch from AGMARKNET (latest available)
+        live_records = MarketService._fetch_live_direct(limit=500)
+        
+        # Index live records by commodity (lowercase)
+        live_index = {}
+        for r in live_records:
+            commodity = (r.get('commodity') or '').lower()
+            if commodity and commodity not in live_index:
+                live_index[commodity] = r
+        
         prices = []
         for crop, base_price in BASE_PRICES.items():
-            variation = random.uniform(-0.08, 0.08)
-            current_price = base_price * (1 + variation)
-            change = random.uniform(-5, 7)
+            live = live_index.get(crop)
+            if live:
+                current_price = float(live.get('modal_price', 0) or 0)
+                min_p = float(live.get('min_price', 0) or 0)
+                max_p = float(live.get('max_price', 0) or 0)
+                change = round(((current_price - base_price) / base_price) * 100, 2) if base_price else 0
+                source = 'AGMARKNET'
+            else:
+                current_price = base_price
+                change = 0
+                source = 'Reference'
             
             prices.append({
                 'name': crop.capitalize(),
                 'price': round(current_price),
-                'change': round(change, 2),
+                'change': change,
                 'isPositive': change >= 0,
-                'demand': random.choice(['High', 'Medium', 'Low']),
-                'roi': round(random.uniform(10, 35), 1)
+                'demand': 'High' if change > 3 else ('Low' if change < -3 else 'Medium'),
+                'roi': round(max(5, min(40, 15 + change)), 1),
+                'source': source
             })
         
         return jsonify({

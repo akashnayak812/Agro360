@@ -121,18 +121,30 @@ class MarketService:
     @staticmethod
     def get_market_insights(state, market, commodity):
         """Get the latest price details for a specific state, market, and crop.
-        First checks DB, then tries a targeted API sync, then falls back to
-        direct live fetch for an immediate response."""
+        Auto-refreshes if cached data is older than 6 hours.
+        First checks DB freshness, then syncs if stale, then falls back to direct API."""
         from models.market_price import MarketPrice
         from extensions import db
+        
+        STALE_HOURS = 6  # Re-fetch if data is older than this
         
         # 1. Check DB first
         result = MarketPrice.query.filter_by(
             state=state, market=market, commodity=commodity
         ).order_by(MarketPrice.id.desc()).first()
         
-        if not result:
-            # 2. Try targeted sync from API into DB
+        # 2. Check if the cached result is stale
+        is_stale = False
+        if result and result.updated_at:
+            age = datetime.utcnow() - result.updated_at
+            age_hours = age.total_seconds() / 3600
+            if age_hours > STALE_HOURS:
+                is_stale = True
+                print(f"[MarketService] Cached data for {commodity}@{market} is {age_hours:.1f}h old — refreshing")
+        
+        # 3. Re-sync if no result OR stale
+        if not result or is_stale:
+            # Targeted sync
             synced = MarketService.sync_market_data(limit=50, state=state, market=market, commodity=commodity)
             if synced > 0:
                 result = MarketPrice.query.filter_by(
@@ -140,7 +152,7 @@ class MarketService:
                 ).order_by(MarketPrice.id.desc()).first()
         
         if not result:
-            # 3. Try broader sync (just state + commodity, no market filter)
+            # Broader sync (state + commodity only)
             synced = MarketService.sync_market_data(limit=100, state=state, commodity=commodity)
             if synced > 0:
                 result = MarketPrice.query.filter_by(
@@ -148,10 +160,10 @@ class MarketService:
                 ).order_by(MarketPrice.id.desc()).first()
         
         if not result:
-            # 4. Last resort: direct live fetch and return without DB
+            # 4. Last resort: direct live fetch without DB
             records = MarketService._fetch_live_direct(state=state, commodity=commodity, limit=50)
             if records:
-                # Try to find exact market match
+                # Try exact market match
                 for r in records:
                     if r.get('market', '').lower() == market.lower():
                         return {
@@ -166,8 +178,7 @@ class MarketService:
                             "trend": "stable",
                             "source": "live_api"
                         }
-                # If no exact market match, return the first record for that state+commodity 
-                # with a note about the market
+                # No exact match — return nearest
                 r = records[0]
                 return {
                     "state": r.get('state'),
@@ -184,7 +195,7 @@ class MarketService:
                 }
 
         if result:
-            # Calculate trend based on previous dates if available
+            # Calculate trend based on historical records
             previous = MarketPrice.query.filter_by(
                 state=state, market=market, commodity=commodity
             ).order_by(MarketPrice.id.desc()).all()

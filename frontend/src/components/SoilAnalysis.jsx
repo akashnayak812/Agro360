@@ -13,6 +13,8 @@ import { API_URL } from '../lib/api';
 import SimpleSoilSelector from './SimpleSoilSelector';
 import VoiceInput, { SpeakResult } from './VoiceInput';
 import WeatherWidget from './WeatherWidget';
+import { useLocationData } from '../context/LocationContext';
+import LocationWidget from './LocationWidget';
 
 import { SOIL_TYPES } from './SimpleSoilSelector';
 
@@ -20,6 +22,7 @@ const SoilAnalysis = () => {
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
     const { i18n } = useTranslation();
+    const { address, soil, isLocating } = useLocationData();
 
     // Simple mode state
     const [simpleData, setSimpleData] = useState({
@@ -40,20 +43,29 @@ const SoilAnalysis = () => {
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [autoFilledData, setAutoFilledData] = useState(null);
-    const [location, setLocation] = useState(null);
 
-    // Fetch location for weather
+    // Hybrid soil data toggle: 'estimated' or 'manual'
+    const [dataSource, setDataSource] = useState('estimated');
+
+    // Auto-fill from global LocationContext
     useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    // In a real app, reverse geocode here
-                    setLocation({ lat: position.coords.latitude, lon: position.coords.longitude });
-                },
-                (error) => console.log(error)
-            );
+        if (address) {
+            setSimpleData(prev => ({
+                ...prev,
+                state: address.state || prev.state,
+                district: address.district || address.city || prev.district
+            }));
         }
-    }, []);
+        if (soil && dataSource === 'estimated') {
+            setFormData(prev => ({
+                ...prev,
+                N: soil.N || prev.N,
+                P: soil.P || prev.P,
+                K: soil.K || prev.K,
+                ph: soil.ph || prev.ph
+            }));
+        }
+    }, [address, soil, dataSource]);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -236,10 +248,10 @@ const SoilAnalysis = () => {
                     </div>
                 </div>
 
-                {location && (
+                {address && (
                     <div className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur rounded-full text-sm text-gray-600 border border-white/40 shadow-sm">
                         <Sun size={16} className="text-amber-500" />
-                        <span>Local Weather Enabled</span>
+                        <span>{address.city} Weather Enabled</span>
                     </div>
                 )}
             </div>
@@ -248,10 +260,13 @@ const SoilAnalysis = () => {
                 {/* Left Column: Weather & Inputs */}
                 <div className="lg:col-span-1 space-y-6">
                     {/* Weather Widget */}
-                    <WeatherWidget location={location || { city: 'Select Location' }} />
+                    <WeatherWidget location={address || { city: 'Select Location' }} />
 
                     {/* Mode Toggle */}
-                    <InputModeToggle mode={mode} onModeChange={setMode} />
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <InputModeToggle mode={mode} onModeChange={setMode} />
+                        <LocationWidget className="w-full sm:w-auto shrink-0 shadow-md" />
+                    </div>
 
                     {mode === 'simple' ? (
                         /* Simple Mode */
@@ -315,28 +330,104 @@ const SoilAnalysis = () => {
                             </Button>
                         </div>
                     ) : (
-                        /* Advanced Mode */
+                        /* Advanced Mode — Hybrid Estimated/Manual */
                         <Card glass className="p-6">
                             <form onSubmit={handleAdvancedSubmit} className="space-y-5">
-                                <h3 className="font-semibold text-gray-900 border-b pb-2">Enter Soil Test Results</h3>
+                                <h3 className="font-semibold text-gray-900 border-b pb-2">Soil Data Input</h3>
 
-                                <div className="space-y-4">
-                                    <Input name="N" label="Nitrogen (N)" placeholder="value in mg/kg" value={formData.N} onChange={handleChange} required icon={Activity} />
-                                    <Input name="P" label="Phosphorus (P)" placeholder="value in mg/kg" value={formData.P} onChange={handleChange} required icon={Activity} />
-                                    <Input name="K" label="Potassium (K)" placeholder="value in mg/kg" value={formData.K} onChange={handleChange} required icon={Activity} />
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input name="ph" label="pH Level" placeholder="6-7" value={formData.ph} onChange={handleChange} required icon={FlaskConical} />
-                                        <Input name="moisture" label="Moisture %" placeholder="Optional" value={formData.moisture} onChange={handleChange} icon={Droplets} />
-                                    </div>
+                                {/* Hybrid Toggle */}
+                                <div className="flex gap-2 p-1 bg-gray-100 rounded-xl">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setDataSource('estimated');
+                                            if (soil) {
+                                                setFormData(prev => ({ ...prev, N: soil.N, P: soil.P, K: soil.K, ph: soil.ph }));
+                                            }
+                                        }}
+                                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 ${dataSource === 'estimated' ? 'bg-purple-600 text-white shadow-md' : 'text-gray-600 hover:text-gray-800'}`}
+                                    >
+                                        {dataSource === 'estimated' && <span>✅</span>}
+                                        Use Estimated Values
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setDataSource('manual');
+                                            setFormData({ N: '', P: '', K: '', ph: '', moisture: '' });
+                                        }}
+                                        className={`flex-1 py-2 px-3 text-sm font-medium rounded-lg transition-all flex items-center justify-center gap-1.5 ${dataSource === 'manual' ? 'bg-purple-600 text-white shadow-md' : 'text-gray-600 hover:text-gray-800'}`}
+                                    >
+                                        {dataSource === 'manual' && <span>✏️</span>}
+                                        Enter Manual Values
+                                    </button>
                                 </div>
+
+                                {/* Estimated Data Display */}
+                                {dataSource === 'estimated' && (
+                                    <div className="space-y-3">
+                                        {isLocating ? (
+                                            <div className="flex items-center justify-center py-6 text-purple-600 gap-2">
+                                                <div className="w-5 h-5 border-2 border-purple-300 border-t-purple-600 rounded-full animate-spin" />
+                                                Loading location data...
+                                            </div>
+                                        ) : soil ? (
+                                            <>
+                                                <div className="flex items-center gap-2 text-xs">
+                                                    <span className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 font-medium">📡 {soil.source || 'Estimated'}</span>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-3">
+                                                    {[
+                                                        { label: 'Nitrogen (N)', value: estimatedSoil.N, unit: 'mg/kg' },
+                                                        { label: 'Phosphorus (P)', value: estimatedSoil.P, unit: 'mg/kg' },
+                                                        { label: 'Potassium (K)', value: estimatedSoil.K, unit: 'mg/kg' },
+                                                        { label: 'pH Level', value: estimatedSoil.ph, unit: '' },
+                                                    ].map((item, i) => (
+                                                        <div key={i} className="p-3 bg-purple-50/60 border border-purple-100 rounded-xl">
+                                                            <span className="text-xs text-gray-500">{item.label}</span>
+                                                            <p className="text-lg font-bold text-gray-800">{item.value} <span className="text-xs font-normal text-gray-400">{item.unit}</span></p>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                                {estimatedSoil.note && (
+                                                    <p className="text-xs text-amber-600 bg-amber-50 px-3 py-2 rounded-lg border border-amber-100">ℹ️ {estimatedSoil.note}</p>
+                                                )}
+                                                <p className="text-xs text-gray-400 italic">⚠️ For best accuracy, use lab-tested soil values</p>
+                                            </>
+                                        ) : (
+                                            <div className="text-center py-4 text-gray-500 text-sm">
+                                                <p>Enable GPS or select a location to auto-fetch soil estimates</p>
+                                                <button type="button" onClick={() => { if (location) fetchSoilEstimate(location.lat, location.lon); }} className="mt-2 text-purple-600 underline text-sm">Retry</button>
+                                            </div>
+                                        )}
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <Input name="moisture" label="Moisture %" placeholder="Optional" value={formData.moisture} onChange={handleChange} icon={Droplets} />
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Manual Input Fields */}
+                                {dataSource === 'manual' && (
+                                    <div className="space-y-4">
+                                        <Input name="N" label="Nitrogen (N)" placeholder="value in mg/kg" value={formData.N} onChange={handleChange} required icon={Activity} />
+                                        <Input name="P" label="Phosphorus (P)" placeholder="value in mg/kg" value={formData.P} onChange={handleChange} required icon={Activity} />
+                                        <Input name="K" label="Potassium (K)" placeholder="value in mg/kg" value={formData.K} onChange={handleChange} required icon={Activity} />
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <Input name="ph" label="pH Level" placeholder="6-7" value={formData.ph} onChange={handleChange} required icon={FlaskConical} />
+                                            <Input name="moisture" label="Moisture %" placeholder="Optional" value={formData.moisture} onChange={handleChange} icon={Droplets} />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <Button
                                     type="submit"
                                     className="w-full text-lg h-12 bg-purple-600 hover:bg-purple-700 shadow-lg shadow-purple-500/30 rounded-xl"
                                     isLoading={loading}
+                                    disabled={dataSource === 'estimated' && !estimatedSoil}
                                 >
-                                    {loading ? 'Analyzing...' : 'Analyze Data'}
+                                    {loading ? 'Analyzing...' : '🔬 Analyze Soil Health'}
                                 </Button>
                             </form>
                         </Card>
@@ -355,7 +446,7 @@ const SoilAnalysis = () => {
                             <Card className="p-6 bg-white/80 border-purple-100 overflow-hidden relative">
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-purple-100/50 rounded-full blur-3xl -z-10" />
 
-                                <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center justify-between mb-6">
                                     <div>
                                         <h3 className="text-xl font-bold text-gray-900">Analysis Results</h3>
                                         <p className="text-sm text-gray-500">Based on your inputs</p>
@@ -365,6 +456,58 @@ const SoilAnalysis = () => {
                                     </div>
                                 </div>
 
+                                {/* Health Score Gauge */}
+                                {result.health_score !== undefined && (
+                                    <div className="flex flex-col items-center mb-8 p-6 bg-gradient-to-br from-gray-50 to-purple-50 rounded-2xl border border-purple-100/50">
+                                        <div className="relative w-32 h-32">
+                                            <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                                                <circle cx="60" cy="60" r="54" fill="none" stroke="#e5e7eb" strokeWidth="10" />
+                                                <circle
+                                                    cx="60" cy="60" r="54" fill="none"
+                                                    stroke={result.health_score >= 70 ? '#10b981' : result.health_score >= 40 ? '#f59e0b' : '#ef4444'}
+                                                    strokeWidth="10"
+                                                    strokeLinecap="round"
+                                                    strokeDasharray={`${(result.health_score / 100) * 339.3} 339.3`}
+                                                />
+                                            </svg>
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                                <span className="text-3xl font-extrabold text-gray-800">{Math.round(result.health_score)}</span>
+                                                <span className="text-xs text-gray-500 font-medium">/ 100</span>
+                                            </div>
+                                        </div>
+                                        <p className="text-sm font-semibold text-gray-700 mt-3">Soil Health Score</p>
+
+                                        {/* Component Scores */}
+                                        {result.component_scores && (
+                                            <div className="grid grid-cols-4 gap-3 mt-4 w-full">
+                                                {[
+                                                    { label: 'pH', value: result.component_scores.ph },
+                                                    { label: 'NPK', value: result.component_scores.npk },
+                                                    { label: 'Moisture', value: result.component_scores.moisture },
+                                                    { label: 'Balance', value: result.component_scores.balance },
+                                                ].map((s, i) => (
+                                                    <div key={i} className="text-center p-2 bg-white/70 rounded-xl border border-gray-100">
+                                                        <span className="block text-lg font-bold text-gray-800">{Math.round(s.value || 0)}</span>
+                                                        <span className="text-xs text-gray-500">{s.label}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Deficiency Warnings */}
+                                        {result.deficiencies && result.deficiencies.length > 0 && (
+                                            <div className="mt-4 w-full space-y-2">
+                                                {result.deficiencies.map((d, i) => (
+                                                    <div key={i} className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-800">
+                                                        <AlertTriangle size={14} />
+                                                        {d}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <NutrientMeter
                                         name="Nitrogen"
@@ -372,7 +515,7 @@ const SoilAnalysis = () => {
                                         value={result.detected_values.N}
                                         icon="🌿"
                                         description="Essential for leaf growth"
-                                        max={300} // Approximate typical max for visuals
+                                        max={300}
                                     />
                                     <NutrientMeter
                                         name="Phosphorus"
@@ -399,10 +542,13 @@ const SoilAnalysis = () => {
                                 <Card className="p-6 bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-100">
                                     <h4 className="font-semibold text-indigo-900 mb-4 flex items-center gap-2">
                                         <img src="https://cdn-icons-png.flaticon.com/512/4712/4712038.png" className="w-6 h-6" alt="AI" />
-                                        Gemini AI Advice
+                                        AI Insight
                                     </h4>
                                     <p className="text-gray-700 leading-relaxed bg-white/60 p-4 rounded-xl border border-white/50 text-sm md:text-base">
                                         {result.advice}
+                                    </p>
+                                    <p className="text-xs text-gray-400 mt-3 italic">
+                                        ⚠️ Predictions are AI-based estimates. For best results, consult agricultural experts.
                                     </p>
                                     <div className="mt-4 flex justify-end">
                                         <SpeakResult text={`The soil health is ${result.status}. ${result.advice}`} />

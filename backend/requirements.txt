@@ -19,3 +19,4 @@ Pillow
 scikit-image
 
 gunicorn
+joblib

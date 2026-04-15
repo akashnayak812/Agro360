@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
+import { LocationProvider } from './context/LocationContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
@@ -77,10 +78,12 @@ function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <Router>
-          <AntiGravityCursor />
-          <AppContent />
-        </Router>
+        <LocationProvider>
+          <Router>
+            <AntiGravityCursor />
+            <AppContent />
+          </Router>
+        </LocationProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

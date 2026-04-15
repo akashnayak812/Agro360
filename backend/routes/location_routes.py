@@ -88,6 +88,45 @@ def get_soil_by_region():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+@location_bp.route('/soil/soilgrids', methods=['POST'])
+def get_soilgrids_data():
+    """
+    Fetch soil data from SoilGrids API by GPS coordinates.
+    Falls back to regional data if API is unreachable.
+    Accepts: {lat, lon} or {state, district}
+    """
+    try:
+        data = request.json
+        lat = data.get('lat')
+        lon = data.get('lon')
+        state = data.get('state')
+        district = data.get('district')
+        
+        result = None
+        
+        # Try SoilGrids API with coordinates
+        if lat is not None and lon is not None:
+            from services.location_service import fetch_soilgrids_data
+            result = fetch_soilgrids_data(float(lat), float(lon))
+        
+        # Fallback: regional data by state/district
+        if not result and state and district:
+            result = get_regional_soil_data(state, district)
+            if result:
+                result['source'] = 'Regional Average (SoilGrids unavailable)'
+        
+        # Final fallback
+        if not result:
+            result = {
+                "success": True,
+                "N": 40, "P": 35, "K": 40, "ph": 7.0,
+                "source": "Default Estimates"
+            }
+        
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
 @location_bp.route('/soil/types', methods=['GET'])
 def get_soil_types():
     """Get all available soil types with their properties"""

@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Navigation, Loader2, Check } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { API_URL } from '../lib/api';
-import { fetchRealWeather } from '../services/weatherApi';
-import districtCoords from '../data/districtCoords.json';
+import { useLocationData } from '../context/LocationContext';
 
 // States and districts data
 const STATES_DISTRICTS = {
@@ -824,10 +822,8 @@ const LocationSelector = ({
     onAutoFill,
     loading = false 
 }) => {
+    const { isLocating, fetchLocationAndData, fetchLocationByAddress, address, weather } = useLocationData();
     const [districts, setDistricts] = useState([]);
-    const [gpsLoading, setGpsLoading] = useState(false);
-    const [autoFillLoading, setAutoFillLoading] = useState(false);
-    const [autoFilledData, setAutoFilledData] = useState(null);
 
     // Update districts when state changes
     useEffect(() => {
@@ -841,133 +837,6 @@ const LocationSelector = ({
             setDistricts([]);
         }
     }, [selectedState]);
-
-    // Get current location using Google Geolocation API
-    const getCurrentLocation = async () => {
-        setGpsLoading(true);
-        
-        try {
-            const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-            
-            // 1. Get Lat/Lng using Google Geolocation API
-            const geoResponse = await fetch(`https://www.googleapis.com/geolocation/v1/geolocate?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({}) // Empty body uses IP address for fallback
-            });
-            
-            if (!geoResponse.ok) {
-                throw new Error('Geolocation API request failed');
-            }
-            
-            const geoData = await geoResponse.json();
-            const { lat: latitude, lng: longitude } = geoData.location;
-            
-            // New: Auto-fetch weather safely avoiding failure of geo process
-            try {
-                setAutoFillLoading(true);
-                const weatherData = await fetchRealWeather(latitude, longitude);
-                const finalData = { weather: weatherData };
-                setAutoFilledData(finalData);
-                if (onAutoFill) {
-                    onAutoFill(finalData);
-                }
-            } catch (err) {
-                console.error('Weather auto-fill failed:', err);
-            } finally {
-                setAutoFillLoading(false);
-            }
-            
-            // 2. Use reverse geocoding to get state/district
-            const response = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
-            );
-            const data = await response.json();
-            
-            if (data.results && data.results.length > 0) {
-                const addressComponents = data.results[0].address_components || [];
-                const stateComponent = addressComponents.find(c => c.types.includes('administrative_area_level_1'));
-                const districtComponent = addressComponents.find(c => 
-                    c.types.includes('administrative_area_level_3') || 
-                    c.types.includes('administrative_area_level_2') || 
-                    c.types.includes('locality')
-                );
-                
-                const state = stateComponent ? stateComponent.long_name : '';
-                const district = districtComponent ? districtComponent.long_name : '';
-                
-                // Try to match with our available states/districts
-                const matchedState = Object.keys(STATES_DISTRICTS).find(
-                    s => state.toLowerCase().includes(s.toLowerCase()) || 
-                         s.toLowerCase().includes(state.toLowerCase())
-                );
-                
-                if (matchedState) {
-                    onStateChange(matchedState);
-                    
-                    // Try to match district
-                    const matchedDistrict = STATES_DISTRICTS[matchedState].find(
-                        d => district.toLowerCase().includes(d.toLowerCase()) ||
-                             d.toLowerCase().includes(district.toLowerCase())
-                    );
-                    
-                    if (matchedDistrict) {
-                        setTimeout(() => onDistrictChange(matchedDistrict), 100);
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Location detection error:', error);
-            alert('Could not auto-detect location. Please select manually.');
-        } finally {
-            setGpsLoading(false);
-        }
-    };
-
-    // Auto-fill weather and soil data
-    const handleAutoFill = async () => {
-        if (!selectedState || !selectedDistrict) {
-            alert('Please select state and district first');
-            return;
-        }
-
-        setAutoFillLoading(true);
-        
-        try {
-            let coords = districtCoords[selectedDistrict];
-            
-            // Dynamic Fallback: If not found in our JSON file, fetch coordinates on the fly!
-            if (!coords) {
-                const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(selectedDistrict)}&count=1&language=en&format=json`);
-                if (geoResponse.ok) {
-                    const geoData = await geoResponse.json();
-                    if (geoData.results && geoData.results.length > 0) {
-                        coords = {
-                            lat: geoData.results[0].latitude,
-                            lon: geoData.results[0].longitude
-                        };
-                    }
-                }
-            }
-
-            if (!coords) {
-                throw new Error(`Coordinates not found for ${selectedDistrict}. Please use GPS instead.`);
-            }
-            
-            const weatherData = await fetchRealWeather(coords.lat, coords.lon);
-            const finalData = { weather: weatherData };
-            
-            setAutoFilledData(finalData);
-            if (onAutoFill) {
-                onAutoFill(finalData);
-            }
-        } catch (error) {
-            console.error('Auto-fill error:', error);
-            alert(error.message || 'Error fetching weather data. Please try again.');
-        } finally {
-            setAutoFillLoading(false);
-        }
-    };
 
     return (
         <div className="space-y-4">
@@ -984,24 +853,24 @@ const LocationSelector = ({
                 type="button"
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
-                onClick={getCurrentLocation}
-                disabled={gpsLoading}
+                onClick={fetchLocationAndData}
+                disabled={isLocating}
                 className={cn(
                     "w-full p-3 rounded-xl border-2 border-dashed",
                     "flex items-center justify-center gap-2",
                     "text-emerald-600 border-emerald-300 bg-emerald-50/50",
                     "hover:bg-emerald-100 hover:border-emerald-400",
                     "transition-all duration-200",
-                    gpsLoading && "opacity-70 cursor-not-allowed"
+                    isLocating && "opacity-70 cursor-not-allowed"
                 )}
             >
-                {gpsLoading ? (
+                {isLocating ? (
                     <Loader2 size={20} className="animate-spin" />
                 ) : (
                     <Navigation size={20} />
                 )}
                 <span className="font-medium">
-                    {gpsLoading ? 'Detecting...' : 'Use My Location (GPS)'}
+                    {isLocating ? 'Detecting Location...' : 'Use My Location (GPS)'}
                 </span>
             </motion.button>
 
@@ -1066,8 +935,8 @@ const LocationSelector = ({
                     animate={{ opacity: 1, y: 0 }}
                     whileHover={{ scale: 1.01 }}
                     whileTap={{ scale: 0.99 }}
-                    onClick={handleAutoFill}
-                    disabled={autoFillLoading}
+                    onClick={() => fetchLocationByAddress(selectedState, selectedDistrict)}
+                    disabled={isLocating}
                     className={cn(
                         "w-full p-3 rounded-xl",
                         "flex items-center justify-center gap-2",
@@ -1075,22 +944,22 @@ const LocationSelector = ({
                         "hover:from-emerald-600 hover:to-teal-600",
                         "shadow-lg shadow-emerald-500/20",
                         "transition-all duration-200",
-                        autoFillLoading && "opacity-70 cursor-not-allowed"
+                        isLocating && "opacity-70 cursor-not-allowed"
                     )}
                 >
-                    {autoFillLoading ? (
+                    {isLocating ? (
                         <Loader2 size={20} className="animate-spin" />
                     ) : (
                         <MapPin size={20} />
                     )}
                     <span className="font-medium">
-                        {autoFillLoading ? 'Getting Data...' : 'Auto-Fill Weather Data'}
+                        {isLocating ? 'Getting Data...' : 'Auto-Fill Environment Data'}
                     </span>
                 </motion.button>
             )}
 
             {/* Auto-filled data display */}
-            {autoFilledData && autoFilledData.weather && (
+            {weather && address && address.state === selectedState && (
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1099,11 +968,11 @@ const LocationSelector = ({
                     <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                             <Check size={18} className="text-emerald-500" />
-                            <span className="font-medium text-gray-900">Weather Data Auto-Filled!</span>
+                            <span className="font-medium text-gray-900">Environment Data Synced!</span>
                         </div>
-                        {autoFilledData.weather.timestamp && (
+                        {weather.timestamp && (
                             <span className="text-xs text-gray-500 font-medium bg-white/50 px-2 py-1 rounded-md">
-                                Last Updated: {autoFilledData.weather.timestamp}
+                                Last Updated: {weather.timestamp}
                             </span>
                         )}
                     </div>
@@ -1111,15 +980,15 @@ const LocationSelector = ({
                     <div className="grid grid-cols-3 gap-3 text-sm">
                         <div className="p-2 bg-white/60 rounded-lg">
                             <p className="text-gray-500">🌡️ Temperature</p>
-                            <p className="font-semibold">{autoFilledData.weather.temperature}°C</p>
+                            <p className="font-semibold">{weather.temperature}°C</p>
                         </div>
                         <div className="p-2 bg-white/60 rounded-lg">
                             <p className="text-gray-500">💧 Humidity</p>
-                            <p className="font-semibold">{autoFilledData.weather.humidity}%</p>
+                            <p className="font-semibold">{weather.humidity}%</p>
                         </div>
                         <div className="p-2 bg-white/60 rounded-lg">
                             <p className="text-gray-500">🌧️ Rainfall</p>
-                            <p className="font-semibold">{autoFilledData.weather.rainfall} mm</p>
+                            <p className="font-semibold">{weather.rainfall} mm</p>
                         </div>
                     </div>
                 </motion.div>

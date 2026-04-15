@@ -11,6 +11,8 @@ import SimpleSoilSelector from './SimpleSoilSelector';
 import WaterAvailabilitySelector from './WaterAvailabilitySelector';
 import { API_URL } from '../lib/api';
 import VoiceInput, { SpeakResult } from './VoiceInput';
+import { useLocationData } from '../context/LocationContext';
+import LocationWidget from './LocationWidget';
 
 // ─── Helper: ScoreBar ────────────────────────────────────────────
 const ScoreBar = ({ label, value, colorClass, icon: Icon }) => (
@@ -128,6 +130,8 @@ const DecisionPanel = ({ decision, t }) => {
 
 const CropRecommendation = () => {
     const { t, i18n } = useTranslation();
+    const { address, weather, soil } = useLocationData();
+
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
     
@@ -147,6 +151,34 @@ const CropRecommendation = () => {
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [autoFilledData, setAutoFilledData] = useState(null);
+
+    // Auto-fill from global LocationContext
+    React.useEffect(() => {
+        if (address) {
+            setSimpleData(prev => ({
+                ...prev,
+                state: address.state || prev.state,
+                district: address.district || address.city || prev.district
+            }));
+        }
+        if (weather) {
+            setFormData(prev => ({
+                ...prev,
+                temperature: weather.temperature || prev.temperature,
+                humidity: weather.humidity || prev.humidity,
+                rainfall: weather.rainfall || prev.rainfall
+            }));
+        }
+        if (soil) {
+            setFormData(prev => ({
+                ...prev,
+                N: soil.N || prev.N,
+                P: soil.P || prev.P,
+                K: soil.K || prev.K,
+                ph: soil.ph || prev.ph
+            }));
+        }
+    }, [address, weather, soil]);
 
     // Handle advanced mode input change
     const handleChange = (e) => {
@@ -247,7 +279,10 @@ const CropRecommendation = () => {
             </div>
 
             {/* Mode Toggle */}
-            <InputModeToggle mode={mode} onModeChange={setMode} />
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <InputModeToggle mode={mode} onModeChange={setMode} />
+                <LocationWidget className="w-full sm:w-auto shrink-0 shadow-md" />
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Input Form */}

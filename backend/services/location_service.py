@@ -989,29 +989,56 @@ def get_weather_by_coordinates(lat, lon):
             
             # Seasonal defaults for India
             if month in [12, 1, 2]:  # Winter
-                return {"temperature": 20, "humidity": 60, "rainfall": 20}
+                return {"temperature": 20, "condition": "Clear", "humidity": 60, "wind": 10, "rainfall": 20, "forecast": []}
             elif month in [3, 4, 5]:  # Summer
-                return {"temperature": 35, "humidity": 40, "rainfall": 10}
+                return {"temperature": 35, "condition": "Sunny", "humidity": 40, "wind": 15, "rainfall": 10, "forecast": []}
             elif month in [6, 7, 8, 9]:  # Monsoon
-                return {"temperature": 28, "humidity": 85, "rainfall": 250}
+                return {"temperature": 28, "condition": "Rain", "humidity": 85, "wind": 20, "rainfall": 250, "forecast": []}
             else:  # Post-monsoon
-                return {"temperature": 25, "humidity": 70, "rainfall": 50}
+                return {"temperature": 25, "condition": "Clouds", "humidity": 70, "wind": 12, "rainfall": 50, "forecast": []}
         
-        url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
-        response = requests.get(url, timeout=5)
+        current_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+        response = requests.get(current_url, timeout=5)
         
+        weather_data = {"temperature": 25, "humidity": 70, "rainfall": 100, "condition": "Clear", "wind": 10, "forecast": []}
+
         if response.status_code == 200:
             data = response.json()
-            return {
-                "temperature": data["main"]["temp"],
-                "humidity": data["main"]["humidity"],
-                "rainfall": data.get("rain", {}).get("1h", 0) * 24 * 30  # Estimate monthly
-            }
+            weather_data["temperature"] = round(data["main"]["temp"])
+            weather_data["humidity"] = data["main"]["humidity"]
+            weather_data["rainfall"] = data.get("rain", {}).get("1h", 0) * 24 * 30  # Estimate monthly
+            weather_data["wind"] = round(data.get("wind", {}).get("speed", 0) * 3.6) # convert m/s to km/h
+            weather_data["condition"] = data.get("weather", [{}])[0].get("main", "Clear")
+            
+        # 2. Forecast Data (5 day / 3 hour)
+        forecast_url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}&units=metric"
+        f_response = requests.get(forecast_url, timeout=5)
+        if f_response.status_code == 200:
+            f_data = f_response.json()
+            seen_dates = set()
+            import datetime
+            today = datetime.datetime.now().strftime("%Y-%m-%d")
+            
+            for item in f_data.get("list", []):
+                date_str = item["dt_txt"].split(" ")[0]
+                # Pick the first reading of a future day
+                if date_str != today and date_str not in seen_dates:
+                    seen_dates.add(date_str)
+                    dt = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+                    weather_data["forecast"].append({
+                        "day": dt.strftime("%a"),
+                        "temp": round(item["main"]["temp_max"]),
+                        "condition": item["weather"][0]["main"]
+                    })
+                    if len(weather_data["forecast"]) >= 3:
+                        break
+                        
+        return weather_data
     except Exception as e:
         print(f"Weather API error: {e}")
     
     # Default fallback
-    return {"temperature": 25, "humidity": 70, "rainfall": 100}
+    return {"temperature": 25, "humidity": 70, "rainfall": 100, "condition": "Clear", "wind": 10, "forecast": []}
 
 
 def get_weather_by_location(state, district):
@@ -1035,6 +1062,72 @@ def get_weather_by_location(state, district):
     
     # Return seasonal defaults
     return get_weather_by_coordinates(20, 78)
+
+
+def fetch_soilgrids_data(lat, lon):
+    """
+    Fetch real soil data from the SoilGrids REST API (ISRIC).
+    Returns estimated N, P, K, pH, organic_carbon for the location.
+    Falls back to regional data if API is unreachable.
+    """
+    try:
+        # SoilGrids REST API v2.0
+        url = (
+            f"https://rest.isric.org/soilgrids/v2.0/properties/query"
+            f"?lon={lon}&lat={lat}"
+            f"&property=nitrogen&property=phh2o&property=ocd&property=cec"
+            f"&depth=0-5cm&value=mean"
+        )
+        response = requests.get(url, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            layers = data.get("properties", {}).get("layers", [])
+            
+            nitrogen_raw = None
+            ph_raw = None
+            ocd_raw = None
+            cec_raw = None
+            
+            for layer in layers:
+                name = layer.get("name", "")
+                depths = layer.get("depths", [])
+                if depths:
+                    val = depths[0].get("values", {}).get("mean")
+                    if name == "nitrogen" and val is not None:
+                        nitrogen_raw = val  # cg/kg → divide by 100 for g/kg
+                    elif name == "phh2o" and val is not None:
+                        ph_raw = val  # pH*10 → divide by 10
+                    elif name == "ocd" and val is not None:
+                        ocd_raw = val  # hg/dm³ organic carbon density
+                    elif name == "cec" and val is not None:
+                        cec_raw = val  # mmol(c)/kg cation exchange capacity
+            
+            # Convert to usable values
+            N_est = round(nitrogen_raw / 100 * 10, 1) if nitrogen_raw else 40  # Approximate N in mg/kg
+            ph_est = round(ph_raw / 10, 1) if ph_raw else 7.0
+            oc_est = round(ocd_raw / 10, 1) if ocd_raw else 0.5  # g/dm³
+            
+            # Estimate P and K from organic carbon and CEC (heuristic)
+            P_est = round(max(15, min(80, (oc_est * 3) + 20)), 1)
+            K_est = round(max(20, min(90, (cec_raw / 10) + 25 if cec_raw else 40)), 1)
+            
+            return {
+                "success": True,
+                "N": N_est,
+                "P": P_est,
+                "K": K_est,
+                "ph": ph_est,
+                "organic_carbon": oc_est,
+                "source": "SoilGrids API (ISRIC)",
+                "note": "P and K are estimated from organic carbon and CEC. For exact values, use lab testing."
+            }
+        else:
+            print(f"[SoilGrids] API returned HTTP {response.status_code}")
+    except Exception as e:
+        print(f"[SoilGrids] API error: {e}")
+    
+    return None
 
 
 def get_regional_soil_data(state, district):

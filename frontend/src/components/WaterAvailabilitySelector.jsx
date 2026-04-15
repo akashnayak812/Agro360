@@ -97,7 +97,7 @@ const WaterAvailabilitySelector = ({ selected, onSelect }) => {
 
             {/* Legend */}
             <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
-                <span>🏜️ Drought</span>
+                <span>🏜️ Less Rain</span>
                 <span>→</span>
                 <span>🌊 Heavy Rain</span>
             </div>

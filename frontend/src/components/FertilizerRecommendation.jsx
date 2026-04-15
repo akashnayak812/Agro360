@@ -11,6 +11,8 @@ import LocationSelector from './LocationSelector';
 import SimpleSoilSelector from './SimpleSoilSelector';
 import { API_URL } from '../lib/api';
 import VoiceInput, { SpeakResult } from './VoiceInput';
+import { useLocationData } from '../context/LocationContext';
+import LocationWidget from './LocationWidget';
 
 // Common crops list for easy selection
 const COMMON_CROPS = [
@@ -32,6 +34,7 @@ const FertilizerRecommendation = () => {
     // Mode: 'simple' or 'advanced'
     const [mode, setMode] = useState('simple');
     const { i18n } = useTranslation();
+    const { address, soil } = useLocationData();
     
     // Simple mode state
     const [simpleData, setSimpleData] = useState({
@@ -48,6 +51,26 @@ const FertilizerRecommendation = () => {
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(false);
     const [autoFilledData, setAutoFilledData] = useState(null);
+
+    // Auto-fill from global LocationContext
+    React.useEffect(() => {
+        if (address) {
+            setSimpleData(prev => ({
+                ...prev,
+                state: address.state || prev.state,
+                district: address.district || address.city || prev.district
+            }));
+        }
+        if (soil) {
+            setFormData(prev => ({
+                ...prev,
+                N: soil.N || prev.N,
+                P: soil.P || prev.P,
+                K: soil.K || prev.K,
+                ph: soil.ph || prev.ph
+            }));
+        }
+    }, [address, soil]);
 
     // Farmer-friendly fertilizer info
     const fertilizerInfo = {
@@ -196,7 +219,10 @@ const FertilizerRecommendation = () => {
             </div>
 
             {/* Mode Toggle */}
-            <InputModeToggle mode={mode} onModeChange={setMode} />
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                <InputModeToggle mode={mode} onModeChange={setMode} />
+                <LocationWidget className="w-full sm:w-auto shrink-0 shadow-md" />
+            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="space-y-6">

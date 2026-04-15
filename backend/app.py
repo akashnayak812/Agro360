@@ -48,6 +48,8 @@ from routes.market_routes import market_bp
 from routes.risk_routes import risk_bp
 from routes.schemes_routes import schemes_bp
 from routes.profile_routes import profile_bp
+from routes.farm_routes import farm_bp
+from models.farm_data import UserFarmData
 
 # MySQL Connection
 try:
@@ -80,6 +82,7 @@ app.register_blueprint(market_bp, url_prefix='/api/market')
 app.register_blueprint(risk_bp, url_prefix='/api/risk')
 app.register_blueprint(schemes_bp, url_prefix='/api/schemes')
 app.register_blueprint(profile_bp, url_prefix='/api/profile')
+app.register_blueprint(farm_bp, url_prefix='/api/farm-data')
 
 @app.route('/')
 def home():

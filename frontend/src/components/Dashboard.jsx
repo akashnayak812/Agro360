@@ -23,6 +23,8 @@ import { useAuth } from '../context/AuthContext';
 import WeatherWidget from './WeatherWidget';
 import StatCard from './StatCard';
 import FarmProfileModal from './FarmProfileModal';
+import FarmDataModal from './FarmDataModal';
+import LocationWidget from './LocationWidget';
 import { Layers } from 'lucide-react';
 
 const Dashboard = () => {
@@ -43,9 +45,38 @@ const Dashboard = () => {
         show: { opacity: 1, y: 0 }
     };
 
-    const [location, setLocation] = React.useState(null);
-    const [locationLoading, setLocationLoading] = React.useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
+    const [farmData, setFarmData] = React.useState(null);
+    const [isFarmDataModalOpen, setIsFarmDataModalOpen] = React.useState(false);
+    const [loadingFarmData, setLoadingFarmData] = React.useState(true);
+
+    React.useEffect(() => {
+        const fetchFarmData = async () => {
+            if (!user) return;
+            try {
+                const response = await fetch(`${API_URL}/api/farm-data/${user.uid}`);
+                const result = await response.json();
+                if (result.success && result.data) {
+                    setFarmData(result.data);
+                } else {
+                    setIsFarmDataModalOpen(true);
+                }
+            } catch (error) {
+                console.error("Failed to fetch farm data", error);
+            } finally {
+                setLoadingFarmData(false);
+            }
+        };
+        fetchFarmData();
+    }, [user]);
+
+    // Revenue Calculation Logic
+    const activeCrops = farmData?.activeCrops || 0;
+    const monthlyIncome = farmData?.monthlyIncome || 0;
+    const annualRevenue = (monthlyIncome * 12) + (activeCrops * 5000);
+
+    const formattedMonthlyIncome = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(monthlyIncome);
+    const formattedRevenue = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(annualRevenue);
 
     const modules = [
         { title: t('dashboard.bestCrop'), desc: t('dashboard.bestCropDesc'), path: '/crop', icon: Sprout, color: 'text-emerald-500', bg: 'bg-emerald-50', border: 'border-emerald-100' },
@@ -56,45 +87,7 @@ const Dashboard = () => {
         { title: t('nav.community'), desc: t('dashboard.communityDesc'), path: '/community', icon: Users, color: 'text-pink-500', bg: 'bg-pink-50', border: 'border-pink-100' },
     ];
 
-    const detectLocation = () => {
-        if (!navigator.geolocation) {
-            alert("Geolocation is not supported by your browser");
-            return;
-        }
 
-        setLocationLoading(true);
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                try {
-                    const { latitude, longitude } = position.coords;
-                    const response = await fetch(`${API_URL}/api/location/reverse-geocode`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ lat: latitude, lon: longitude }),
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        setLocation(data);
-                    } else {
-                        alert("Could not fetch location details");
-                    }
-                } catch (error) {
-                    console.error("Location Error:", error);
-                    alert("Failed to detect location");
-                } finally {
-                    setLocationLoading(false);
-                }
-            },
-            (error) => {
-                console.error("Geolocation Error:", error);
-                alert("Please allow location access to use this feature.");
-                setLocationLoading(false);
-            }
-        );
-    };
 
     return (
         <motion.div
@@ -110,25 +103,15 @@ const Dashboard = () => {
                     <h2 className="text-3xl font-heading font-bold text-gray-800">
                         {t('dashboard.hello')}, {user?.displayName || user?.email?.split('@')[0] || t('dashboard.farmer')}! 👋
                     </h2>
-                    <div className="flex items-center gap-2 mt-2 text-gray-600">
-                        {locationLoading ? (
-                            <span className="flex items-center gap-2 text-sm bg-white/50 px-3 py-1 rounded-full border border-gray-200">
-                                <Loader2 size={14} className="animate-spin text-agro-green" /> {t('dashboard.detectingLocation')}
-                            </span>
-                        ) : (
-                            <div className="flex items-center gap-3">
-                                <span className="flex items-center gap-2 text-sm bg-white/50 px-3 py-1 rounded-full border border-gray-200 cursor-pointer hover:bg-white hover:border-agro-green transition-colors" onClick={!location ? detectLocation : undefined}>
-                                    <MapPin size={16} className="text-agro-green" />
-                                    {location ? `${location.mandal || location.city}, ${location.district}` : t('dashboard.clickToDetect')}
-                                </span>
-                                <span className="text-sm text-gray-400">|</span>
-                                <span className="text-sm font-medium text-gray-500">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
-                            </div>
-                        )}
+                    <div className="flex items-center gap-2 mt-2 text-gray-500 font-medium">
+                        <span className="text-sm">{new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
+                    <Button variant="outline" onClick={() => setIsFarmDataModalOpen(true)} className="hidden md:flex gap-2 border-blue-500/30 text-blue-600 hover:bg-blue-500/10">
+                        <DollarSign size={16} /> Edit Data
+                    </Button>
                     <Button variant="outline" onClick={() => setIsProfileModalOpen(true)} className="hidden md:flex gap-2 border-agro-green/30 text-agro-green hover:bg-agro-green/10">
                         <Layers size={16} /> Farm Profile
                     </Button>
@@ -143,6 +126,11 @@ const Dashboard = () => {
                 </div>
             </motion.header>
 
+            {/* Universal Location Widget */}
+            <motion.div variants={item}>
+                <LocationWidget />
+            </motion.div>
+
             {/* Main Dashboard Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -152,26 +140,24 @@ const Dashboard = () => {
                     {/* Stats Row */}
                     <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <StatCard
-                            title={t('dashboard.fieldHealth')}
-                            value="92%"
-                            icon={Activity}
-                            color="emerald"
-                            trend={5}
+                            title="Active Crops"
+                            value={loadingFarmData ? "..." : activeCrops.toString()}
+                            icon={Sprout}
+                            color="amber"
                             delay={0.1}
                         />
                         <StatCard
-                            title={t('dashboard.activeCrops')}
-                            value="3"
-                            icon={Sprout}
-                            color="amber"
+                            title="Monthly Income"
+                            value={loadingFarmData ? "..." : formattedMonthlyIncome}
+                            icon={DollarSign}
+                            color="blue"
                             delay={0.2}
                         />
                         <StatCard
-                            title={t('dashboard.monthlyRevenue')}
-                            value="$12.5k"
-                            icon={DollarSign}
-                            color="blue"
-                            trend={12}
+                            title="Annual Revenue"
+                            value={loadingFarmData ? "..." : formattedRevenue}
+                            icon={TrendingUp}
+                            color="emerald"
                             delay={0.3}
                         />
                     </motion.div>
@@ -296,6 +282,21 @@ const Dashboard = () => {
             <FarmProfileModal 
                 isOpen={isProfileModalOpen} 
                 onClose={() => setIsProfileModalOpen(false)} 
+            />
+
+            <FarmDataModal
+                isOpen={isFarmDataModalOpen}
+                onClose={() => {
+                    // Only allow closing if data exists
+                    if (farmData) {
+                        setIsFarmDataModalOpen(false);
+                    }
+                }}
+                onSave={(data) => {
+                    setFarmData(data);
+                    setIsFarmDataModalOpen(false);
+                }}
+                existingData={farmData}
             />
         </motion.div>
     );
