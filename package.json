@@ -3,9 +3,14 @@
     "dev": "cd frontend && npm run dev",
     "dev:backend": "cd backend && source ../.venv/bin/activate && python app.py",
     "dev:all": "npm run dev:backend & npm run dev",
-    "install:all": "npm install && cd frontend && npm install"
+    "install:all": "npm install && cd frontend && npm install",
+    "deploy": "wrangler deploy",
+    "preview": "wrangler dev"
   },
   "dependencies": {
     "firebase": "^12.7.0"
+  },
+  "devDependencies": {
+    "wrangler": "^4.83.0"
   }
 }
