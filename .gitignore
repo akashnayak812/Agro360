@@ -4,6 +4,13 @@
 .env.*
 .env.local
 
+# Environment variables in frontend directory
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
 # Node modules
 node_modules/
 
